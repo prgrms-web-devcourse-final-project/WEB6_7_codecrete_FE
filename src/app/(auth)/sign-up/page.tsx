@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -22,9 +23,9 @@ export default function Page() {
         <div className="nicknameInput flex flex-col gap-2">
           <p className="text-sm">닉네임 *</p>
           <div className="flex w-full max-w-sm items-center gap-2">
-            <Input type="text" placeholder="Enter Your Nickname" />
-            <Button type="submit" variant="default" className="bg-point-main">
-              Subscribe
+            <Input type="text" placeholder="Enter Your Nickname" className="h-13" />
+            <Button type="submit" variant="default" className="bg-point-main h-13">
+              Confirm
             </Button>
           </div>
           <p className="text-text-sub text-xs">중복된 닉네임입니다.</p>
@@ -33,9 +34,9 @@ export default function Page() {
         <div className="emailInput flex flex-col gap-2">
           <p className="text-sm">이메일 *</p>
           <div className="flex w-full max-w-sm items-center gap-2">
-            <Input type="email" placeholder="Enter Your Email" />
-            <Button type="submit" variant="default" className="bg-point-main">
-              Subscribe
+            <Input type="email" placeholder="Enter Your Email" className="h-13" />
+            <Button type="submit" variant="default" className="bg-point-main h-13">
+              Confirm
             </Button>
           </div>
           <p className="text-text-sub text-xs">인증을 완료하세요.</p>
@@ -44,9 +45,9 @@ export default function Page() {
         <div className="emailConfirm flex flex-col gap-2">
           <p className="text-sm">이메일 인증 *</p>
           <div className="flex w-full max-w-sm items-center gap-2">
-            <Input type="number" placeholder="Enter Validation Number" />
-            <Button type="submit" variant="default" className="bg-point-main">
-              Subscribe
+            <Input type="number" placeholder="Enter Validation Number" className="h-13" />
+            <Button type="submit" variant="default" className="bg-point-main h-13">
+              Confirm
             </Button>
           </div>
           <p className="text-text-sub text-xs">인증번호를 입력하세요.</p>
@@ -64,14 +65,25 @@ export default function Page() {
         </div>
         <DatePicker />
 
-        <div className="flex items-center gap-2">
+        <div className="agreeCheckbox flex items-center gap-2">
           <Checkbox className="cursor-pointer" />
-          <Label>아이디 저장</Label>
+          <Label className="text-text-sub">서비스 약관 및 개인정보 처리방침에 동의합니다.</Label>
+        </div>
+        <div className="alarmCheckbox flex items-center gap-2">
+          <Checkbox className="cursor-pointer" />
+          <Label className="text-text-sub">콘서트 소식과 프로모션 이메일을 보내주세요.</Label>
         </div>
 
         <Button className="signUpButton cursor-pointer" variant="default" size="lg" asChild={false}>
           회원가입
         </Button>
+
+        <div className="signUpLink flex justify-center gap-1">
+          <p className="text-text-sub">이미 계정이 있으신가요?</p>
+          <Link href="/sign-in" className="text-text-main hover:text-text-sub">
+            로그인
+          </Link>
+        </div>
       </div>
     </div>
   );

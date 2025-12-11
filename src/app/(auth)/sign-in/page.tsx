@@ -24,6 +24,7 @@ export default function SignIn() {
             <Checkbox className="cursor-pointer" />
             <Label>아이디 저장</Label>
           </div>
+          {/* TODO: 비밀번호 찾기 */}
           {/* <Link href="/sign-up" className="text-text-sub cursor-pointer hover:text-text-main">
                 비밀번호를 잊으셨나요?
               </Link> */}
