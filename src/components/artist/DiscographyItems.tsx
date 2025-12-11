@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/item";
 
 // TODO: 나중에 이미지 url 모두 바꾸기
+// TODO: 실제 api 통신을 통해 데이터가 들어오면 mock 데이터 지우고 구현하기
 const music = [
   {
     album: "Beauty Behind the Madness",
