@@ -12,24 +12,27 @@ import {
 // TODO: 나중에 이미지 url 모두 바꾸기
 const music = [
   {
-    album: "Midnight City Lights",
+    album: "Beauty Behind the Madness",
     type: "Full Album",
     total_tracks: 12,
     releasedDate: "2008",
+    imageSrc: "/The_Weeknd_-_Beauty_Behind_the_Madness.png",
     externalURL: "https://open.spotify.com/album/0P3oVJBFOv3TDXlYRhGL7s?si=X5iVFAKRSo6tpsQBXW4nSg",
   },
   {
-    album: "Coffee Shop Conversations",
+    album: "After Hours",
     type: "Compilation",
     total_tracks: 12,
     releasedDate: "2015",
+    imageSrc: "/The_Weeknd_-_After_Hours.png",
     externalURL: "https://open.spotify.com/album/4yP0hdKOZPNshxUOjY0cZj?si=1UcOK7CgROWndyrM_MnS8g",
   },
   {
-    album: "Digital Rain",
+    album: "Madvillainy",
     type: "Full Album",
     total_tracks: 12,
     releasedDate: "2021",
+    imageSrc: "/Madvillainy_cover.png",
     externalURL: "https://open.spotify.com/album/19bQiwEKhXUBJWY6oV3KZk?si=XhVEgnlkS66484cbcrERwg",
   },
 ];
@@ -46,12 +49,7 @@ export function DiscographyItems() {
             role="listitem"
           >
             <ItemMedia variant="image" className={"h-24 w-24 shrink-0"}>
-              <Image
-                fill
-                src="/df407a42f276be16445ed39a53c9c3a6.jpg"
-                alt={song.album}
-                className="object-cover grayscale"
-              />
+              <Image fill src={song.imageSrc} alt={song.album} className="object-cover" />
             </ItemMedia>
             <div className={"flex flex-col gap-2"}>
               <ItemContent>
