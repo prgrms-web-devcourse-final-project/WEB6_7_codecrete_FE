@@ -1,5 +1,4 @@
 import PasswordInput from "@/components/auth/PasswordInput";
-import Separator from "@/components/auth/Separator";
 import SocialButton from "@/components/auth/SocialButton";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +15,6 @@ export default function SignIn() {
       </div>
 
       <SocialButton />
-      <Separator />
 
       <div className="input flex flex-col gap-3">
         <Input placeholder="Email Address" className="h-13" />
