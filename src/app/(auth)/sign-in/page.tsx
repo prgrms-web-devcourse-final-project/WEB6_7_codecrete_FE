@@ -1,11 +1,10 @@
+import PasswordInput from "@/components/auth/PasswordInput";
 import Separator from "@/components/auth/Separator";
 import SocialButton from "@/components/auth/SocialButton";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
-import { Eye } from "lucide-react";
 import Link from "next/link";
 
 export default function SignIn() {
@@ -21,12 +20,7 @@ export default function SignIn() {
 
       <div className="input flex flex-col gap-3">
         <Input placeholder="Email Address" className="h-13" />
-        <InputGroup className="h-13">
-          <InputGroupInput placeholder="Password" className="h-13" />
-          <InputGroupAddon align="inline-end">
-            <Eye />
-          </InputGroupAddon>
-        </InputGroup>
+        <PasswordInput />
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <Checkbox className="cursor-pointer" />
