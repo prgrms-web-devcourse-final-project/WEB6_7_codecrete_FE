@@ -12,6 +12,7 @@ import QuickStat from "@/components/artist/QuickStat";
 import ArtistAbout from "@/components/artist/ArtistAbout";
 import Discography from "@/components/artist/Discography";
 import ArtistProfile from "@/components/artist/ArtistProfile";
+import SimilarArtists from "@/components/artist/SimilarArtists";
 
 {
   /*TODO: 하드코딩 한 부분 나중에 바꿔 끼우기*/
@@ -54,7 +55,7 @@ export default function page() {
         <div className={"flex w-125 shrink-0 flex-col gap-12"}>
           <QuickStat />
           <HotTrack />
-          <h3 className={"text-xl font-bold"}>Similar Artists</h3>
+          <SimilarArtists />
         </div>
       </section>
     </>

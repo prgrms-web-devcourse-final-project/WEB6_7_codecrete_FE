@@ -9,6 +9,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 
+// TODO: 나중에 이미지 url 모두 바꾸기
 const music = [
   {
     album: "Midnight City Lights",
