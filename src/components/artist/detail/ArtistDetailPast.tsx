@@ -16,7 +16,7 @@ export default function ArtistDetailPast() {
           <div className={"flex gap-3"}>
             <DropdownButton
               button={
-                <Button variant={"outline"} className={"flex gap-2"} size={"lg"}>
+                <Button variant={"outline"} className={"flex gap-2"}>
                   <Funnel size={12} fill={"true"} />
                   <span>필터</span>
                 </Button>
@@ -24,7 +24,7 @@ export default function ArtistDetailPast() {
             />
             <DropdownButton
               button={
-                <Button variant={"outline"} className={"flex gap-2"} size={"lg"}>
+                <Button variant={"outline"} className={"flex gap-2"}>
                   <ChevronsUpDown size={12} fill={"true"} />
                   <span>날짜순 정렬</span>
                 </Button>

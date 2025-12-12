@@ -1,29 +1,13 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
+import ArtistListNavbar from "@/components/artist/list/ArtistListNavbar";
+import ArtistListHeader from "@/components/artist/list/ArtistListHeader";
+import ArtistListMain from "@/components/artist/list/ArtistListMain";
 
 export default function page() {
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">홈</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>아티스트 목록</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <h1>page Component</h1>
-      <Link href={"/home"}></Link>
+      <ArtistListNavbar />
+      <ArtistListHeader />
+      <ArtistListMain />
     </>
   );
 }
