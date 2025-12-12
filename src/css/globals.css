@@ -146,3 +146,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+.nav-link-hover {
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link-hover::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: 2px;
+  background-color: var(--color-border-point);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-link-hover:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link-hover:hover::before {
+  transform: scaleY(1);
+}

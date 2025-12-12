@@ -1,7 +1,15 @@
+import FeaturedSlider from "@/components/home/FeaturedSlider";
+import HeroSlider from "@/components/home/HeroSlider";
+import PlannerBanner from "@/components/home/PlannerBanner";
+import UpcomingSlider from "@/components/home/UpcomingSlider";
+
 export default function Page() {
   return (
     <>
-      <h1>Page Component</h1>
+      <HeroSlider />
+      <UpcomingSlider />
+      <FeaturedSlider />
+      <PlannerBanner />
     </>
   );
 }
