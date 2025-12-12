@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-export default function SignIn() {
+export default function Page() {
   return (
     <div className="flex w-full max-w-200 flex-col justify-center gap-10 px-12">
       <div className="intro flex flex-col gap-2">
