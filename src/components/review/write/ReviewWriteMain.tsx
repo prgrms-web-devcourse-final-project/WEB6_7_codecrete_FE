@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import ReviewDetailRating from "@/components/review/write/ReviewDetailRating";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FileUploadBox } from "@/components/review/write/FileUploadBox";
+import { Separator } from "@/components/ui/separator";
 
 export default function ReviewWriteMain() {
   return (
@@ -134,7 +136,7 @@ export default function ReviewWriteMain() {
                 Your Review<span className={"text-text-sub"}>*</span>
               </Label>
               <Textarea
-                className={"h-50 resize"}
+                className={"h-50 resize-none"}
                 placeholder="Share your detailed thoughts about the concert. What made it special? How was the atmosphere? Would you recommend it to others?"
                 id="message-2"
               />
@@ -155,6 +157,19 @@ export default function ReviewWriteMain() {
               Share photos from the concert (stage view, atmosphere, etc.)
             </CardDescription>
           </CardContent>
+
+          {/*이미지 업로드 파트*/}
+          <CardContent className={"flex flex-col gap-2"}>
+            <CardTitle>Upload Photos</CardTitle>
+            <FileUploadBox />
+            <CardDescription className={"text-xs"}>
+              Share photos from the concert (stage view, atmosphere, etc.)
+            </CardDescription>
+          </CardContent>
+
+          <div className="px-6">
+            <Separator />
+          </div>
         </Card>
       </div>
     </section>
