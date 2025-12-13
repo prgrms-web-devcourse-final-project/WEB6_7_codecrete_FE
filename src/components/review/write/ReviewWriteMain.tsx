@@ -36,7 +36,7 @@ export default function ReviewWriteMain() {
               Concert Selection <span className={"text-text-sub"}>*</span>
             </CardTitle>
             <Select>
-              <SelectTrigger className={"w-full"}>
+              <SelectTrigger className={"h-13! w-full px-4 py-3"}>
                 <SelectValue placeholder={"Select the concert you attended"} />{" "}
               </SelectTrigger>
               <SelectContent>
@@ -93,7 +93,10 @@ export default function ReviewWriteMain() {
             <CardTitle>
               Review Title <span className={"text-text-sub"}>*</span>
             </CardTitle>
-            <Input placeholder={"e.g., An unforgettable evening with amazing vocals"} />
+            <Input
+              className={"h-13"}
+              placeholder={"e.g., An unforgettable evening with amazing vocals"}
+            />
             <p className={"text-text-sub text-xs"}>
               Write a compelling title that summarizes your experience
             </p>
@@ -124,6 +127,7 @@ export default function ReviewWriteMain() {
             <ReviewDetailRating title={"Value for Money"} />
           </CardContent>
 
+          {/*리뷰 작성 파트*/}
           <CardContent>
             <div className="grid w-full gap-3">
               <Label htmlFor="message-2">
@@ -138,6 +142,18 @@ export default function ReviewWriteMain() {
                 Minimum 100 characters. Be specific and helpful to other concert-goers.
               </p>
             </div>
+          </CardContent>
+
+          {/*좌석 정보 파트*/}
+          <CardContent className={"flex flex-col gap-2"}>
+            <CardTitle>Seat Information</CardTitle>
+            <div className={"flex gap-2"}>
+              <Input className={"h-13"} placeholder={"Section (e.g., A, B, Standing)"} />
+              <Input className={"h-13"} placeholder={"Row & Seat (e.g., Row 12, Seat 15)"} />
+            </div>
+            <CardDescription className={"text-xs"}>
+              Share photos from the concert (stage view, atmosphere, etc.)
+            </CardDescription>
           </CardContent>
         </Card>
       </div>
