@@ -8,9 +8,9 @@ export function FileUploadBox() {
     >
       <Upload className="text-muted-foreground h-6 w-6" />
 
-      <p className="text-sm font-medium">Click to upload or drag and drop</p>
+      <p className="text-sm font-medium">클릭해서 사진을 업로드하세요</p>
 
-      <p className="text-muted-foreground text-xs">PNG, JPG up to 10MB (Max 5 photos)</p>
+      <p className="text-muted-foreground text-xs">PNG, JPG 형식 · 파일당 최대 10MB / 최대 5장</p>
 
       <input
         id="file-upload"

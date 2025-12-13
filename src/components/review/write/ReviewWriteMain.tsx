@@ -34,21 +34,21 @@ export default function ReviewWriteMain() {
         <Card className={"gap-8 p-12"}>
           {/*글 작성 헤더*/}
           <CardHeader>
-            <CardTitle className={"text-2xl"}>Share Your Experience</CardTitle>
+            <CardTitle className={"text-2xl"}>공연의 감동을 나눠주세요</CardTitle>
             <CardDescription>
-              Tell the community about the concert you attended. Your review helps others discover
-              great performances.
+              직접 다녀온 공연의 이야기를 들려주세요. 당신의 리뷰가 누군가의 최고의 공연을 찾아줄 수
+              있어요.
             </CardDescription>
           </CardHeader>
 
           {/*콘서트 선택 부분*/}
           <CardContent className={"flex flex-col gap-2"}>
             <CardTitle>
-              Concert Selection <span className={"text-text-sub"}>*</span>
+              공연 선택 <span className={"text-text-sub"}>*</span>
             </CardTitle>
             <Select>
               <SelectTrigger className={"h-13! w-full px-4 py-3"}>
-                <SelectValue placeholder={"Select the concert you attended"} />{" "}
+                <SelectValue placeholder={"어떤 공연을 보고 오셨나요?"} />{" "}
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -102,22 +102,17 @@ export default function ReviewWriteMain() {
           {/*리뷰 작성 제목 작성 부분*/}
           <CardContent className={"flex flex-col gap-2"}>
             <CardTitle>
-              Review Title <span className={"text-text-sub"}>*</span>
+              리뷰 제목 <span className={"text-text-sub"}>*</span>
             </CardTitle>
-            <Input
-              className={"h-13"}
-              placeholder={"e.g., An unforgettable evening with amazing vocals"}
-            />
-            <p className={"text-text-sub text-xs"}>
-              Write a compelling title that summarizes your experience
-            </p>
+            <Input className={"h-13"} placeholder={"리뷰 제목을 입력해주세요."} />
+            <p className={"text-text-sub text-xs"}>공연의 인상을 한 문장으로 표현해보세요</p>
           </CardContent>
 
           {/*총 별점 파트*/}
           <CardContent>
             <CardTitle className={"flex items-center justify-between"}>
               <CardTitle>
-                Overall Rating <span className={"text-text-sub"}>*</span>
+                종합 평점 <span className={"text-text-sub"}>*</span>
               </CardTitle>
               <div className={"flex"}>
                 <Star fill="true" />
@@ -131,48 +126,49 @@ export default function ReviewWriteMain() {
 
           {/*별점 상세 파트*/}
           <CardContent className={"flex flex-col gap-4"}>
-            <CardTitle>Detailed Ratings</CardTitle>
-            <ReviewDetailRating title={"Performance Quality"} />
-            <ReviewDetailRating title={"Venue & Facilities"} />
-            <ReviewDetailRating title={"Sound Quality"} />
-            <ReviewDetailRating title={"Value for Money"} />
+            <CardTitle>세부 평가</CardTitle>
+            <ReviewDetailRating title={"퍼포먼스 완성도"} />
+            <ReviewDetailRating title={"공연장 & 시설"} />
+            <ReviewDetailRating title={"음향 퀄리티"} />
+            <ReviewDetailRating title={"가격 대비 만족도"} />
           </CardContent>
 
           {/*리뷰 작성 파트*/}
           <CardContent>
             <div className="grid w-full gap-3">
               <Label htmlFor="message-2">
-                Your Review<span className={"text-text-sub"}>*</span>
+                리뷰 작성<span className={"text-text-sub"}>*</span>
               </Label>
               <Textarea
                 className={"h-50 resize-none"}
-                placeholder="Share your detailed thoughts about the concert. What made it special? How was the atmosphere? Would you recommend it to others?"
+                placeholder="공연의 분위기, 무대 연출, 관객 반응까지
+느꼈던 그대로 자유롭게 적어주세요."
                 id="message-2"
               />
               <p className="text-text-sub text-xs">
-                Minimum 100 characters. Be specific and helpful to other concert-goers.
+                최소 100자 이상 작성해주세요. 구체적인 후기는 다른 관객들에게 큰 도움이 됩니다.
               </p>
             </div>
           </CardContent>
 
           {/*좌석 정보 파트*/}
           <CardContent className={"flex flex-col gap-2"}>
-            <CardTitle>Seat Information</CardTitle>
+            <CardTitle>좌석 정보</CardTitle>
             <div className={"flex gap-2"}>
-              <Input className={"h-13"} placeholder={"Section (e.g., A, B, Standing)"} />
-              <Input className={"h-13"} placeholder={"Row & Seat (e.g., Row 12, Seat 15)"} />
+              <Input className={"h-13"} placeholder={"구역 (예: A구역, 스탠딩)"} />
+              <Input className={"h-13"} placeholder={"열 / 좌석 번호 (예: 12열 15번)"} />
             </div>
             <CardDescription className={"text-xs"}>
-              Share photos from the concert (stage view, atmosphere, etc.)
+              이 자리, 잘 보였나요? 후기로 알려주세요
             </CardDescription>
           </CardContent>
 
           {/*이미지 업로드 파트*/}
           <CardContent className={"flex flex-col gap-2"}>
-            <CardTitle>Upload Photos</CardTitle>
+            <CardTitle>사진 업로드</CardTitle>
             <FileUploadBox />
             <CardDescription className={"text-xs"}>
-              Share photos from the concert (stage view, atmosphere, etc.)
+              무대, 시야, 현장 분위기가 담긴 사진을 공유해보세요
             </CardDescription>
           </CardContent>
 
@@ -181,28 +177,28 @@ export default function ReviewWriteMain() {
           </div>
 
           <CardContent className={"flex flex-col gap-4"}>
-            <CardTitle>Tags</CardTitle>
+            <CardTitle>태그 선택</CardTitle>
             <div className={"flex flex-wrap gap-2"}>
               <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
-                <Music /> Great Vocals
+                <Music /> 가창력 미쳤다
               </Button>
               <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
-                <Flame /> High Energy
+                <Flame /> 에너지 폭발
               </Button>
               <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
-                <Heart /> Emotional
+                <Heart /> 감동적인 공연
               </Button>
               <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
-                <Users /> Great Crowd
+                <Users /> 관객 호응 최고
               </Button>
               <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
-                <Star /> Memorable
+                <Star /> 기억에 남는 무대
               </Button>
               <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
-                <Spotlight /> Amazing Stage
+                <Spotlight /> 무대 연출 최고
               </Button>
             </div>
-            <Input className={"h-13"} placeholder={"Add custom tags (press Enter)"} />
+            <Input className={"h-13"} placeholder={"직접 태그를 추가해보세요 (Enter 입력)"} />
           </CardContent>
 
           <div className="px-6">
@@ -219,22 +215,20 @@ export default function ReviewWriteMain() {
 
               <Label htmlFor="review-confirm" className="text-text-main flex flex-col items-start">
                 <span>
-                  I confirm that this review is based on my own experience and I have followed the
-                  community guidelines.
+                  본 리뷰는 직접 관람한 경험을 바탕으로 작성되었으며, 커뮤니티 가이드라인을
+                  준수했음을 확인합니다.
                 </span>
-                <span>
-                  I understand that fake or misleading reviews may result in account suspension.
-                </span>
+                <span>허위 또는 오해를 유발하는 리뷰는 계정 이용에 제한이 있을 수 있습니다.</span>
               </Label>
             </div>
           </CardContent>
 
           <CardFooter className={"flex justify-end gap-3"}>
             <Button type={"reset"} variant={"outline"} className={"cursor-pointer"}>
-              Cancel
+              취소
             </Button>
             <Button type={"submit"} className={"cursor-pointer"}>
-              <Send /> Publish Review
+              <Send /> 리뷰 등록하기
             </Button>
           </CardFooter>
         </Card>
