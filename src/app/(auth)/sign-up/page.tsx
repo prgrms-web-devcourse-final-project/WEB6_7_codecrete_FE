@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <div className="flex flex-col justify-center gap-10 px-12">
+    <div className="flex w-full max-w-200 flex-col justify-center gap-10 px-12">
       <div className="intro flex flex-col gap-2">
         <p className="text-text-main text-3xl font-bold">회원가입</p>
         <span className="text-text-sub">
@@ -89,6 +89,10 @@ export default function Page() {
             로그인
           </Link>
         </div>
+
+        <p className="agreePolicy text-text-sub flex justify-center text-xs">
+          계속 진행하시면 당사의 서비스 약관 및 개인정보 보호정책에 동의하는 것으로 간주됩니다.
+        </p>
       </div>
     </div>
   );

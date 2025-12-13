@@ -11,7 +11,7 @@ import ArtistDetailPast from "@/components/artist/detail/ArtistDetailPast";
 export default function page() {
   return (
     <>
-      <ArtistDetailNavbar />
+      <BreadcrumbNav itemType="아티스트" itemDetail="김민지" />
       <ArtistDetailProfile />
       <ArtistDetailOverview />
       <ArtistDetailUpcoming />

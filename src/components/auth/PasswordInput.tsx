@@ -1,5 +1,5 @@
 import { Eye } from "lucide-react";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
 export default function PasswordInput({
   placeholder = "Enter Your Password",
