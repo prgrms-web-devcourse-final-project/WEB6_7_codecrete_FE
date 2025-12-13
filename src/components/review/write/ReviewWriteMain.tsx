@@ -10,19 +10,21 @@ import {
 } from "@/components/ui/select";
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
 import Image from "next/image";
-import { Calendar, Clock4, Star } from "lucide-react";
+import { Calendar, Clock4, Flame, Heart, Music, Spotlight, Star, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ReviewDetailRating from "@/components/review/write/ReviewDetailRating";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUploadBox } from "@/components/review/write/FileUploadBox";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ReviewWriteMain() {
   return (
     <section className={"bg-bg-main flex justify-center px-15 py-16"}>
       <div className={"flex w-full max-w-400 flex-col gap-8"}>
-        <Card className={"gap-12 p-12"}>
+        <Card className={"gap-8 p-12"}>
           {/*글 작성 헤더*/}
           <CardHeader>
             <CardTitle className={"text-2xl"}>Share Your Experience</CardTitle>
@@ -170,6 +172,51 @@ export default function ReviewWriteMain() {
           <div className="px-6">
             <Separator />
           </div>
+
+          <CardContent className={"flex flex-col gap-4"}>
+            <CardTitle>Tags</CardTitle>
+            <div className={"flex flex-wrap gap-2"}>
+              <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
+                <Music /> Great Vocals
+              </Button>
+              <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
+                <Flame /> High Energy
+              </Button>
+              <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
+                <Heart /> Emotional
+              </Button>
+              <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
+                <Users /> Great Crowd
+              </Button>
+              <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
+                <Star /> Memorable
+              </Button>
+              <Button variant={"outline"} type={"button"} className={"cursor-pointer rounded-full"}>
+                <Spotlight /> Amazing Stage
+              </Button>
+            </div>
+            <Input className={"h-13"} placeholder={"Add custom tags (press Enter)"} />
+          </CardContent>
+
+          <div className="px-6">
+            <Separator />
+          </div>
+
+          <CardContent className={"flex flex-col gap-4"}>
+            <div className="bg-bg-sub flex w-full items-start gap-3 p-6">
+              <Checkbox
+                className={"bg-bg-main border-border-point"}
+                id="review-confirm"
+                type={"button"}
+              />
+
+              <Label htmlFor="review-confirm" className="text-text-main leading-relaxed">
+                I confirm that this review is based on my own experience and I have followed the
+                community guidelines.
+                <br />I understand that fake or misleading reviews may result in account suspension.
+              </Label>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </section>
