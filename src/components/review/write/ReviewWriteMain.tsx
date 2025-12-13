@@ -1,4 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -10,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
 import Image from "next/image";
-import { Calendar, Clock4, Flame, Heart, Music, Spotlight, Star, Users } from "lucide-react";
+import { Calendar, Clock4, Flame, Heart, Music, Send, Spotlight, Star, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ReviewDetailRating from "@/components/review/write/ReviewDetailRating";
 import { Label } from "@/components/ui/label";
@@ -210,13 +217,26 @@ export default function ReviewWriteMain() {
                 type={"button"}
               />
 
-              <Label htmlFor="review-confirm" className="text-text-main leading-relaxed">
-                I confirm that this review is based on my own experience and I have followed the
-                community guidelines.
-                <br />I understand that fake or misleading reviews may result in account suspension.
+              <Label htmlFor="review-confirm" className="text-text-main flex flex-col items-start">
+                <span>
+                  I confirm that this review is based on my own experience and I have followed the
+                  community guidelines.
+                </span>
+                <span>
+                  I understand that fake or misleading reviews may result in account suspension.
+                </span>
               </Label>
             </div>
           </CardContent>
+
+          <CardFooter className={"flex justify-end gap-3"}>
+            <Button type={"reset"} variant={"outline"} className={"cursor-pointer"}>
+              Cancel
+            </Button>
+            <Button type={"submit"} className={"cursor-pointer"}>
+              <Send /> Publish Review
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </section>
