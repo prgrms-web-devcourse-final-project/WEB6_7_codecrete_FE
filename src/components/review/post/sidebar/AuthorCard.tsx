@@ -1,4 +1,4 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function AuthorCard() {
@@ -12,18 +12,9 @@ export default function AuthorCard() {
         </Avatar>
         <div className={"flex flex-col justify-center gap-2"}>
           <span>Kim Ji-soo</span>
-          <div className={"text-text-sub flex gap-1 text-xs"}>
-            <span>127 posts</span>
-            <span>·</span>
-            <span>2.4k followers</span>
-          </div>
+          <span className={"text-text-sub flex text-xs"}>jisoo1004@gmail.com</span>
         </div>
       </div>
-      <CardContent className="text-text-sub px-0">
-        {
-          "Music lover and concert regular. I've attended over 200 live shows across Korea and love sharing tips with fellow concert-goers."
-        }
-      </CardContent>
     </Card>
   );
 }
