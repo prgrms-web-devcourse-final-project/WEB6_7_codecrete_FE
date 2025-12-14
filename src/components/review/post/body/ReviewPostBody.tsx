@@ -8,7 +8,6 @@ export default function ReviewPostBody() {
    * - 리뷰 본문 데이터를 API 연동 후 props로 전달하도록 변경
    * - 현재는 퍼블리싱을 위한 하드코딩 텍스트 상태
    */
-
   return (
     <>
       <section className="flex flex-col gap-4">
@@ -53,9 +52,9 @@ export default function ReviewPostBody() {
        * - 로그인 여부에 따른 클릭 제한 처리
        * - 이미 좋아요한 경우 상태 표시 (active / filled icon)
        */}
-      <div className="flex justify-end">
-        <Button variant="outline">
-          <Heart className="mr-1" /> 좋아요 124
+      <div>
+        <Button variant={"outline"}>
+          <Heart /> 124
         </Button>
       </div>
 
