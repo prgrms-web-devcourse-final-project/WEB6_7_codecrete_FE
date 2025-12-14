@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
-import ConcertHeaderTitle from "@/components/concert/ConcertHeaderTitle";
-import ConcertHeaderInfo from "@/components/concert/ConcertHeaderInfo";
-import ConcertHeaderArtist from "@/components/concert/ConcertHeaderArtist";
-import ConcertHeaderBtn from "@/components/concert/ConcertHeaderBtn";
+import ConcertHeaderTitle from "@/components/concert/detail/ConcertHeaderTitle";
+import ConcertHeaderInfo from "@/components/concert/detail/ConcertHeaderInfo";
+import ConcertHeaderArtist from "@/components/concert/detail/ConcertHeaderArtist";
+import ConcertHeaderBtn from "@/components/concert/detail/ConcertHeaderBtn";
 
 export default function ConcertHeader() {
   return (

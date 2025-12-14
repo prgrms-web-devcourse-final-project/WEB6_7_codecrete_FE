@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { Bell, CalendarPlus2, ExternalLink, MessageSquare, Share2, Ticket } from "lucide-react";
-import QuickActions from "@/components/concert/QuickActions";
+import QuickActions from "@/components/concert/detail/QuickActions";
 
 export default function ConcertDetailSideBar() {
   return (

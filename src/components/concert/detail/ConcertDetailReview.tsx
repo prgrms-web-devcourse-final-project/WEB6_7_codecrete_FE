@@ -1,8 +1,8 @@
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ReviewRatingBar from "@/components/concert/ReviewRatingBar";
+import ReviewRatingBar from "@/components/concert/detail/ReviewRatingBar";
 import { twMerge } from "tailwind-merge";
-import ConcertReviewCard from "@/components/concert/ConcertReviewCard";
+import ConcertReviewCard from "@/components/concert/detail/ConcertReviewCard";
 import LoadMoreBtn from "@/components/common/LoadMoreBtn";
 import Link from "next/link";
 

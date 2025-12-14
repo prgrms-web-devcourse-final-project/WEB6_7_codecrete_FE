@@ -1,7 +1,7 @@
 import BreadcrumbNav from "@/components/common/BreadcrumbNav";
-import ConcertDetail from "@/components/concert/ConcertDetail";
-import ConcertHeader from "@/components/concert/ConcertHeader";
-import ConcertSimilar from "@/components/concert/ConcertSimilar";
+import ConcertDetail from "@/components/concert/detail/ConcertDetail";
+import ConcertHeader from "@/components/concert/detail/ConcertHeader";
+import ConcertSimilar from "@/components/concert/detail/ConcertSimilar";
 
 export default function Page() {
   return (
