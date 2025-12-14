@@ -7,6 +7,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { Fragment } from "react";
 
 export type BreadcrumbItemType = {
   label: string;
@@ -74,7 +75,7 @@ export default function BreadcrumbNavbar({ items }: BreadcrumbNavProps) {
             const isLast = index === items.length - 1;
 
             return (
-              <>
+              <Fragment key={`${item.label}-${index}`}>
                 <BreadcrumbItem key={item.label}>
                   {item.href && !isLast ? (
                     <BreadcrumbLink asChild>
@@ -86,7 +87,7 @@ export default function BreadcrumbNavbar({ items }: BreadcrumbNavProps) {
                 </BreadcrumbItem>
 
                 {!isLast && <BreadcrumbSeparator />}
-              </>
+              </Fragment>
             );
           })}
         </BreadcrumbList>
