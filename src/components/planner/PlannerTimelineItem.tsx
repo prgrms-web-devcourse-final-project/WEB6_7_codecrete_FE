@@ -129,17 +129,19 @@ export default function PlannerTimelineItem({
               >
                 {schedule.start_at}
               </span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" aria-label="메뉴 열기" className="size-8">
-                    <MoreHorizontalIcon />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onSelect={handleEditDialog}>수정</DropdownMenuItem>
-                  <DropdownMenuItem onSelect={handleDeleteDialog}>삭제</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {schedule.schedule_type !== "CONCERT" && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" aria-label="메뉴 열기" className="size-8">
+                      <MoreHorizontalIcon />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onSelect={handleEditDialog}>수정</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={handleDeleteDialog}>삭제</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
           <div
