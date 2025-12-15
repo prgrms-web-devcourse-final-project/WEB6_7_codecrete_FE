@@ -15,7 +15,7 @@ export default function MateListIntro() {
             <h2 className="text-text-main text-4xl font-bold">공연 동행 찾기</h2>
             <p className="text-text-sub text-md">다가오는 콘서트를 함께 즐길 Mate 를 찾아보세요.</p>
           </div>
-          <Link href="/write">
+          <Link href="/concert-mate/write">
             <Button variant="default" size="lg" className="bg-point-main cursor-pointer">
               <Plus /> 글 작성하기
             </Button>
