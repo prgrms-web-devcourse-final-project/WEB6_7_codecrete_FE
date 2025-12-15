@@ -1,5 +1,6 @@
 import { LoginResponse } from "@/types/auth";
 
+// 로그인
 export async function login(email: string, password: string): Promise<LoginResponse> {
   try {
     // fetch (네트워크 단계)
@@ -51,4 +52,18 @@ export async function login(email: string, password: string): Promise<LoginRespo
     // 정말 예외적인 케이스
     throw new Error("알 수 없는 오류가 발생했습니다.");
   }
+}
+
+// 닉네임 중복 체크
+
+export async function checkNickname(nickname: string) {
+  const res = await fetch(`http://localhost:8080/api/v1/auth/nickname/check?nickname=${nickname}`);
+
+  const json = await res.json();
+
+  if (!res.ok || json.resultCode !== "OK") {
+    throw new Error(json.msg ?? "닉네임 확인 실패");
+  }
+
+  return json.data;
 }

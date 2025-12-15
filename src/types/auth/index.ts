@@ -16,3 +16,8 @@ export type PasswordInputProps = {
   placeholder?: string;
   autoComplete?: string;
 };
+
+export type NicknameFieldProps = {
+  checked: boolean | null;
+  setChecked: (value: boolean | null) => void;
+};
