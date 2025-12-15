@@ -5,6 +5,7 @@ import Footer from "@/components/common/Footer";
 import { pretendard } from "@/../public/fonts/local_fonts";
 
 import { twMerge } from "tailwind-merge";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
   title: "내콘부",
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={twMerge("min-h-dvh text-sm", pretendard.className)}>
         <Header />
         <main className="min-h-dvh">{children}</main>
+        <Toaster />
         <Footer />
       </body>
     </html>

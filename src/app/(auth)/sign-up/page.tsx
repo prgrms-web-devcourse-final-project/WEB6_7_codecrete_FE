@@ -1,5 +1,4 @@
 import { DatePicker } from "@/components/auth/DatePicker";
-import PasswordInput from "@/components/auth/PasswordInput";
 import SocialButton from "@/components/auth/SocialButton";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -57,14 +56,15 @@ export default function Page() {
           <p className="text-text-sub text-xs">인증번호를 입력하세요.</p>
         </div>
 
+        {/*TODO: PasswordInput 나중에 수정*/}
         <div className="passwordInput flex flex-col gap-2">
           <p className="text-sm">비밀번호 *</p>
-          <PasswordInput />
+          {/*<PasswordInput />*/}
           <p className="text-text-sub text-xs">영문, 숫자 8자 이상 입력하세요.</p>
         </div>
         <div className="passwordConfirm flex flex-col gap-2">
           <p className="text-sm">비밀번호 확인 *</p>
-          <PasswordInput />
+          {/*<PasswordInput />*/}
           <p className="text-text-sub text-xs">동일한 비밀번호를 입력하세요.</p>
         </div>
 
