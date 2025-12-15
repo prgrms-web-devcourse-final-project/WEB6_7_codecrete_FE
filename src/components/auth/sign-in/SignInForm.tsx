@@ -8,18 +8,18 @@ import { login } from "@/lib/auth";
 import { toast } from "sonner";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type LoginFormValues, loginSchema } from "@/lib/validations/auth";
+import { type SignInFormValues, signInSchema } from "@/lib/validations/auth";
 import FieldError from "@/components/auth/FieldError";
 
-export default function LoginForm() {
+export default function SignInForm() {
   const router = useRouter();
   const {
     register,
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -28,7 +28,7 @@ export default function LoginForm() {
     reValidateMode: "onSubmit",
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: SignInFormValues) => {
     try {
       await login(data.email, data.password);
       toast.success("로그인이 완료됐습니다.");

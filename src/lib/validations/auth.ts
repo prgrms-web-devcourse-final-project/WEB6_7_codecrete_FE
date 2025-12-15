@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
+export const signInSchema = z.object({
   // TODO: 현재 테스트용으로 나중에 regex 주석 지우기
   email: z.string().trim().min(1, "이메일은 필수입니다.").email("이메일 형식이 올바르지 않습니다."),
   password: z.string().trim().min(1, "비밀번호는 필수입니다."),
@@ -36,5 +36,5 @@ export const signUpSchema = z
     message: "비밀번호가 일치하지 않습니다.",
   });
 
-export type LoginFormValues = z.infer<typeof loginSchema>;
+export type SignInFormValues = z.infer<typeof signInSchema>;
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
