@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 
 export default function Header() {
   const navLinkHover =
-    "relative inline-block transition-all duration-300 ease-in-out hover:-translate-y-0.5 before:absolute before:-bottom-0.5 before:left-0 before:right-0 before:-z-10 before:h-0.5 before:bg-border-point before:origin-bottom before:scale-y-0 before:transform before:transition-transform before:duration-300 before:ease-in-out hover:before:scale-y-100";
+    "relative inline-block transition-all duration-300 ease-in-out text-text-main hover:-translate-y-0.5 before:absolute before:-bottom-0.5 before:left-0 before:right-0 before:-z-10 before:h-0.5 before:bg-border-point before:origin-bottom before:scale-y-0 before:transform before:transition-transform before:duration-300 before:ease-in-out hover:before:scale-y-100";
 
   return (
     <header className="border-border bg-bg-main sticky -top-21 left-0 z-50 flex w-full justify-center border-b px-15">
@@ -38,12 +38,13 @@ export default function Header() {
             <Link className="hover:font-medium" href="/sign-up">
               회원가입
             </Link>
+            <Link className="hover:font-medium" href="/my-page/overview">
+              마이페이지
+            </Link>
+            <Link className="hover:font-medium" href="#">
+              로그아웃
+            </Link>
           </div>
-          {/* 회원일 때 */}
-          {/* <div>
-            <Link className="hover:font-medium" href="/my-page">마이페이지</Link>
-            <Link className="hover:font-medium" href="#">로그아웃</Link>
-          </div> */}
         </div>
         <nav className="space-x-15 text-xl font-semibold text-zinc-900">
           <Link href="/concerts" className={navLinkHover}>
