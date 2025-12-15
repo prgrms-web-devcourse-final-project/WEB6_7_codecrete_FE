@@ -1,5 +1,5 @@
 import SocialButton from "@/components/auth/SocialButton";
-import Intro from "@/components/auth/sign-in/Intro";
+import SignInIntro from "@/components/auth/sign-in/SignInIntro";
 import LoginForm from "@/components/auth/sign-in/LoginForm";
 import SignUpLink from "@/components/auth/sign-in/SignUpLink";
 import PolicyText from "@/components/auth/sign-in/PolicyText";
@@ -7,7 +7,7 @@ import PolicyText from "@/components/auth/sign-in/PolicyText";
 export default function Page() {
   return (
     <div className="flex w-full max-w-200 flex-col justify-center gap-10 px-12">
-      <Intro />
+      <SignInIntro />
       <SocialButton />
       <LoginForm />
       <SignUpLink />

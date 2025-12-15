@@ -3,13 +3,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import React, { useState } from "react";
-
-type PasswordInputProps = {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  autoComplete?: string;
-};
+import { PasswordInputProps } from "@/types/auth";
 
 export default function PasswordInput({
   value,

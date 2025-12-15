@@ -1,4 +1,4 @@
-import { LoginResponse } from "@/types/sign-in";
+import { LoginResponse } from "@/types/auth";
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
   try {
