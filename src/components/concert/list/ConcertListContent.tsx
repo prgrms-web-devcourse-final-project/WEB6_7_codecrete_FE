@@ -3,7 +3,7 @@ import { SortSelect } from "@/components/common/SortSelect";
 
 export default function ConcertListContent() {
   return (
-    <section className="flex flex-col gap-9 px-40">
+    <section className="mx-auto flex w-full max-w-400 flex-col gap-9">
       <div className="header flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-text-main text-2xl font-bold">1,352</span>

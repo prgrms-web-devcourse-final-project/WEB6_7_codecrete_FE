@@ -8,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { twMerge } from "tailwind-merge";
 
 export default function BreadcrumbNav({
   itemType,
@@ -19,7 +20,7 @@ export default function BreadcrumbNav({
   const parentHref = itemType === "아티스트" ? "/artists" : "/concerts";
 
   return (
-    <nav className={"border-border border-b px-13 py-4"}>
+    <nav className={twMerge(`border-border mx-auto w-full max-w-400 border-b py-4`)}>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
