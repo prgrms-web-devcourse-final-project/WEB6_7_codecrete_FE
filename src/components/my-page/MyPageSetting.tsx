@@ -1,5 +1,4 @@
 "use client";
-
 import { CalendarIcon, EyeIcon, EyeOffIcon, SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,17 +11,17 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { FileUploadBox } from "../review/write/FileUploadBox";
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { Separator } from "../ui/separator";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Switch } from "../ui/switch";
+import { useTheme } from "next-themes";
 
 export default function MyPageSetting() {
-  const id = useId();
+  const { resolvedTheme, setTheme } = useTheme();
 
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [password, setPassword] = useState("");
@@ -36,6 +35,14 @@ export default function MyPageSetting() {
 
   const handlePWVisible = () => setIsVisible((prevState) => !prevState);
   const handlePWCVisible = () => setIsVisibleConfirm((prevState) => !prevState);
+
+  const handleDarkMode = () => {
+    if (resolvedTheme === "dark") {
+      setTheme("light");
+    } else {
+      setTheme("dark");
+    }
+  };
 
   return (
     <>
@@ -148,34 +155,37 @@ export default function MyPageSetting() {
               </Popover>
             </Field>
             <Separator />
-            <Card className="flex-row">
-              <CardHeader className="flex-1">
-                <CardTitle className="text-base">이메일 알림</CardTitle>
-                <CardDescription className="text-xs">
-                  입력한 이메일로 알림을 받습니다
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+            <div className="space-y-4">
+              <div className="border-border relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none">
                 <Switch
-                  id={id}
-                  aria-describedby={`${id}-description`}
-                  className="h-6 w-10 [&_span]:size-5 data-[state=checked]:[&_span]:translate-x-4.5 data-[state=checked]:[&_span]:rtl:-translate-x-4.5"
+                  id="emailAlert"
+                  className="order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2.5 data-[state=checked]:[&_span]:rtl:-translate-x-2.5"
+                  aria-describedby="이메일 수신 스위치"
                 />
-              </CardContent>
-            </Card>
-            <Card className="flex-row">
-              <CardHeader className="flex-1">
-                <CardTitle className="text-base">다크모드</CardTitle>
-                <CardDescription className="text-xs">다크모드를 사용합니다</CardDescription>
-              </CardHeader>
-              <CardContent>
+                <div className="flex grow gap-3">
+                  <div className="grid grow gap-2">
+                    <Label htmlFor="emailAlert">이메일 알림</Label>
+                    <p className="text-text-sub text-sm">이메일 알림을 받습니다</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="border-border relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none"
+                onClick={handleDarkMode}
+              >
                 <Switch
-                  id={id}
-                  aria-describedby={`${id}-description`}
-                  className="h-6 w-10 [&_span]:size-5 data-[state=checked]:[&_span]:translate-x-4.5 data-[state=checked]:[&_span]:rtl:-translate-x-4.5"
+                  id="darkMode"
+                  className="order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2.5 data-[state=checked]:[&_span]:rtl:-translate-x-2.5"
+                  aria-describedby="다크모드 스위치"
                 />
-              </CardContent>
-            </Card>
+                <div className="flex grow gap-3">
+                  <div className="grid grow gap-2">
+                    <Label htmlFor="darkMode">다크모드</Label>
+                    <p className="text-text-sub text-sm">다크모드를 사용합니다</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </FieldGroup>
           <DialogFooter>
             <DialogClose asChild>

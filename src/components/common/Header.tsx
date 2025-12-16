@@ -1,8 +1,8 @@
 import { Search } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
+import Logo from "./Logo";
 
 export default function Header() {
   const navLinkHover =
@@ -13,11 +13,7 @@ export default function Header() {
       <div className="w-full max-w-400 space-y-8 py-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-10">
-            <h1>
-              <Link href="/home">
-                <Image src="/logo_b.svg" alt="NCB Ticket" width={329} height={64} />
-              </Link>
-            </h1>
+            <Logo />
             <div className="relative w-full max-w-md">
               <Search
                 size={16}
