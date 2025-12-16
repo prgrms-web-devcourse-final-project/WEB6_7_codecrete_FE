@@ -43,6 +43,10 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
     const email = getValues("email")?.trim();
 
     if (!email) {
+      // TODO: 닉네임 중복 확인 버튼 클릭 시 setError로 추가한 에러가
+      // 즉시 FieldError로 렌더링되지 않고, submit 시점에만 노출됨
+      // RHF formState / FieldError 렌더 조건 재확인 필요
+
       setError("email", {
         type: "manual",
         message: "이메일을 입력해주세요",
