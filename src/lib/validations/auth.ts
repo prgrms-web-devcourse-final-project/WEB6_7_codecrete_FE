@@ -27,13 +27,13 @@ export const signUpSchema = z
     // 비밀번호
     password: z
       .string()
-      .min(1, "비밀번호는 필수입니다.")
+      .min(8, "비밀번호는 8자 이상이어야 합니다.")
       .regex(
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/,
         "비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다."
       ),
     // 비밀번호 확인
-    passwordConfirm: z.string(),
+    passwordConfirm: z.string().min(1, "비밀번호 확인은 필수입니다."),
     // 생년월일
     birth: z
       .string()
