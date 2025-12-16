@@ -9,8 +9,13 @@ import { concertEvents, getConcertsByDate } from "@/data/concertData";
 import { EventContextType } from "@/types/my-page";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import MyPageCalendarList from "./MyPageCalendarList";
+import { getSchedulesByDate, scheduleEvents } from "@/data/userSchedules";
 
-const EventContext = createContext<EventContextType>({ events: {} });
+const EventContext = createContext<EventContextType>({
+  events: {},
+  schedules: {},
+  onDateClick: undefined,
+});
 
 // 커스텀 요일 네비게이션 컴포넌트
 const CustomCaption = (props: MonthCaptionProps) => {
@@ -67,18 +72,20 @@ const CustomCaption = (props: MonthCaptionProps) => {
 // 커스텀 날짜 버튼 컴포넌트
 const CustomDay = (props: DayProps) => {
   const { day, modifiers } = props;
-  const { events, onDateClick } = useContext(EventContext);
+  const { events, schedules, onDateClick } = useContext(EventContext);
 
   const dateKey = `${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`;
   const dayNumber = day.date.getDate();
-  const eventCount = events[dateKey] || 0;
+
+  const eventCount = events[dateKey] || 0; // 콘서트 일정 개수
+  const scheduleCount = schedules[dateKey] || 0; // 플래너 일정 개수 (필요시 데이터 연동)
 
   return (
     <td className="border-r last:border-0">
       <Button
         variant="ghost"
         className={twMerge(
-          "bg-bg-main flex aspect-square h-auto w-full flex-col items-start justify-start gap-2 rounded-none border-2 border-transparent p-4",
+          "bg-bg-main flex aspect-square h-full w-full flex-col items-start justify-start gap-2 rounded-none border-2 border-transparent p-4",
           modifiers.selected && "border-border-point",
           modifiers.outside && "opacity-50",
           modifiers.disabled && "cursor-not-allowed opacity-30",
@@ -96,14 +103,28 @@ const CustomDay = (props: DayProps) => {
       >
         <strong className="text-point-main text-sm font-normal">{dayNumber}</strong>
         {modifiers.today && <span className="text-text-sub text-xs">Today</span>}
+        {/* 이벤트 점 */}
         {eventCount > 0 && (
           <div className="flex items-center gap-1">
             <div className="flex gap-1">
-              {Array.from({ length: Math.min(eventCount, 2) }).map((_, i) => (
+              {Array.from({ length: Math.min(eventCount, 3) }).map((_, i) => (
                 <span key={i} className="bg-point-main size-2 rounded-full" />
               ))}
             </div>
-            {eventCount > 2 && <span className="text-text-sub text-xs">+{eventCount - 2}</span>}
+            {eventCount > 3 && <span className="text-text-sub text-xs">+{eventCount - 3}</span>}
+          </div>
+        )}
+        {/* 플래너 점 */}
+        {scheduleCount > 0 && (
+          <div className="flex items-center gap-1">
+            <div className="flex gap-1">
+              {Array.from({ length: Math.min(scheduleCount, 3) }).map((_, i) => (
+                <span key={i} className="bg-border size-2 rounded-full" />
+              ))}
+            </div>
+            {scheduleCount > 3 && (
+              <span className="text-text-sub text-xs">+{scheduleCount - 3}</span>
+            )}
           </div>
         )}
       </Button>
@@ -120,6 +141,12 @@ export default function MyPageCalendar() {
       )
     : [];
 
+  const selectedSchedules = date
+    ? getSchedulesByDate(
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+      )
+    : [];
+
   const handleDayClick = (clickedDate: Date) => {
     setDate(clickedDate);
   };
@@ -127,7 +154,9 @@ export default function MyPageCalendar() {
   return (
     <div className="flex-3 space-y-8">
       <section className="border-border w-full rounded-xl border p-8">
-        <EventContext.Provider value={{ events: concertEvents, onDateClick: handleDayClick }}>
+        <EventContext.Provider
+          value={{ events: concertEvents, schedules: scheduleEvents, onDateClick: handleDayClick }}
+        >
           <Calendar
             mode="single"
             selected={date}
@@ -155,9 +184,18 @@ export default function MyPageCalendar() {
               },
             }}
           />
+          <ul className="*:text-text-main mt-5 flex gap-4 *:flex *:items-center *:gap-2 *:font-medium *:before:size-2 *:before:rounded-full">
+            <li className="before:bg-point-main">콘서트 일정</li>
+            <li className="before:bg-border">플래너 일정</li>
+            <li className="before:border-point-main before:border-2">선택한 날짜</li>
+          </ul>
         </EventContext.Provider>
       </section>
-      <MyPageCalendarList concerts={selectedConcerts} selectedDate={date as Date} />
+      <MyPageCalendarList
+        concerts={selectedConcerts}
+        schedules={selectedSchedules}
+        selectedDate={date as Date}
+      />
     </div>
   );
 }
