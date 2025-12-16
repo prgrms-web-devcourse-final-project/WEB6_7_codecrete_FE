@@ -31,6 +31,9 @@ export default function SignUpForm() {
       birth: "",
       agree: false,
     },
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    shouldUnregister: false,
   });
   const {
     handleSubmit,
@@ -79,7 +82,7 @@ export default function SignUpForm() {
           size="lg"
           disabled={isSubmitting}
         >
-          회원가입
+          {isSubmitting ? "회원가입 중..." : "회원가입"}
         </Button>
       </form>
     </FormProvider>
