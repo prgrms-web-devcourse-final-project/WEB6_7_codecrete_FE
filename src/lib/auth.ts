@@ -85,3 +85,26 @@ export async function sendEmailCode(email: string) {
 
   return json;
 }
+
+// 이메일 인증코드 검증
+
+export async function verifyEmailCode(params: { email: string; code: string }) {
+  const res = await fetch("http://localhost:8080/api/v1/auth/email/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+  });
+
+  let json;
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error("서버 응답을 처리할 수 없습니다.");
+  }
+
+  if (!res.ok || json.resultCode !== "OK") {
+    throw new Error(json.msg ?? "이메일 인증에 실패했습니다.");
+  }
+
+  return json;
+}

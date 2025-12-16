@@ -1,6 +1,7 @@
 "use client";
 
 // TODO: 나중에 input 값이 비어있을 때 이메일 인증 ui/ux 보완
+// TODO: 이후 가능하면 setError로 에러처리 관리하기
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
   const {
     register,
     getValues,
-    setError,
+    // setError,
     clearErrors,
     formState: { errors },
   } = useFormContext<SignUpFormValues>();
@@ -44,10 +45,11 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
     const email = getValues("email")?.trim();
 
     if (!email) {
-      setError("email", {
-        type: "manual",
-        message: "이메일을 입력해주세요",
-      });
+      // TODO: 나중에 에러 처리 setError로 바꾸기
+      // setError("email", {
+      //   type: "manual",
+      //   message: "이메일을 입력해주세요",
+      // });
       toast.error("이메일을 입력해주세요");
       return;
     }
@@ -66,10 +68,11 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
         description: "이메일로 인증 코드가 전송되었습니다.",
       });
     } catch (e) {
-      setError("email", {
-        type: "manual",
-        message: e instanceof Error ? e.message : "인증 코드 전송 중 오류가 발생했습니다.",
-      });
+      // setError("email", {
+      //   type: "manual",
+      //   message: e instanceof Error ? e.message : "인증 코드 전송 중 오류가 발생했습니다.",
+      // });
+      toast.error(e instanceof Error ? e.message : "인증 코드 전송 중 오류가 발생했습니다.");
     } finally {
       setIsSendingCode(false);
     }
@@ -80,10 +83,13 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
     const code = getValues("emailCode")?.trim();
 
     if (!code) {
-      setError("emailCode", {
-        type: "manual",
-        message: "인증번호를 입력해주세요.",
-      });
+      // TODO: 나중에 setError로 바꾸기
+      // setError("emailCode", {
+      //   type: "manual",
+      //   message: "인증번호를 입력해주세요.",
+      // });
+
+      toast.error("인증번호를 입력해주세요");
       return;
     }
 
@@ -99,10 +105,11 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
         description: "이메일 인증이 성공적으로 완료되었습니다.",
       });
     } catch (e) {
-      setError("emailCode", {
-        type: "manual",
-        message: e instanceof Error ? e.message : "인증번호가 올바르지 않습니다.",
-      });
+      // setError("emailCode", {
+      //   type: "manual",
+      //   message: e instanceof Error ? e.message : "인증번호가 올바르지 않습니다.",
+      // });
+      toast.error(e instanceof Error ? e.message : "인증번호가 올바르지 않습니다.");
     }
   };
   return (
@@ -125,9 +132,13 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
             className="bg-point-main h-13"
             disabled={isVerified || isSendingCode || (isCodeSent && remainingTime > 0)}
           >
-            {isCodeSent && remainingTime > 0
-              ? `${String(Math.floor(remainingTime / 60)).padStart(2, "0")}:${String(remainingTime % 60).padStart(2, "0")}`
-              : "이메일 인증"}
+            {isVerified
+              ? "인증 완료"
+              : isCodeSent && remainingTime > 0
+                ? `${String(Math.floor(remainingTime / 60)).padStart(2, "0")}:${String(
+                    remainingTime % 60
+                  ).padStart(2, "0")}`
+                : "이메일 인증"}
           </Button>
         </div>
         {errors.email && <FieldError message={errors.email.message} />}
@@ -151,7 +162,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
               onClick={handleVerifyCode}
               disabled={isVerified}
             >
-              Confirm
+              {isVerified ? "인증 완료" : "인증 확인"}
             </Button>
           </div>
           {errors.emailCode && <FieldError message={errors.emailCode.message} />}
