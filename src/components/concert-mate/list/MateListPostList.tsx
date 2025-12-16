@@ -1,13 +1,5 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import MateListCard from "./MateListCard";
+import MateListCard from "@/components/concert-mate/list/MateListCard";
+import PagePagination from "@/components/common/PagePagination";
 
 export default function MateListPostList() {
   return (
@@ -17,30 +9,7 @@ export default function MateListPostList() {
           <MateListCard key={index} />
         ))}
       </div>
-      <Pagination className="py-12">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <PagePagination />
     </section>
   );
 }
