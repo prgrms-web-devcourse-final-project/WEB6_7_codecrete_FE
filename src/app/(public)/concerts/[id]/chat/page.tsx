@@ -8,7 +8,7 @@ import InfoBadge from "@/components/concert/chat/InfoBadge";
 
 export default function ChatPage() {
   return (
-    <div className="border-border mx-auto flex h-screen min-h-0 max-w-400 flex-col border-x">
+    <>
       <ChatHeader />
       <div className="border-border flex min-h-screen border-t">
         {/*채팅 영역*/}
@@ -23,7 +23,7 @@ export default function ChatPage() {
               </p>
             </div>
           </div>
-          <div className={"bg-bg-main flex flex-1 flex-col gap-6 overflow-y-auto border-b p-8"}>
+          <div className={"bg-bg-main flex flex-1 flex-col gap-6 border-b p-8"}>
             <div className={"flex justify-center"}>
               <InfoBadge>
                 <span className={"text-text-sub"}>Today - December 8, 2025</span>
@@ -49,6 +49,6 @@ export default function ChatPage() {
         </section>
         <aside className="bg-bg-sub flex max-w-400 flex-col p-10">어사이드</aside>
       </div>
-    </div>
+    </>
   );
 }

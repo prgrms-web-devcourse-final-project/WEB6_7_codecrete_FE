@@ -4,9 +4,9 @@ import InfoBadge from "@/components/concert/chat/InfoBadge";
 export default function ChatHeader() {
   return (
     <header className={`bg-bg-main flex gap-8`}>
-      <div className={"flex w-full justify-between px-6 py-4"}>
+      <div className={"flex w-full justify-between px-8 py-4"}>
         {/*헤더 좌측*/}
-        <div className={"flex items-center gap-4"}>
+        <div className={"flex items-center gap-7"}>
           <button className={"cursor-pointer"} type={"button"} aria-label={"뒤로가기"}>
             <ArrowLeft />
           </button>
