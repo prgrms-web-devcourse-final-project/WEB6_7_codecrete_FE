@@ -16,7 +16,7 @@ import ModalContainer from "@/components/concert-mate/modal/ModalContainer";
 export default function MateWriteMain() {
   return (
     <section className="bg-bg-main flex justify-center px-15 py-16">
-      <div className={twMerge(`relative flex w-full max-w-400 flex-col gap-8`)}>
+      <div className={twMerge(`relative mx-auto flex w-full max-w-400 flex-col gap-8`)}>
         <Card className="gap-8 p-12">
           <MateWriteIntro />
           {/* 공연 선택칸 + 선택 모달 */}

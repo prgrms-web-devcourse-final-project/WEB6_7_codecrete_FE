@@ -8,7 +8,7 @@ export default function MateListTagNav() {
   const tabs = [
     { id: "all", label: "전체 글" },
     { id: "before", label: "공연 동행" },
-    { id: "meal", label: "밥 동행" },
+    { id: "meal", label: "식사 동행" },
     { id: "transport", label: "교통 동행" },
   ];
 
