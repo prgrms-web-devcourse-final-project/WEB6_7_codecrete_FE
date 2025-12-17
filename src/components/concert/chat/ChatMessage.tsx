@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { twMerge } from "tailwind-merge";
+import { ChatMessageProps } from "@/types/chat";
 
 export default function ChatMessage({
   profileImage = "https://github.com/shadcn.png",

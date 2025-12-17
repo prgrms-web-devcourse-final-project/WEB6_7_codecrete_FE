@@ -1,3 +1,5 @@
+"use client";
+
 import { Pin, Send } from "lucide-react";
 import InfoBadge from "@/components/concert/chat/InfoBadge";
 import ChatMessage from "@/components/concert/chat/ChatMessage";
