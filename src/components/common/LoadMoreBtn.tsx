@@ -6,12 +6,7 @@ export default function LoadMoreBtn() {
   return (
     <div className={"flex justify-center"}>
       <Link href={"#"}>
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className={"border-border cursor-pointer border-2"}
-          type={"button"}
-        >
+        <Button size={"lg"} variant={"outline"} className={"cursor-pointer border"} type={"button"}>
           <span className={"font-bold"}>더보기</span>
         </Button>
       </Link>

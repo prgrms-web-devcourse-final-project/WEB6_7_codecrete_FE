@@ -1,11 +1,14 @@
+import { twMerge } from "tailwind-merge";
+
 export default function ConcertListIntro() {
   return (
-    <section className="intro bg-bg-sub flex flex-col gap-4 px-40 py-20">
-      <h2 className="text-text-main text-4xl font-bold">Play Your Life, Live Your Music</h2>
-      <p className="text-text-sub text-md">
-        남들 다 가는데 진짜 안 갈 거야...? 잊지 못할 이어폰 너머 라이브의 감동, 이제 눈앞에서
-        생생하게 즐기세요.
-      </p>
+    <section className="intro bg-bg-sub border-border border-b px-15 py-16">
+      <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-4`)}>
+        <h2 className="text-text-main text-4xl font-bold">공연 둘러보기</h2>
+        <p className="text-text-sub text-md">
+          &quot;Play Your Life, Live Your Music&quot; 가고 싶은 공연을 찾아보세요
+        </p>
+      </div>
     </section>
   );
 }

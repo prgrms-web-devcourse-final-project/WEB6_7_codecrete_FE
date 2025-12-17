@@ -9,30 +9,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-function formatDate(date: Date | undefined) {
-  if (!date) {
-    return "";
-  }
+type DatePickerProps = {
+  value?: Date;
+  onChange: (date?: Date) => void;
+};
 
-  return date.toLocaleDateString("ko-KR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-function isValidDate(date: Date | undefined) {
-  if (!date) {
-    return false;
-  }
-  return !isNaN(date.getTime());
-}
-
-export function DatePicker() {
+export function DatePicker({ value, onChange }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(new Date("2025-12-01"));
-  const [month, setMonth] = React.useState<Date | undefined>(date);
-  const [value, setValue] = React.useState(formatDate(date));
+
+  const formattedValue = value
+    ? value.toLocaleDateString("ko-KR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
 
   return (
     <div className="flex flex-col gap-2">
@@ -42,23 +33,10 @@ export function DatePicker() {
       <div className="relative flex gap-2">
         <Input
           id="date"
-          value={value}
-          placeholder="June 01, 2025"
+          value={formattedValue}
+          placeholder="2025년 1월 19일"
           className="bg-point-sub h-13 pr-10"
-          onChange={(e) => {
-            const date = new Date(e.target.value);
-            setValue(e.target.value);
-            if (isValidDate(date)) {
-              setDate(date);
-              setMonth(date);
-            }
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowDown") {
-              e.preventDefault();
-              setOpen(true);
-            }
-          }}
+          readOnly
         />
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -79,13 +57,10 @@ export function DatePicker() {
           >
             <Calendar
               mode="single"
-              selected={date}
+              selected={value}
               captionLayout="dropdown"
-              month={month}
-              onMonthChange={setMonth}
               onSelect={(date) => {
-                setDate(date);
-                setValue(formatDate(date));
+                onChange(date);
                 setOpen(false);
               }}
             />

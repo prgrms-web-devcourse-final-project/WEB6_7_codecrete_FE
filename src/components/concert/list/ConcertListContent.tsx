@@ -3,15 +3,15 @@ import { SortSelect } from "@/components/common/SortSelect";
 
 export default function ConcertListContent() {
   return (
-    <section className="flex flex-col gap-9 px-40">
-      <div className="header flex items-center justify-between">
+    <section className="mx-auto flex w-full max-w-400 flex-col gap-9 py-16">
+      <div className="header flex items-center justify-between px-15">
         <div className="flex items-center gap-2">
           <span className="text-text-main text-2xl font-bold">1,352</span>
           <span className="text-text-main text-lg">items</span>
         </div>
         <SortSelect />
       </div>
-      <div className="list grid gap-8 pb-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="list grid gap-8 px-15 pb-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 10 }).map((_, index) => (
           <ConcertCard
             key={index}

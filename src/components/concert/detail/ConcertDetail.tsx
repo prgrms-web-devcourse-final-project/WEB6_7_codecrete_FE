@@ -6,7 +6,7 @@ import ConcertDetailSideBar from "@/components/concert/detail/ConcertDetailSideB
 
 export default function ConcertDetail() {
   return (
-    <section className={twMerge(`header bg-bg-main px-40 py-20`)}>
+    <section className={twMerge(`header bg-bg-main mx-auto w-full max-w-400 px-15 py-16`)}>
       <div className="max-auto flex w-full gap-12">
         <div className={twMerge(`left flex w-full flex-2 flex-col gap-12`)}>
           <ConcertDetailInfo />
