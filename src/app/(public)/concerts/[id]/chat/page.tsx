@@ -1,5 +1,6 @@
 import ChatHeader from "@/components/concert/chat/ChatHeader";
 import ChatRoom from "@/components/concert/chat/ChatRoom";
+import ChatAside from "@/components/concert/chat/ChatAside";
 
 export default function ChatPage() {
   return (
@@ -7,7 +8,7 @@ export default function ChatPage() {
       <ChatHeader />
       <div className="border-border flex min-h-screen border-t">
         <ChatRoom />
-        <aside className="bg-bg-sub flex max-w-400 flex-col p-10">어사이드</aside>
+        <ChatAside />
       </div>
     </>
   );

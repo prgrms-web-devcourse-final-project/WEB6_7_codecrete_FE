@@ -5,3 +5,5 @@ export type ChatMessageProps = {
   profileImage?: string;
   isMe?: boolean;
 };
+
+export type TicketVendor = "nol" | "ticketlink" | "melon";
