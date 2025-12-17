@@ -9,7 +9,7 @@ import {
 
 const PaginationWithIconDemo = () => {
   return (
-    <Pagination>
+    <Pagination className="py-12">
       <PaginationContent>
         <PaginationItem>
           <PaginationLink href="#" aria-label="Go to previous page" size="icon">
