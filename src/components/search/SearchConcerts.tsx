@@ -1,8 +1,8 @@
-import ConcertCard from "@/components/concert/ConcertCard";
-import { SortSelect } from "@/components/common/SortSelect";
 import { twMerge } from "tailwind-merge";
+import { SortSelect } from "@/components/common/SortSelect";
+import SearchConcertCard from "@/components/search/SearchConcertCard";
 
-export default function ConcertListContent() {
+export default function SearchConcerts() {
   return (
     <section className="px-15 py-16">
       <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-9`)}>
@@ -13,15 +13,9 @@ export default function ConcertListContent() {
           </div>
           <SortSelect />
         </div>
-        <div className="list grid gap-8 pb-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="flex flex-col gap-6 pb-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 10 }).map((_, index) => (
-            <ConcertCard
-              key={index}
-              image="/ConcertPoster.png"
-              title="The Midnight Echo Live"
-              date="March 15, 2025 • 8:00 PM"
-              location="Madison Square Garden"
-            />
+            <SearchConcertCard key={index} />
           ))}
         </div>
       </div>
