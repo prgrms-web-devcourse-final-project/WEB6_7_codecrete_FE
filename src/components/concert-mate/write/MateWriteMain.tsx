@@ -1,24 +1,26 @@
 import { Card } from "@/components/ui/card";
 import MateWriteIntro from "@/components/concert-mate/write/MateWriteIntro";
-import ConcertSelectSection from "@/components/review/write/ConcertSelectSection";
 import SelectedConcertCard from "@/components/review/write/SelectedConcertCard";
 import MateTitleSection from "@/components/concert-mate/write/MateTitleSection";
 import MateWriteSection from "@/components/concert-mate/write/MateWriteSection";
 import MateTimeSection from "@/components/concert-mate/write/MeetingTimeSection";
 import MeetingPlaceSection from "@/components/concert-mate/write/MeetingPlaceSection";
-import ActivityTagSection from "./ActivityTagSection";
+import ActivityTagSection from "@/components/concert-mate/write/ActivityTagSection";
 import { Separator } from "@/components/ui/separator";
 import ReviewConfirmSection from "@/components/review/write/ReviewConfirmSection";
 import ReviewFooterActions from "@/components/review/write/ReviewFooterActions";
-import PreferenceSelectSection from "./PreferenceSelectSection";
+import PreferenceSelectSection from "@/components/concert-mate/write/PreferenceSelectSection";
+import { twMerge } from "tailwind-merge";
+import ModalContainer from "@/components/concert-mate/modal/ModalContainer";
 
 export default function MateWriteMain() {
   return (
     <section className="bg-bg-main flex justify-center px-15 py-16">
-      <div className="flex w-full max-w-400 flex-col gap-8">
+      <div className={twMerge(`relative flex w-full max-w-400 flex-col gap-8`)}>
         <Card className="gap-8 p-12">
           <MateWriteIntro />
-          <ConcertSelectSection />
+          {/* 공연 선택칸 + 선택 모달 */}
+          <ModalContainer />
           <SelectedConcertCard />
           <MateTitleSection />
           <PreferenceSelectSection />

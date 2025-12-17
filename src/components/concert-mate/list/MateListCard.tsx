@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 
 export default function MateListCard() {
   return (
-    <Link href="#">
+    <Link href="concert-mate/1">
       <div
         className={twMerge(
           `border-border hover:border-border-point flex flex-col gap-4 rounded-2xl border p-6`

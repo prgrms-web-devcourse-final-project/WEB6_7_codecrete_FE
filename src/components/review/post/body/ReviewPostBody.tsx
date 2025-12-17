@@ -1,8 +1,14 @@
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { twMerge } from "tailwind-merge";
 
-export default function ReviewPostBody() {
+type ReviewPostBody = {
+  showBadge: boolean;
+};
+
+export default function ReviewPostBody({ showBadge }: ReviewPostBody) {
   /**
    * TODO:
    * - 리뷰 본문 데이터를 API 연동 후 props로 전달하도록 변경
@@ -52,12 +58,23 @@ export default function ReviewPostBody() {
        * - 로그인 여부에 따른 클릭 제한 처리
        * - 이미 좋아요한 경우 상태 표시 (active / filled icon)
        */}
-      <div>
-        <Button variant={"outline"}>
-          <Heart /> 124
-        </Button>
-      </div>
+      <div className="flex justify-between">
+        <div>
+          <Button variant={"outline"}>
+            <Heart /> 124
+          </Button>
+        </div>
 
+        {/**
+         * 동행 구인 페이지 전용
+         * - props로 true 전달
+         */}
+        {showBadge && (
+          <Badge className={twMerge(`bg-point-main text-text-point-main mr-2 text-sm`)}>
+            closed
+          </Badge>
+        )}
+      </div>
       <Separator />
     </>
   );
