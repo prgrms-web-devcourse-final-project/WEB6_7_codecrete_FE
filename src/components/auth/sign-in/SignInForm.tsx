@@ -33,6 +33,7 @@ export default function SignInForm() {
       await login(data.email, data.password);
       toast.success("로그인이 완료됐습니다.");
       router.push("/home");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
