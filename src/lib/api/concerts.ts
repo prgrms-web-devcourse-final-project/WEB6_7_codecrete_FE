@@ -16,9 +16,7 @@ export const getUpcomingConcerts = async ({
         size,
       },
     });
-    if (res.status !== 200) {
-      throw new Error(`Failed to fetch upcoming concerts: ${res.data.msg}`);
-    }
+
     return res.data;
   } catch (error) {
     console.error("Error fetching upcoming concerts:", error);

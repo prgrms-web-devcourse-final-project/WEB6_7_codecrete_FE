@@ -147,7 +147,7 @@ export default function HeroSlider() {
         thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
         modules={[Thumbs, Mousewheel, EffectFade, Autoplay, Parallax]}
         className="h-full w-full"
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        autoplay={{ delay: 6000, disableOnInteraction: false }}
         parallax={true}
         speed={1000}
       >
