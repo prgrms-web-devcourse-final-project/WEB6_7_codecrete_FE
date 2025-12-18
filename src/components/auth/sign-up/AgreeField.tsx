@@ -3,7 +3,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Controller, useFormContext } from "react-hook-form";
-import { SignUpFormValues } from "@/lib/validations/auth";
+import { SignUpFormValues } from "@/lib/zod/auth";
 import FieldError from "@/components/auth/FieldError";
 
 export default function AgreeField() {

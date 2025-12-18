@@ -7,10 +7,10 @@ import PasswordField from "@/components/auth/sign-up/PasswordField";
 import BirthField from "@/components/auth/sign-up/BirthField";
 import AgreeField from "@/components/auth/sign-up/AgreeField";
 import { FormProvider, useForm } from "react-hook-form";
-import { SignUpFormValues, signUpSchema } from "@/lib/validations/auth";
+import { SignUpFormValues, signUpSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { signUp } from "@/lib/auth";
+import { signUp } from "@/lib/auth/auth.client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 

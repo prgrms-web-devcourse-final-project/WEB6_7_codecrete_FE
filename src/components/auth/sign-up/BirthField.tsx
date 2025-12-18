@@ -2,7 +2,7 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 import { DatePicker } from "@/components/auth/DatePicker";
-import { SignUpFormValues } from "@/lib/validations/auth";
+import { SignUpFormValues } from "@/lib/zod/auth";
 import { format, isValid, parse } from "date-fns";
 import FieldError from "@/components/auth/FieldError";
 

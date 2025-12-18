@@ -29,3 +29,16 @@ export type NicknameFieldProps = {
   checked: boolean | null;
   setChecked: (value: boolean | null) => void;
 };
+
+export interface GetMeResponse {
+  status: number;
+  resultCode: string;
+  msg: string;
+  data: {
+    id: number;
+    email: string;
+    nickname: string;
+    birthdate: string;
+    status: string;
+  };
+}

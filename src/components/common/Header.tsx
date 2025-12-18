@@ -3,8 +3,12 @@ import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { getAuthStatus } from "@/lib/auth/auth.server";
+import LogoutButton from "@/components/home/LogoutButton";
 
-export default function Header() {
+export default async function Header() {
+  const isLoggedIn = await getAuthStatus();
+
   const navLinkHover =
     "relative inline-block transition-all duration-300 ease-in-out text-text-main hover:-translate-y-0.5 before:absolute before:-bottom-0.5 before:left-0 before:right-0 before:-z-10 before:h-0.5 before:bg-border-point before:origin-bottom before:scale-y-0 before:transform before:transition-transform before:duration-300 before:ease-in-out hover:before:scale-y-100";
 
@@ -29,21 +33,25 @@ export default function Header() {
               />
             </div>
           </div>
-          {/* TODO: 유저 로그인 여부 확인 후 토글 */}
-          {/* 비회원일 때 */}
+          {/* 로그인 상태에 따라 다른 메뉴 표시 */}
           <div className="space-x-8 text-zinc-500">
-            <Link className="hover:font-medium" href="/sign-in">
-              로그인
-            </Link>
-            <Link className="hover:font-medium" href="/sign-up">
-              회원가입
-            </Link>
-            <Link className="hover:font-medium" href="/my-page/overview">
-              마이페이지
-            </Link>
-            <Link className="hover:font-medium" href="#">
-              로그아웃
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <LogoutButton />
+                <Link className="hover:font-medium" href="/my-page/overview">
+                  마이페이지
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="hover:font-medium" href="/sign-in">
+                  로그인
+                </Link>
+                <Link className="hover:font-medium" href="/sign-up">
+                  회원가입
+                </Link>
+              </>
+            )}
           </div>
         </div>
         <nav className="space-x-15 text-xl font-semibold text-zinc-900">

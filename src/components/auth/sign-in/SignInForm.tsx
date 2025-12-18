@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { login } from "@/lib/auth";
+import { login } from "@/lib/auth/auth.client";
 import { toast } from "sonner";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type SignInFormValues, signInSchema } from "@/lib/validations/auth";
+import { type SignInFormValues, signInSchema } from "@/lib/zod/auth";
 import FieldError from "@/components/auth/FieldError";
 
 export default function SignInForm() {
@@ -33,6 +33,7 @@ export default function SignInForm() {
       await login(data.email, data.password);
       toast.success("로그인이 완료됐습니다.");
       router.push("/home");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

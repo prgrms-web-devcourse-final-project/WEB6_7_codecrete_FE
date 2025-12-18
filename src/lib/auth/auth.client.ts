@@ -54,6 +54,30 @@ export async function login(email: string, password: string): Promise<LoginRespo
   }
 }
 
+// 로그아웃
+export async function logout() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/logout`, {
+      method: "POST",
+      credentials: "include", // 🔥 쿠키 전달 필수
+    });
+
+    if (!res.ok) {
+      throw new Error("로그아웃에 실패했습니다.");
+    }
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error("서버에 연결할 수 없습니다.");
+    }
+
+    if (err instanceof Error) {
+      throw err;
+    }
+
+    throw new Error("알 수 없는 오류가 발생했습니다.");
+  }
+}
+
 // 회원가입
 export async function signUp(payload: {
   email: string;
@@ -168,22 +192,32 @@ export async function sendEmailCode(email: string) {
 // 이메일 인증코드 검증
 
 export async function verifyEmailCode(params: { email: string; code: string }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/email/verify`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params),
-  });
-
-  let json;
   try {
-    json = await res.json();
-  } catch {
-    throw new Error("서버 응답을 처리할 수 없습니다.");
-  }
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/email/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
 
-  if (!res.ok || json.resultCode !== "OK") {
-    throw new Error(json.msg ?? "이메일 인증에 실패했습니다.");
-  }
+    let json;
+    try {
+      json = await res.json();
+    } catch {
+      throw new Error("서버 응답을 처리할 수 없습니다.");
+    }
 
-  return json;
+    if (!res.ok || json.resultCode !== "OK") {
+      throw new Error(json.msg ?? "이메일 인증에 실패했습니다.");
+    }
+
+    return json;
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error("서버에 연결할 수 없습니다.");
+    }
+    if (err instanceof Error) {
+      throw err;
+    }
+    throw new Error("알 수 없는 오류가 발생했습니다.");
+  }
 }
