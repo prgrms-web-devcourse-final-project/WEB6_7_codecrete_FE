@@ -1,9 +1,10 @@
+import MyPageNavigation from "@/components/my-page/MyPageNavigation";
+
 export default function Page() {
   return (
     <>
-      <h1>Page Component</h1>
+      <MyPageNavigation />
+      <p></p>
     </>
   );
 }
-
-// TODO: 마이페이지 모달 넣기

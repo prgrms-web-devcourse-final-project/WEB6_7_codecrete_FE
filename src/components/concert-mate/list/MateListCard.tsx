@@ -6,12 +6,8 @@ import { twMerge } from "tailwind-merge";
 
 export default function MateListCard() {
   return (
-    <Link href="#">
-      <div
-        className={twMerge(
-          `border-border hover:border-border-point flex flex-col gap-4 rounded-2xl border p-6`
-        )}
-      >
+    <Link href="concert-mate/1">
+      <div className={twMerge(`border-border flex flex-col gap-4 rounded-2xl border p-6`)}>
         <div className="profile flex justify-between">
           <div className="flex gap-4">
             <Avatar className="ring-border size-10 ring-4">

@@ -1,13 +1,5 @@
+import { Button } from "@/components/ui/button";
 import { CardContent, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 /*
  * TODO: 공연 선택 기능 구현
@@ -26,20 +18,27 @@ import {
  *   - 아래 SelectedConcertCard 렌더링
  */
 
-export default function ConcertSelectSection() {
+type ConcertSelectSectionProps = {
+  onClick: () => void;
+};
+
+export default function ConcertSelectSection({ onClick }: ConcertSelectSectionProps) {
   return (
     <CardContent className={"flex flex-col gap-2"}>
       <CardTitle>
         공연 선택 <span className={"text-text-sub"}>*</span>
       </CardTitle>
-      <Select>
+      <Button variant="outline" onClick={onClick}>
+        어떤 공연을 보고 오셨나요?
+      </Button>
+      {/* <Select>
         <SelectTrigger className={"h-13! w-full px-4 py-3"}>
           <SelectValue placeholder={"어떤 공연을 보고 오셨나요?"} />{" "}
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             <SelectLabel>공연명</SelectLabel>
-            {/*TODO: 나중에 value 부분을 해당 공연의 id로 바꾸기*/}
+            {/*TODO: 나중에 value 부분을 해당 공연의 id로 바꾸기
             <SelectItem value="apple">YE LIVE IN KOREA</SelectItem>
             <SelectItem value="banana">CIRCUS MAXIMUS in Korea</SelectItem>
             <SelectItem value="blueberry">ZUTOMAYO INTENSE II 「坐・ZOMBIE CRAB LABO」</SelectItem>
@@ -47,7 +46,7 @@ export default function ConcertSelectSection() {
             <SelectItem value="pineapple">ONE OK ROCK DETOX Asia Tour 2026 in Korea</SelectItem>
           </SelectGroup>
         </SelectContent>
-      </Select>
+      </Select> */}
     </CardContent>
   );
 }

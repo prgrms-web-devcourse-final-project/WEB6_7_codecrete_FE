@@ -11,6 +11,7 @@ import {
   SaveIcon,
   Share2Icon,
   CopyIcon,
+  CheckIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -37,11 +38,13 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { PlannerMembers } from "./PlannerMembers";
+import { twMerge } from "tailwind-merge";
 
 export default function PlannerTopActions() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [copied, setCopied] = useState<boolean>(false);
 
   const [value, setValue] = useState("");
   const [coords, setCoords] = useState<{ lat?: string; lng?: string } | null>(null); // 좌표 저장
@@ -57,6 +60,16 @@ export default function PlannerTopActions() {
   };
   const handleSave = () => {
     // TODO : 저장 로직 구현
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText("Thank you for using Shadcn Studio!");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
   };
 
   return (
@@ -222,9 +235,28 @@ export default function PlannerTopActions() {
                   value="https://example.com/invite-link"
                   className="read-only:bg-muted"
                 />
-                <Button type="submit">
-                  <CopyIcon />
-                  복사
+                <Button
+                  className="relative disabled:opacity-100"
+                  onClick={handleCopy}
+                  disabled={copied}
+                >
+                  <span
+                    className={twMerge(
+                      "transition-all",
+                      copied ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                    )}
+                  >
+                    <CheckIcon className="stroke-green-600 dark:stroke-green-400" />
+                  </span>
+                  <span
+                    className={twMerge(
+                      "absolute left-4 transition-all",
+                      copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                    )}
+                  >
+                    <CopyIcon />
+                  </span>
+                  {copied ? "복사됨" : "복사"}
                 </Button>
               </div>
               <p className="text-muted-foreground text-xs">
@@ -258,9 +290,28 @@ export default function PlannerTopActions() {
                   value="https://example.com/invite-link"
                   className="read-only:bg-muted"
                 />
-                <Button type="submit">
-                  <CopyIcon />
-                  복사
+                <Button
+                  className="relative disabled:opacity-100"
+                  onClick={handleCopy}
+                  disabled={copied}
+                >
+                  <span
+                    className={twMerge(
+                      "transition-all",
+                      copied ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                    )}
+                  >
+                    <CheckIcon className="stroke-green-600 dark:stroke-green-400" />
+                  </span>
+                  <span
+                    className={twMerge(
+                      "absolute left-4 transition-all",
+                      copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                    )}
+                  >
+                    <CopyIcon />
+                  </span>
+                  {copied ? "복사됨" : "복사"}
                 </Button>
               </div>
               <p className="text-muted-foreground text-xs">

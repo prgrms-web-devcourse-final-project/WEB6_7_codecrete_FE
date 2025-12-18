@@ -14,11 +14,11 @@ export default function ReviewPostMain() {
           <ReviewConcertCard />
           <ReviewPostHeader />
           <Separator />
-          <ReviewPostBody />
+          <ReviewPostBody showBadge={false} />
           <ReviewPostComments />
         </section>
         {/*오른쪽 파트*/}
-        <ReviewPostSidebar />
+        <ReviewPostSidebar showMeetingDetail={false} />
       </div>
     </section>
   );

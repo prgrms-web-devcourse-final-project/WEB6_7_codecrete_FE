@@ -140,7 +140,17 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
 
-  /* TODO 다크모드 색상 변수 설정 */
+  --color--bg-main: #000000; /*white*/
+  --color--bg-sub: #18181b; /*zinc-50*/
+  --color--point-main: #f4f4f5; /*zinc-900*/
+  --color--point-sub: #18181b; /*zinc-50*/
+  --color--border: #3f3f46; /*zinc-200*/
+  --color--border-point: #f4f4f5; /*zinc-900*/
+
+  --color--text-main: #f4f4f5; /*zinc-900*/
+  --color--text-sub: #71717b; /*zinc-500*/
+  --color--text-point-main: #000000; /*white*/
+  --color--text-point-sub: #3f3f46; /*zinc-200*/
 }
 
 @layer base {
@@ -152,30 +162,11 @@
   }
 }
 
-.nav-link-hover {
-  position: relative;
-  display: inline-block;
-  transition: all 0.3s ease-in-out;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.nav-link-hover::before {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  z-index: -1;
-  height: 2px;
-  background-color: var(--color-border-point);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 0.3s ease-in-out;
-}
-
-.nav-link-hover:hover {
-  transform: translateY(-2px);
-}
-
-.nav-link-hover:hover::before {
-  transform: scaleY(1);
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

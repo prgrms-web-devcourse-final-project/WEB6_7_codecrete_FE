@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontalIcon } from "lucide-react";
 import { mockComments } from "@/components/review/post/comments/comments.mock";
+import LoadMoreBtn from "@/components/common/LoadMoreBtn";
 
 export default function CommentItem() {
   return (
@@ -79,9 +80,7 @@ export default function CommentItem() {
       })}
 
       <div className={"flex justify-center"}>
-        <Button variant={"outline"} size={"lg"}>
-          댓글 더 보기
-        </Button>
+        <LoadMoreBtn />
       </div>
     </>
   );
