@@ -1,8 +1,10 @@
-export type ConcertCartProp = {
-  image: string;
-  title: string;
-  date: string;
-  location: string;
+export type ConcertData = {
+  id: number;
+  posterUrl: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  placeName: string;
 };
 
 export type QuickActionsProps = {
