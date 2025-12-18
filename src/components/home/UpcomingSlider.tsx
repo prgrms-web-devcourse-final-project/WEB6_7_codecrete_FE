@@ -65,14 +65,15 @@ export default function UpcomingSlider({ concerts }: { concerts: Concert[] }) {
                 <SwiperSlide key={concert.id} className="group mr-8 w-auto! last:mr-0">
                   <Link className="relative block w-80" href={`/concerts/${concert.id}`}>
                     <AspectRatio ratio={320 / 426.5}>
+                      {/* TODO : 이미지 concert.posterUrl 로 바꿀것 */}
                       <Image
                         src="/images/hero_slide_01.png"
                         alt={concert.name}
                         className="rounded-2xl object-cover"
                         fill
-                        loading="lazy"
+                        sizes="320px"
                         placeholder="blur"
-                        blurDataURL="data:image/svg+xml;base64,..."
+                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFklEQVR42mN8//HLfwYiAOOoQvoqBABbWyZJf74GZgAAAABJRU5ErkJggg=="
                       />
                     </AspectRatio>
                     <div className="absolute top-0 left-0 flex h-full w-full flex-col bg-zinc-900/30 opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100">
