@@ -4,7 +4,7 @@ import { LoginResponse, SignUpResponse } from "@/types/auth";
 export async function login(email: string, password: string): Promise<LoginResponse> {
   try {
     // fetch (네트워크 단계)
-    const res = await fetch("http://localhost:8080/api/v1/auth/login", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -63,7 +63,7 @@ export async function signUp(payload: {
   profileImage?: string;
 }): Promise<SignUpResponse> {
   try {
-    const res = await fetch("http://localhost:8080/api/v1/auth/signup", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -111,7 +111,7 @@ export async function signUp(payload: {
 export async function checkNickname(nickname: string) {
   try {
     const res = await fetch(
-      `http://localhost:8080/api/v1/auth/nickname/check?nickname=${encodeURIComponent(nickname)}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/nickname/check?nickname=${encodeURIComponent(nickname)}`
     );
 
     const json = await res.json();
@@ -136,7 +136,7 @@ export async function checkNickname(nickname: string) {
 
 export async function sendEmailCode(email: string) {
   try {
-    const res = await fetch("http://localhost:8080/api/v1/auth/email/send", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/email/send`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -168,7 +168,7 @@ export async function sendEmailCode(email: string) {
 // 이메일 인증코드 검증
 
 export async function verifyEmailCode(params: { email: string; code: string }) {
-  const res = await fetch("http://localhost:8080/api/v1/auth/email/verify", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/email/verify`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params),
