@@ -1,3 +1,6 @@
+// TODO: 공연 제목, 날짜, 인원 수를 서버 데이터 기반으로 치환
+// TODO: i18n 적용 시 헤더 텍스트 다국어 처리
+
 import { ArrowLeft, Calendar } from "lucide-react";
 import InfoBadge from "@/components/concert/chat/InfoBadge";
 
@@ -12,7 +15,7 @@ export default function ChatHeader() {
           </button>
           <div className={"flex flex-col"}>
             <h2 className={"text-xl font-bold"}>The Midnight Echo Live</h2>
-            <h3 className={"text-text-sub"}>Live Chat Room</h3>
+            <h3 className={"text-text-sub"}>실시간 채팅방</h3>
           </div>
         </div>
         {/*헤더 우측*/}

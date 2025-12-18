@@ -43,9 +43,9 @@ export default function TicketVendorSelector({
   return (
     <div className="border-t pt-4">
       <RadioGroup value={value} onValueChange={onChange}>
-        <VendorItem value="nol" id="r1" label="NOL Interpark" />
-        <VendorItem value="ticketlink" id="r2" label="TicketLink" />
-        <VendorItem value="melon" id="r3" label="Melon" />
+        <VendorItem value="nol" id="r1" label="NOL 티켓" />
+        <VendorItem value="ticketlink" id="r2" label="티켓 링크" />
+        <VendorItem value="melon" id="r3" label="멜론 티켓" />
       </RadioGroup>
     </div>
   );

@@ -8,56 +8,56 @@ const PARTICIPANTS = [
   {
     id: 1,
     name: "MusicFan_2024",
-    statusText: "Active now",
+    statusText: "현재 활동 중",
     online: true,
     imageUrl: "https://example.com/images/user1.png",
   },
   {
     id: 2,
     name: "JazzLover88",
-    statusText: "Active 2m ago",
+    statusText: "2분 전 활동",
     online: false,
     imageUrl: "https://example.com/images/user2.png",
   },
   {
     id: 3,
     name: "RockStar99",
-    statusText: "Active 5m ago",
+    statusText: "5분 전 활동",
     online: false,
     imageUrl: "https://example.com/images/user3.png",
   },
   {
     id: 4,
     name: "ClassicalQueen",
-    statusText: "Active now",
+    statusText: "현재 활동 중",
     online: true,
     imageUrl: "https://example.com/images/user4.png",
   },
   {
     id: 5,
     name: "PopGuru",
-    statusText: "Active 10m ago",
+    statusText: "10분 전 활동",
     online: false,
     imageUrl: "https://example.com/images/user5.png",
   },
   {
     id: 6,
     name: "IndieVibes",
-    statusText: "Active 1m ago",
+    statusText: "1분 전 활동",
     online: true,
     imageUrl: "https://example.com/images/user6.png",
   },
   {
     id: 7,
     name: "IndieVibes",
-    statusText: "Active 1m ago",
+    statusText: "1분 전 활동",
     online: true,
     imageUrl: "https://example.com/images/user6.png",
   },
   {
     id: 8,
     name: "IndieVibes",
-    statusText: "Active 1m ago",
+    statusText: "1분 전 활동",
     online: true,
     imageUrl: "https://example.com/images/user6.png",
   },
@@ -70,7 +70,7 @@ export default function ActiveParticipantsCard() {
     <Card className="flex flex-col gap-4 p-7">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <CardTitle className="text-text-main text-xl font-bold">Active Participants</CardTitle>
+        <CardTitle className="text-text-main text-xl font-bold">현재 참여자</CardTitle>
 
         <InfoBadge>
           <span className="text-text-sub">{PARTICIPANTS.length}</span>
@@ -101,7 +101,7 @@ export default function ActiveParticipantsCard() {
           className="text-text-sub mt-2 rounded-lg border py-3 text-center font-bold"
           onClick={() => setShowAll(!showAll)}
         >
-          {showAll ? "Show Less" : "View All Participants"}
+          {showAll ? "접기" : "전체 참여자 보기"}
         </Button>
       )}
     </Card>

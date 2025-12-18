@@ -4,34 +4,34 @@ import { CircleCheck, CircleX } from "lucide-react";
 const RULES = [
   {
     type: "allow",
-    text: "Be respectful to all participants",
+    text: "모든 참여자를 존중해 주세요",
   },
   {
     type: "deny",
-    text: "No ticket selling in chat",
+    text: "채팅방 내 티켓 판매는 금지되어 있습니다",
   },
   {
     type: "allow",
-    text: "Use Transfer Board for trades",
+    text: "티켓 거래는 트랜스퍼 보드를 이용해 주세요",
   },
   {
     type: "deny",
-    text: "Don't share personal information",
+    text: "개인정보는 공유하지 마세요",
   },
   {
     type: "allow",
-    text: "Keep discussions concert-related",
+    text: "공연과 관련된 이야기만 나눠주세요",
   },
   {
     type: "deny",
-    text: "No spam or promotional content",
+    text: "스팸 또는 홍보성 콘텐츠는 금지되어 있습니다",
   },
 ] as const;
 
 export default function ChatRulesCard() {
   return (
     <Card className="gap-4 p-7">
-      <CardTitle className="text-text-main text-xl font-bold">Chat Room Rules</CardTitle>
+      <CardTitle className="text-text-main text-xl font-bold">채팅방 이용 규칙</CardTitle>
 
       <ul className="flex flex-col gap-3">
         {RULES.map((rule, index) => (
