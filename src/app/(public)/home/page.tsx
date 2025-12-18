@@ -2,12 +2,18 @@ import FeaturedSlider from "@/components/home/FeaturedSlider";
 import HeroSlider from "@/components/home/HeroSlider";
 import PlannerBanner from "@/components/home/PlannerBanner";
 import UpcomingSlider from "@/components/home/UpcomingSlider";
+import UpcomingSkeleton from "@/components/loading/UpcomingSkeleton";
+import { getUpcomingConcerts } from "@/lib/api/concerts";
+import { Suspense } from "react";
 
-export default function Page() {
+export default async function Page() {
+  const concertData = await getUpcomingConcerts();
   return (
     <>
       <HeroSlider />
-      <UpcomingSlider />
+      <Suspense fallback={<UpcomingSkeleton />}>
+        <UpcomingSlider concerts={concertData.data} />
+      </Suspense>
       <FeaturedSlider />
       <PlannerBanner />
     </>
