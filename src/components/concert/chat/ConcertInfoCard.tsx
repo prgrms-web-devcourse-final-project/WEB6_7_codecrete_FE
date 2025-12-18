@@ -1,3 +1,11 @@
+// TODO: 공연 정보(포스터, 제목, 날짜, 장소, 예매 URL)를
+// 서버 API 데이터로 치환하여 props로 전달받도록 변경
+
+// TODO: 예매 버튼 클릭 시 선택된 예매처(vendor)에 따라
+// 외부 예매 URL로 이동하도록 로직 연결
+
+// TODO: 포스터 이미지 로딩 실패 시 fallback 이미지 처리
+
 import { Card, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import InfoRow from "@/components/concert/chat/InfoRow";

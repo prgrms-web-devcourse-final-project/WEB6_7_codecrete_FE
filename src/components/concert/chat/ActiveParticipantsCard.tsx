@@ -4,6 +4,10 @@ import InfoBadge from "@/components/concert/chat/InfoBadge";
 import ParticipantItem from "@/components/concert/chat/ParticipantItem";
 import { Button } from "@/components/ui/button";
 
+// TODO:
+// - 참여자 목록을 서버(API/WebSocket)에서 받아 실시간으로 갱신
+// - statusText를 서버 기준 시간으로 계산하여 동적 생성
+// - online 상태 변경 시 애니메이션 또는 강조 효과 추가
 const PARTICIPANTS = [
   {
     id: 1,

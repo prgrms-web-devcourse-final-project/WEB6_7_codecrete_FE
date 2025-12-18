@@ -1,3 +1,8 @@
+// TODO: vendor 상태를 상위(ChatPage)로 끌어올려
+//  채팅/시간/예매처 관련 로직을 페이지 단에서 통합 관리
+
+// TODO: 모바일 환경에서는 ChatAside를 Drawer/BottomSheet 형태로 전환
+
 "use client";
 
 import { useState } from "react";
