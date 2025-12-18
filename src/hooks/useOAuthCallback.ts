@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 export function useOAuthCallback(provider: "google" | "kakao") {
   const router = useRouter();
@@ -26,6 +27,7 @@ export function useOAuthCallback(provider: "google" | "kakao") {
         }
 
         router.replace("/home");
+        toast.success("로그인 성공!");
       } catch (error) {
         console.error(`[OAuth ${provider}] 로그인 실패`, error);
         router.replace("/sign-in");
