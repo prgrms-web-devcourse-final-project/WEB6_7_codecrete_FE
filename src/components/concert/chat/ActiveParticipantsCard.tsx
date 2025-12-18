@@ -80,7 +80,7 @@ export default function ActiveParticipantsCard() {
       {/*TODO: 디자인 확정 후 ParticipantItem 높이 기준으로 리스트 영역 높이를 (5개 기준) calc()로 재조정*/}
 
       <div
-        className={`flex max-h-[280px] flex-col gap-3 overscroll-contain pr-2 ${showAll ? "scrollbar-hide overflow-y-auto" : ""}`}
+        className={`flex max-h-[238px] flex-col gap-3 overscroll-contain pr-2 ${showAll ? "scrollbar-hide overflow-y-auto" : ""}`}
       >
         {(showAll ? PARTICIPANTS : PARTICIPANTS.slice(0, 5)).map((user) => (
           <ParticipantItem
