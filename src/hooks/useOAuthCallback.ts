@@ -10,7 +10,11 @@ export function useOAuthCallback(provider: "google" | "kakao") {
   const code = params.get("code");
 
   useEffect(() => {
-    if (!code) return;
+    if (!code) {
+      router.replace("/sign-in");
+      toast.info("로그인이 취소되었습니다.");
+      return;
+    }
 
     const login = async () => {
       try {
@@ -27,6 +31,7 @@ export function useOAuthCallback(provider: "google" | "kakao") {
         }
 
         router.replace("/home");
+        router.refresh();
         toast.success("로그인 성공!");
       } catch (error) {
         console.error(`[OAuth ${provider}] 로그인 실패`, error);
