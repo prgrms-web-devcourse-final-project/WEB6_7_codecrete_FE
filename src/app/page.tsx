@@ -1,15 +1,7 @@
-import FeaturedSlider from "@/components/home/FeaturedSlider";
-import HeroSlider from "@/components/home/HeroSlider";
-import PlannerBanner from "@/components/home/PlannerBanner";
-import UpcomingSlider from "@/components/home/UpcomingSlider";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return (
-    <>
-      <HeroSlider />
-      <UpcomingSlider />
-      <FeaturedSlider />
-      <PlannerBanner />
-    </>
-  );
+  redirect("/home");
+
+  // TODO : 향후 인트로 페이지 개발 필요
 }

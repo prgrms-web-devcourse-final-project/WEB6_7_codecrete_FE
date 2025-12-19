@@ -17,8 +17,8 @@ export default function ConcertSimilar() {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   return (
-    <section className={twMerge(`similar bg-bg-sub flex w-full flex-col gap-8 px-15 py-20`)}>
-      <div className={twMerge(`header mx-auto flex w-full max-w-400 items-center justify-between`)}>
+    <section className="bg-bg-sub flex w-full flex-col gap-8 px-15 py-20">
+      <div className="mx-auto flex w-full max-w-400 items-center justify-between">
         <div className="intro flex flex-col gap-1">
           <h2 className="text-text-main text-3xl font-bold">추천 공연</h2>
           <p className="text-text-sub text-sm">이런 공연도 한 번 확인해보세요!</p>
@@ -47,7 +47,7 @@ export default function ConcertSimilar() {
           slidesPerView={4}
           spaceBetween={32}
           loop={true}
-          className="w-full overflow-visible!"
+          className="w-full"
         >
           {Array.from({ length: 10 }).map((_, index) => (
             <SwiperSlide key={index} className="mr-8 w-auto! last:mr-0">
