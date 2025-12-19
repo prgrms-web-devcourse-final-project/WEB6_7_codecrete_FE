@@ -12,6 +12,11 @@ export type Concert = {
   likeCount: number;
 };
 
+export type ConcertWithTicket = Concert & {
+  ticketOfficeName?: string;
+  ticketOfficeUrl?: string;
+};
+
 export type ResponseData<T> = {
   status: number;
   resultCode: string;

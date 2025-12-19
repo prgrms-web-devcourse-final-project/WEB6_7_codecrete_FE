@@ -15,10 +15,12 @@ export default function MyPageLikedConcertList() {
         {Array.from({ length: 10 }).map((_, index) => (
           <ConcertCard
             key={index}
-            image="/ConcertPoster.png"
-            title="The Midnight Echo Live"
-            date="March 15, 2025 • 8:00 PM"
-            location="Madison Square Garden"
+            id={index}
+            posterUrl="/ConcertPoster.png"
+            name="The Midnight Echo Live"
+            startDate="March 15, 2025 • 8:00 PM"
+            endDate="March 15, 2025 • 8:00 PM"
+            placeName="Madison Square Garden"
           />
         ))}
       </div>
