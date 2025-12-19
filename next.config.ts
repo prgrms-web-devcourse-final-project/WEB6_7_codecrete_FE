@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "kopis.or.kr",
+        protocol: "http",
+        hostname: "www.kopis.or.kr",
       },
       {
         protocol: "https",
