@@ -21,7 +21,7 @@ export default function GoogleCallbackPage() {
         </EmptyMedia>
         <EmptyTitle>구글 로그인 중이에요</EmptyTitle>
         <EmptyDescription role="status" aria-live="polite">
-          곧 홈 화면으로 이동할게요 🙂
+          곧 홈 화면으로 이동할게요
         </EmptyDescription>
       </EmptyHeader>
 
