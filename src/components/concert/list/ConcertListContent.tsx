@@ -5,7 +5,9 @@ import ListSortClient from "@/components/concert/list/ListSortClient";
 
 async function getConcerts(sortType: string = "LIKE") {
   // 기본 : 좋아요 순 정렬
-  const res = await fetch(`http://localhost:8080/api/v1/concerts/list/${sortType}?page=0&size=12`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/concerts/list/${sortType}?page=0&size=12`
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");
