@@ -8,10 +8,10 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import QrCode from "@/components/ui/qr-code";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Concert } from "@/types/home";
+import { ConcertWithTicket } from "@/types/home";
 import Image from "next/image";
 
-export default function UpcomingSlider({ concerts }: { concerts: Concert[] }) {
+export default function UpcomingSlider({ concerts }: { concerts: ConcertWithTicket[] }) {
   // Swiper 인스턴스 저장 (직접 제어용)
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
@@ -62,9 +62,11 @@ export default function UpcomingSlider({ concerts }: { concerts: Concert[] }) {
                 <SwiperSlide key={concert.id} className="group mr-8 w-auto! last:mr-0">
                   <Link className="relative block w-80" href={`/concerts/${concert.id}`}>
                     <AspectRatio ratio={320 / 426.5}>
-                      {/* TODO : 이미지 concert.posterUrl 로 바꿀것 */}
                       <Image
-                        src="/images/hero_slide_01.png"
+                        src={
+                          concert.posterUrl ??
+                          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFklEQVR42mN8//HLfwYiAOOoQvoqBABbWyZJf74GZgAAAABJRU5ErkJggg=="
+                        }
                         alt={concert.name}
                         className="rounded-2xl object-cover"
                         fill
@@ -89,8 +91,12 @@ export default function UpcomingSlider({ concerts }: { concerts: Concert[] }) {
                             <p>{concert.placeName}</p>
                           </li>
                         </ul>
-                        {/* TODO : 해당 공연의 예매 가능한 링크 넣기 */}
-                        <QrCode address="https://ncbticket.com/concerts/1" size={64} />
+                        <QrCode
+                          address={
+                            concert.ticketOfficeUrl || "https://www.naeconcertbutakhae.shop/"
+                          }
+                          size={64}
+                        />
                       </div>
                       {/* 티켓 옆 꾸밈요소 */}
                       <div className="absolute top-[58.8%] -mt-4 w-full">
