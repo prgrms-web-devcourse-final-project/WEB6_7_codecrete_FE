@@ -1,7 +1,7 @@
 import ConcertCard from "@/components/concert/ConcertCard";
 import { twMerge } from "tailwind-merge";
 import { ConcertData } from "@/components/concert/ConcertType";
-import { SortSelect } from "@/components/common/SortSelect";
+import ListSortClient from "@/components/concert/list/ListSortClient";
 
 async function getConcerts(sortType: string = "LIKE") {
   // 기본 : 좋아요 순 정렬
@@ -32,7 +32,7 @@ export default async function ConcertListContent({
             <span className="text-text-main text-2xl font-bold">{concertsList.length}</span>
             <span className="text-text-main text-lg">items</span>
           </div>
-          <SortSelect />
+          <ListSortClient />
         </div>
         <div className="list grid gap-8 pb-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {concertsList.map((concert: ConcertData) => (

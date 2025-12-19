@@ -7,6 +7,14 @@ export type ConcertData = {
   placeName: string;
 };
 
+export type SortSelectProps = {
+  onValueChange?: (value: string) => void;
+  sortList?: {
+    value: string;
+    name: string;
+  }[];
+};
+
 export type QuickActionsProps = {
   Icon1: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   text: string;

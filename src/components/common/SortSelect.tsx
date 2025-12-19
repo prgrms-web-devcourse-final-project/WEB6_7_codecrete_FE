@@ -9,31 +9,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { SortSelectProps } from "@/components/concert/ConcertType";
 
-export function SortSelect() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const handlerSort = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("sort", value);
-
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
+export function SortSelect({
+  onValueChange,
+  sortList = [
+    { value: "popular", name: "인기순" },
+    { value: "new", name: "최신순" },
+    { value: "name", name: "이름순" },
+  ],
+}: SortSelectProps) {
+  /**
+   * 사용 참고
+   * onValueChange: 값이 변화될 때 실행될 함수 전달
+   * sortList: SelectItem에 담을 value와 name(정렬이름)을 객체 배열로 전달
+   * 참조 : @/components/concert/list/ListSortClient
+   */
   return (
-    <Select onValueChange={handlerSort}>
-      <SelectTrigger size="default" className="bg-point-sub w-28">
+    <Select onValueChange={onValueChange}>
+      <SelectTrigger size="default" className="w-28">
         <SelectValue placeholder="정렬" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>정렬</SelectLabel>
-          <SelectItem value="LIKE">인기순</SelectItem>
-          <SelectItem value="REGISTERED">최신순</SelectItem>
-          <SelectItem value="UPCOMING">공연 임박순</SelectItem>
+          {sortList.map((sort) => (
+            <SelectItem key={sort.value} value={sort.value}>
+              {sort.name}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>
