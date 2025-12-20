@@ -12,7 +12,10 @@ export default function ConcertCard({
   placeName,
 }: ConcertData) {
   return (
-    <Link href={`/concerts/${id}`} className="flex cursor-pointer flex-col gap-5">
+    <Link
+      href={`/concerts/${id}`}
+      className="flex cursor-pointer flex-col gap-5 transition-opacity duration-300 hover:opacity-70"
+    >
       <Image
         src={posterUrl}
         alt="Concert Poster"
