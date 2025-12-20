@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -27,7 +29,6 @@ export default function ArtistListButtons() {
       <Button variant={"outline"} type={"button"} className={"rounded-full"}>
         EDM
       </Button>
-      {/*TODO: 아래 dropdown들 모두 select로 바꾸기*/}
       <Select>
         <SelectTrigger type={"button"} className={"rounded-full text-sm font-bold"}>
           <SelectValue placeholder="더 보기" />
