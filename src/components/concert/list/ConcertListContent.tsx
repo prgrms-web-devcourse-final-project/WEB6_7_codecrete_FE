@@ -72,6 +72,13 @@ export default function ConcertListContent({
     };
   }, [hasMore, loading, loadMoreList]);
 
+  useEffect(() => {
+    setConcertsList(initialList);
+    pageRef.current = 1;
+    setHasMore(true);
+    setLoading(false);
+  }, [initialList, sortType]);
+
   return (
     <section className="px-15 py-16">
       <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-9`)}>
