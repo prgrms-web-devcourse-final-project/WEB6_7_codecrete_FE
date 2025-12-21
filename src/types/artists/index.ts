@@ -8,7 +8,7 @@ export type ArtistListResponse = {
 export type ArtistListItem = {
   id: number;
   artistName: string;
-  genreName: string;
+  genreName: string; // 필요 x
   imageUrl: string;
-  likeCount: number;
+  likeCount: number; // 필요 x
 };
