@@ -1,17 +1,19 @@
 import ConcertDetailVenue from "@/components/concert/detail/ConcertDetailVenue";
 import ConcertDetailReview from "@/components/concert/detail/ConcertDetailReview";
 import ConcertDetailInfo from "@/components/concert/detail/ConcertDetailInfo";
-import ConcertDetailSideBar from "@/components/concert/detail/ConcertDetailSideBar";
-import { type ConcertVenueInfo, type ConcertDetail } from "@/types/concerts";
+import { type ConcertVenueInfo, type ConcertDetail, TicketOffice } from "@/types/concerts";
+import QuickActionsSection from "./QuickActionsSection";
 
 export default function ConcertDetail({
   concertDetail,
   concertVenueData,
+  concertTicketingData,
 }: {
   concertDetail: ConcertDetail | null;
   concertVenueData: ConcertVenueInfo | null;
+  concertTicketingData: TicketOffice[] | null;
 }) {
-  if (!concertDetail && !concertVenueData) {
+  if (!concertDetail && !concertVenueData && !concertTicketingData) {
     return null;
   }
 
@@ -28,7 +30,17 @@ export default function ConcertDetail({
         </div>
 
         <div className="right relative flex-1">
-          <ConcertDetailSideBar />
+          <div className="border-border sticky top-34 flex flex-col gap-4 rounded-xl border p-6">
+            <h2 className="text-text-main text-xl font-bold">빠른 실행</h2>
+            <div className="flex flex-col gap-3">
+              <QuickActionsSection
+                concertId={concertDetail?.concertId}
+                concertTicketingData={concertTicketingData}
+                concertStartDate={concertDetail?.startDate}
+                concertEndDate={concertDetail?.endDate}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
