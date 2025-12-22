@@ -1,4 +1,4 @@
-import { ArtistListItem, ArtistListResponse } from "@/types/artists";
+import { ArtistListItem, ArtistListResponse, LikeArtistResponse } from "@/types/artists";
 
 export async function getArtists(): Promise<ArtistListItem[]> {
   try {
@@ -50,10 +50,10 @@ export async function likeArtist(id: number): Promise<void> {
     });
 
     // JSON 파싱 단계 (여기서도 에러 날 수 있음)
-    let json: ArtistListResponse;
+    let json: LikeArtistResponse;
 
     try {
-      json = (await res.json()) as ArtistListResponse;
+      json = (await res.json()) as LikeArtistResponse;
     } catch {
       // JSON 파싱 실패 (빈 응답, HTML 응답 등)
       throw new Error("서버 응답을 처리할 수 없습니다.");

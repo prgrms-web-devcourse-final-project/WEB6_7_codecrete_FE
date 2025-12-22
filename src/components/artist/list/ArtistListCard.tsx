@@ -32,8 +32,10 @@ export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
       // TODO: isLiked 상태에 따라 API 호출 분기 (likeArtist / unlikeArtist)
       await likeArtist(artist.id);
 
-      setIsLiked(!isLiked);
-      toast.success(isLiked ? "좋아요를 취소했습니다." : "아티스트를 좋아요 했습니다!");
+      const nextIsLiked = !isLiked;
+      setIsLiked(nextIsLiked);
+
+      toast.success(nextIsLiked ? "아티스트를 좋아요 했습니다!" : "좋아요를 취소했습니다.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "오류가 발생했습니다.");
     } finally {
@@ -43,7 +45,6 @@ export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
 
   return (
     <Link
-      key={artist.id}
       href={`/artists/${artist.id}`}
       className="group flex flex-col gap-5 transition hover:opacity-90"
     >
