@@ -1,6 +1,6 @@
 // 공연 상세 정보
 export type ConcertDetail = {
-  concertId: number;
+  concertId: string;
   concertImageUrls: string[];
   description: string | null;
   endDate: string; // "YYYY-MM-DD"
@@ -43,3 +43,9 @@ export type ConcertVenueInfo = {
   hasBarrierFreeElevator: boolean;
   hasParking: boolean;
 };
+
+// 티켓팅 플랫폼 정보
+export interface TicketOffice {
+  ticketOfficeName: string;
+  ticketOfficeUrl: string;
+}

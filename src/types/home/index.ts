@@ -1,5 +1,5 @@
 export type Concert = {
-  id: number;
+  id: string;
   name: string;
   placeName: string;
   ticketTime: string;
