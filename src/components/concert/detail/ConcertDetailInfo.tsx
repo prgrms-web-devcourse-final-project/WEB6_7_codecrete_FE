@@ -12,7 +12,7 @@ export default function ConcertDetailInfo({
       <div className="space-y-6">
         <h2 className="text-text-main text-3xl font-bold">공연 상세</h2>
         <p className="bg-bg-sub text-text-main rounded-xl p-6 font-medium">
-          해당 공연장에 등록된 정보가 없습니다.
+          공연 상세 정보가 없습니다.
         </p>
       </div>
     );
