@@ -62,7 +62,7 @@ export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
           type="button"
           aria-label="아티스트 좋아요"
           className={twMerge(
-            "absolute top-2 right-2 h-9 w-9 scale-90 rounded-full bg-black/20 backdrop-blur-sm transition-all duration-200 group-hover:scale-100 group-hover:opacity-100",
+            "absolute top-2 right-2 h-9 w-9 rounded-full bg-black/20 backdrop-blur-sm transition-all duration-200 group-hover:scale-100 group-hover:opacity-100",
             isLoading ? "opacity-100" : "opacity-0"
           )}
         >
