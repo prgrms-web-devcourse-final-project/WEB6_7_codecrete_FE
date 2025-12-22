@@ -1,30 +1,87 @@
+"use client";
+
 import ConcertCard from "@/components/concert/ConcertCard";
 import { twMerge } from "tailwind-merge";
 import { ConcertData } from "@/components/concert/ConcertType";
 import ListSortClient from "@/components/concert/list/ListSortClient";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
-async function getConcerts(sortType: string = "LIKE") {
-  // 기본 : 좋아요 순 정렬
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/concerts/list/${sortType}?page=0&size=12`
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
-
-export default async function ConcertListContent({
-  searchParams,
+export default function ConcertListContent({
+  initialList,
+  sortType = "LIKE",
 }: {
-  searchParams: { sort?: string };
+  initialList: ConcertData[];
+  sortType?: string;
 }) {
-  const sortType = searchParams.sort;
+  const [concertsList, setConcertsList] = useState(initialList);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const res = await getConcerts(sortType);
-  const concertsList = res.data;
+  const oTarget = useRef(null);
+  const pageRef = useRef(1); // 0 시작 이므로
+
+  const loadMoreList = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/concerts/list/${sortType}?page=${pageRef.current}&size=12`
+      );
+
+      if (!res.ok) {
+        throw new Error("데이터 패치 실패");
+      }
+
+      const result = await res.json();
+      const addList = result.data;
+
+      if (addList.length > 0) {
+        setConcertsList((prev) => {
+          const uniqueAddList = addList.filter(
+            (addItem: ConcertData) => !prev.some((prevItem) => prevItem.id === addItem.id)
+          );
+
+          return [...prev, ...uniqueAddList];
+        });
+        pageRef.current += 1;
+      }
+      if (addList.length < 12) {
+        setHasMore(false);
+        toast.success("모든 공연을 불러왔습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
+  }, [sortType]);
+
+  useEffect(() => {
+    if (!oTarget.current) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && hasMore) {
+          loadMoreList();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    obs.observe(oTarget.current);
+    return () => {
+      obs.disconnect();
+    };
+  }, [hasMore, loading, loadMoreList]);
+
+  useEffect(() => {
+    setConcertsList(initialList);
+    pageRef.current = 1;
+    setHasMore(true);
+    setLoading(false);
+  }, [initialList, sortType]);
 
   return (
     <section className="px-15 py-16">
@@ -50,6 +107,7 @@ export default async function ConcertListContent({
           ))}
         </div>
       </div>
+      {hasMore && <div ref={oTarget} className="h-1 w-full" aria-hidden="true" />}
     </section>
   );
 }
