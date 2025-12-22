@@ -1,4 +1,5 @@
 import type { ChangeEvent } from "react";
+import { User } from "../user";
 
 export type LoginResponse = {
   status: number;
@@ -34,11 +35,5 @@ export interface GetMeResponse {
   status: number;
   resultCode: string;
   msg: string;
-  data: {
-    id: number;
-    email: string;
-    nickname: string;
-    birthdate: string;
-    status: string;
-  };
+  data: User | null;
 }

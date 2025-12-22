@@ -10,6 +10,8 @@ import {
   Clock4Icon,
   CheckIcon,
   CopyIcon,
+  BellIcon,
+  MessageSquareIcon,
 } from "lucide-react";
 import {
   Dialog,
@@ -26,6 +28,16 @@ import { Input } from "@/components/ui/input";
 import { ConcertDatePicker } from "./ConcertDatePicker";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogFooter,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 export default function QuickActionsSection({
   concertId,
@@ -43,6 +55,8 @@ export default function QuickActionsSection({
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
   const [plannerDialogOpen, setPlannerDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [alarmDialogOpen, setAlarmDialogOpen] = useState(false);
+  const [chatDialogOpen, setChatDialogOpen] = useState(false);
 
   const [copied, setCopied] = useState<boolean>(false);
   // TODO : 플래너 생성 함수... 추후 구현 필요
@@ -107,15 +121,38 @@ export default function QuickActionsSection({
           </div>
           <ArrowRightIcon className="text-text-sub h-4 w-4" />
         </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() => setAlarmDialogOpen(true)}
+          className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <BellIcon className="h-4 w-4" />
+            알림 설정하기
+          </div>
+          <ArrowRightIcon className="text-text-sub h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() => setChatDialogOpen(true)}
+          className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <MessageSquareIcon className="h-4 w-4" />
+            채팅 참여하기
+          </div>
+          <ArrowRightIcon className="text-text-sub h-4 w-4" />
+        </Button>
       </div>
-      {/* 
-      <QuickActions Icon1={CalendarPlus2} text="플래너 만들기" />
-        <QuickActions Icon1={Share2} text="공유하기" />
-        <QuickActions Icon1={Bell} text="알림 설정하기" />
-        <QuickActions Icon1={MessageSquare} text="채팅 참여하기" /> */}
 
       {/* 티켓 예매하기 클릭 시 모달 */}
-      <Dialog open={ticketDialogOpen} onOpenChange={setTicketDialogOpen}>
+      <Dialog
+        open={ticketDialogOpen}
+        onOpenChange={setTicketDialogOpen}
+        aria-description="티켓 예매처 목록"
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>티켓 예매하기</DialogTitle>
@@ -157,7 +194,11 @@ export default function QuickActionsSection({
       </Dialog>
 
       {/* 플래너 만들기 클릭 시 모달 */}
-      <Dialog open={plannerDialogOpen} onOpenChange={setPlannerDialogOpen}>
+      <Dialog
+        open={plannerDialogOpen}
+        onOpenChange={setPlannerDialogOpen}
+        aria-description="해당 공연 정보로 플래너 만들기"
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>플래너 만들기</DialogTitle>
@@ -217,7 +258,11 @@ export default function QuickActionsSection({
       </Dialog>
 
       {/* 공유하기 만들기 클릭 시 모달 */}
-      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+      <Dialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        aria-description="공연 정보 공유하기"
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>공유하기</DialogTitle>
@@ -259,6 +304,48 @@ export default function QuickActionsSection({
           </FieldGroup>
         </DialogContent>
       </Dialog>
+
+      {/* 알림 설정하기 클릭 시 모달 */}
+      <AlertDialog
+        open={alarmDialogOpen}
+        onOpenChange={setAlarmDialogOpen}
+        aria-description="알림 설정하기"
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>알림을 설정하시겠어요?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            이 공연의 예매 오픈 일정에 맞춰 안내 이메일을 보내드릴게요.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction>설정</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* 채팅 참여하기 클릭 시 모달 */}
+      <AlertDialog
+        open={chatDialogOpen}
+        onOpenChange={setChatDialogOpen}
+        aria-description="채팅 참여하기"
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>채팅에 참여하시겠어요?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            예매일이 임박한 공연이에요.
+            <br />
+            채팅에 참여해 실시간 서버 시간과 다른 이용자들과의 이야기를 함께 나눠보세요.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction>참여</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
