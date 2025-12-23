@@ -2,10 +2,10 @@ import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarClockIcon, TicketIcon } from "lucide-react";
 import MyPageSetting from "./MyPageSetting";
-import { UserData } from "@/types/my-page";
 import { format } from "date-fns";
+import { User } from "@/types/user";
 
-export default function MyPageHeader({ userData }: { userData: UserData }) {
+export default function MyPageHeader({ userData }: { userData: User }) {
   const formattedDate = format(new Date(userData.createdDate), "yyyy-mm-dd");
   return (
     <header className="bg-zinc-900 px-15 py-20">

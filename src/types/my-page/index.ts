@@ -38,15 +38,3 @@ export interface ConcertListProps {
   schedules: UserSchedule[];
   selectedDate: Date;
 }
-
-// 유저 프로필
-export type UserData = {
-  id: number;
-  email: string;
-  nickname: string;
-  birthdate: string | null;
-  createdDate: string;
-  profileImageUrl?: string;
-  status: string;
-  role: string;
-};
