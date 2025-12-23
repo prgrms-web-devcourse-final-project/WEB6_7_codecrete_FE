@@ -9,7 +9,7 @@ export default function SimilarArtists({ relatedArtists }: { relatedArtists: Rel
     <div className={"flex flex-col gap-6"}>
       <h3 className={"text-xl font-bold"}>유사 아티스트</h3>
       {relatedArtists.map((artist) => (
-        <Item key={artist.artistName} variant={"outline"} asChild>
+        <Item key={artist.spotifyArtistId} variant={"outline"} asChild>
           {/*TODO: 아래 링크 href에 해당 관련 아티스트 id로 이동하게 수정*/}
           <Link href={`/artists/`}>
             <div className={"bg-text-point-sub relative h-16 w-16 overflow-hidden rounded-full"}>

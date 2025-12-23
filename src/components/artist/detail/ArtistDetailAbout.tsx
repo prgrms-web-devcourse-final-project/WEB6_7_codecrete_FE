@@ -1,7 +1,7 @@
 import { ArtistDetail } from "@/types/artists";
 
 export default function ArtistDetailAbout({ artist }: { artist: ArtistDetail }) {
-  const description = artist?.description?.trim();
+  const description = artist.description.trim();
 
   return (
     <div className={"flex flex-col gap-6"}>

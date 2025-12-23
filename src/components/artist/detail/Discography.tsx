@@ -35,7 +35,7 @@ export default function Discography({ albums }: { albums: ArtistAlbum[] }) {
         <ItemGroup className="w-full gap-6">
           {visibleAlbums.map((album) => (
             <Item
-              key={album.albumName}
+              key={`${album.albumName}-${album.releaseDate}`}
               className={"flex w-full gap-6 p-6"}
               variant="outline"
               role="listitem"
@@ -80,7 +80,7 @@ export default function Discography({ albums }: { albums: ArtistAlbum[] }) {
             onClick={() => setExpanded((prev) => !prev)}
             variant={"outline"}
             size={"lg"}
-            className="hover:text-text-main mt-4 self-center text-sm font-medium font-semibold"
+            className="hover:text-text-main mt-4 self-center text-sm font-semibold"
           >
             {expanded ? "접기" : "더보기"}
           </Button>

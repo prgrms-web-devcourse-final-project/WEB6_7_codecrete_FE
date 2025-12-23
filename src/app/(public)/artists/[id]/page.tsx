@@ -5,7 +5,7 @@ import ArtistDetailPast from "@/components/artist/detail/ArtistDetailPast";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import { getArtistDetail } from "@/lib/artists/artists";
 
-export default async function page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const artist = await getArtistDetail(Number(id));
 

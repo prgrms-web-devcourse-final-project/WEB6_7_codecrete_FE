@@ -19,7 +19,7 @@ export default function QuickStat({ artist }: { artist: ArtistDetail }) {
           <div className={"flex w-full flex-row justify-between"}>
             <ItemDescription>인기도</ItemDescription>
             <ItemTitle>
-              <Star size={12} fill={"true"} />{" "}
+              <Star size={12} fill="currentColor" />{" "}
               {Number(((artist.popularityRating / 100) * 5).toFixed(1))}
             </ItemTitle>
           </div>

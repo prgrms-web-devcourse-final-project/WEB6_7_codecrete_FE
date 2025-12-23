@@ -12,7 +12,7 @@ export default function ArtistDetailOverview({ artist }: { artist: ArtistDetail 
         {/*왼쪽 파트*/}
         <div className={"flex w-full flex-col gap-12"}>
           <ArtistDetailAbout artist={artist} />
-          <Discography albums={artist?.albums ?? []} />
+          <Discography albums={artist.albums} />
         </div>
         {/*오른쪽 파트*/}
         <div className={"sticky top-34 flex w-125 shrink-0 flex-col gap-12 self-start"}>
