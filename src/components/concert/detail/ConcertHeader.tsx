@@ -1,7 +1,7 @@
 import Image from "next/image";
 import ConcertHeaderArtist from "@/components/concert/detail/ConcertHeaderArtist";
 import ConcertHeaderBtn from "@/components/concert/detail/ConcertHeaderBtn";
-import { type ConcertDetail } from "@/types/concerts";
+import { TicketOffice, type ConcertDetail } from "@/types/concerts";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { HeartIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
@@ -9,8 +9,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConcertHeaderInfo from "./ConcertHeaderInfo";
 import { formatDateRange, formatPrice } from "@/utils/helpers/formatters";
+import { User } from "@/types/user";
 
-export default function ConcertHeader({ concertDetail }: { concertDetail: ConcertDetail | null }) {
+export default function ConcertHeader({
+  concertDetail,
+  concertTicketingData,
+  userData,
+}: {
+  concertDetail: ConcertDetail | null;
+  concertTicketingData: TicketOffice[] | null;
+  userData: User | null;
+}) {
   if (!concertDetail) {
     return null;
   }
@@ -34,8 +43,7 @@ export default function ConcertHeader({ concertDetail }: { concertDetail: Concer
             />
           </AspectRatio>
         </div>
-        {/* className = "left" */}
-        <div className="right bg-bg-main border-border flex flex-1 flex-col gap-8 rounded-2xl border p-10">
+        <div className="bg-bg-main border-border flex flex-1 flex-col gap-8 rounded-2xl border p-10">
           <div className="title flex justify-between">
             <div className="flex flex-col gap-4">
               {/* TODO : 아티스트 쪽 장르? 된다면 넣기 */}
@@ -64,10 +72,18 @@ export default function ConcertHeader({ concertDetail }: { concertDetail: Concer
               title={formatPrice(concertDetail.minPrice, concertDetail.maxPrice)}
             />
             {/* TODO : 관리자일 경우 예매일정 직접 입력하는 버튼 추가 */}
-            <ConcertHeaderInfo type="ticketing" label="예매 일정" title={"직접입력"} />
+            <ConcertHeaderInfo
+              type="ticketing"
+              label="예매 일정"
+              title={concertDetail.ticketTime || "미정"}
+            />
           </div>
           <ConcertHeaderArtist />
-          <ConcertHeaderBtn />
+          <ConcertHeaderBtn
+            concertDetail={concertDetail}
+            concertTicketingData={concertTicketingData}
+            userData={userData}
+          />
         </div>
       </div>
     </section>

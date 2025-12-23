@@ -10,11 +10,23 @@ type ConcertDatePickerProps = {
   startDate: Date;
   endDate: Date;
   className?: string;
+  onChange: (date: Date | undefined) => void;
 };
 
-export function ConcertDatePicker({ startDate, endDate, className }: ConcertDatePickerProps) {
+export function ConcertDatePicker({
+  startDate,
+  endDate,
+  className,
+  onChange,
+}: ConcertDatePickerProps) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+
+  const handleSelect = (selected: Date | undefined) => {
+    setDate(selected);
+    onChange?.(selected);
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -30,12 +42,10 @@ export function ConcertDatePicker({ startDate, endDate, className }: ConcertDate
       </PopoverTrigger>
       <PopoverContent className="w-auto overflow-hidden p-0" align="start">
         <Calendar
+          defaultMonth={new Date(startDate.getFullYear(), startDate.getMonth(), 1)}
           mode="single"
           selected={date}
-          onSelect={(date) => {
-            setDate(date);
-            setOpen(false);
-          }}
+          onSelect={handleSelect}
           disabled={(d) => d < startDate || d > endDate}
           className={cn("rounded-md border", className)}
           locale={ko}
