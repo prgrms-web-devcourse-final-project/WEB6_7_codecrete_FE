@@ -25,6 +25,18 @@ export default function Footer() {
         <div className="w-1/3 space-y-4">
           <h2 className="text-text-main text-2xl font-black">CodeCrete</h2>
           <div className="text-text-sub space-8">
+            <p>
+              Powered by
+              <Link
+                href="https://www.kopis.or.kr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mr-2 ml-1"
+              >
+                KOPIS
+              </Link>
+              │ &copy; Arts Management Support Center
+            </p>
             <p>&copy; 2025 Team CodeCrete. All rights reserved.</p>
             <p>
               Design by <strong>@garlatonic</strong>

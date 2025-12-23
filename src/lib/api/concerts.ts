@@ -165,3 +165,47 @@ export const getTicketOfficesByConcertId = async ({
     return null;
   }
 };
+
+// 어드민 : 티켓팅 시간 등록
+export const patchTicketTimeSet = async ({
+  concertId,
+  startDateTime,
+  endDateTime,
+}: {
+  concertId: string;
+  startDateTime: string;
+  endDateTime: string;
+}): Promise<ResponseData<ConcertDetail | null>> => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/ticketTimeSet`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        concertId,
+        startDateTime,
+        endDateTime,
+      }),
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return {
+        status: res.status,
+        resultCode: "ERROR",
+        msg: `API 요청 실패: ${res.status}`,
+        data: null,
+      };
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error setting ticket time:", error);
+    return {
+      status: 500,
+      resultCode: "ERROR",
+      msg: "티켓팅 시간 등록에 실패했습니다",
+      data: null,
+    };
+  }
+};

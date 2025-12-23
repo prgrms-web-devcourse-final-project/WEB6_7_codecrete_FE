@@ -13,7 +13,7 @@ export default function MapApi({
   const [coord, setCoord] = useState<{ lat: number; lon: number }>({ lat: 0, lon: 0 });
 
   const [loading, error] = useKakaoLoader({
-    appkey: process.env.NEXT_PUBLIC_KAKAOMAP_API_KEY!,
+    appkey: process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY!,
     libraries: ["services", "clusterer"],
   });
 

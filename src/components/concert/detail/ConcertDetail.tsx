@@ -3,15 +3,18 @@ import ConcertDetailReview from "@/components/concert/detail/ConcertDetailReview
 import ConcertDetailInfo from "@/components/concert/detail/ConcertDetailInfo";
 import { type ConcertVenueInfo, type ConcertDetail, TicketOffice } from "@/types/concerts";
 import QuickActionsSection from "./QuickActionsSection";
+import { User } from "@/types/user";
 
 export default function ConcertDetail({
   concertDetail,
   concertVenueData,
   concertTicketingData,
+  userData,
 }: {
   concertDetail: ConcertDetail | null;
   concertVenueData: ConcertVenueInfo | null;
   concertTicketingData: TicketOffice[] | null;
+  userData: User | null;
 }) {
   if (!concertDetail && !concertVenueData && !concertTicketingData) {
     return null;
@@ -38,6 +41,7 @@ export default function ConcertDetail({
                 concertTicketingData={concertTicketingData}
                 concertStartDate={concertDetail?.startDate}
                 concertEndDate={concertDetail?.endDate}
+                userData={userData}
               />
             </div>
           </div>

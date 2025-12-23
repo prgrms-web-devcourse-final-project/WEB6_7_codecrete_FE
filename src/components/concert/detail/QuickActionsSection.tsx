@@ -1,4 +1,5 @@
 "use client";
+
 import { useRef, useState } from "react";
 import {
   ExternalLink,
@@ -6,10 +7,10 @@ import {
   CalendarPlus2Icon,
   ArrowRightIcon,
   Share2Icon,
-  Clock8Icon,
-  Clock4Icon,
   CheckIcon,
   CopyIcon,
+  BellIcon,
+  MessageSquareIcon,
 } from "lucide-react";
 import {
   Dialog,
@@ -26,29 +27,109 @@ import { Input } from "@/components/ui/input";
 import { ConcertDatePicker } from "./ConcertDatePicker";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogFooter,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
+import { createPlanner } from "@/lib/api/planner";
+import { useRouter } from "next/navigation";
+import { User } from "@/types/user";
 
 export default function QuickActionsSection({
   concertId,
   concertTicketingData,
   concertStartDate,
   concertEndDate,
+  userData,
 }: {
   concertId?: string;
   concertTicketingData?: TicketOffice[] | null;
   concertStartDate?: string;
   concertEndDate?: string;
+  userData: User | null;
 }) {
+  // 링크 이동
+  const router = useRouter();
+
+  // 링크 공유하기 Input
   const shareInputRef = useRef<HTMLInputElement>(null);
 
+  // 모달 상태 관리
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
   const [plannerDialogOpen, setPlannerDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [alarmDialogOpen, setAlarmDialogOpen] = useState(false);
+  const [chatDialogOpen, setChatDialogOpen] = useState(false);
 
+  // 공유하기 복사 상태 관리
   const [copied, setCopied] = useState<boolean>(false);
-  // TODO : 플래너 생성 함수... 추후 구현 필요
-  const handleCreatePlanner = () => {
-    // 플래너 생성 로직 구현
+
+  // 플래너 생성 상태 관리
+  const [plannerTitle, setPlannerTitle] = useState<string>("");
+  const [plannerDate, setPlannerDate] = useState<Date | undefined>(undefined);
+
+  // 모달 열기 핸들러
+  const handleOpenTicketModal = () => {
+    setTicketDialogOpen(true);
+  };
+  const handleOpenPlannerModal = () => {
+    if (!userData) {
+      toast.error("로그인 후 이용해주세요.");
+      return;
+    }
+    setPlannerDialogOpen(true);
+  };
+  const handleOpenShareModal = () => {
+    setShareDialogOpen(true);
+  };
+  const handleOpenAlarmModal = () => {
+    if (!userData) {
+      toast.error("로그인 후 이용해주세요.");
+      return;
+    }
+    setAlarmDialogOpen(true);
+  };
+  const handleOpenChatModal = () => {
+    setChatDialogOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const handleClosePlannerModal = () => {
     setPlannerDialogOpen(false);
+  };
+
+  // 플래너 생성 핸들러
+  const handleCreatePlanner = async () => {
+    if (!concertId) return;
+    if (!plannerTitle) {
+      toast.error("플래너 제목을 입력해주세요.");
+      return;
+    }
+    if (!plannerDate) {
+      toast.error("플래너 날짜를 선택해주세요.");
+      return;
+    }
+
+    const data = await createPlanner({
+      concertId,
+      title: plannerTitle,
+      planDate: plannerDate.toISOString().slice(0, 10),
+    });
+
+    if (!data) {
+      toast.error("플래너 생성에 실패했습니다.");
+      return;
+    }
+
+    toast.success("플래너가 생성되었습니다.");
+    setPlannerDialogOpen(false);
+    router.push(`/planner/${data.data.id}`);
   };
 
   // 복사
@@ -74,7 +155,7 @@ export default function QuickActionsSection({
         <Button
           variant="outline"
           size="lg"
-          onClick={() => setTicketDialogOpen(true)}
+          onClick={handleOpenTicketModal}
           className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
         >
           <div className="flex items-center gap-2">
@@ -86,7 +167,7 @@ export default function QuickActionsSection({
         <Button
           variant="outline"
           size="lg"
-          onClick={() => setPlannerDialogOpen(true)}
+          onClick={handleOpenPlannerModal}
           className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
         >
           <div className="flex items-center gap-2">
@@ -98,7 +179,7 @@ export default function QuickActionsSection({
         <Button
           variant="outline"
           size="lg"
-          onClick={() => setShareDialogOpen(true)}
+          onClick={handleOpenShareModal}
           className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
         >
           <div className="flex items-center gap-2">
@@ -107,15 +188,38 @@ export default function QuickActionsSection({
           </div>
           <ArrowRightIcon className="text-text-sub h-4 w-4" />
         </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={handleOpenAlarmModal}
+          className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <BellIcon className="h-4 w-4" />
+            알림 설정하기
+          </div>
+          <ArrowRightIcon className="text-text-sub h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={handleOpenChatModal}
+          className="border-border bg-point-sub flex w-full cursor-pointer items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <MessageSquareIcon className="h-4 w-4" />
+            채팅 참여하기
+          </div>
+          <ArrowRightIcon className="text-text-sub h-4 w-4" />
+        </Button>
       </div>
-      {/* 
-      <QuickActions Icon1={CalendarPlus2} text="플래너 만들기" />
-        <QuickActions Icon1={Share2} text="공유하기" />
-        <QuickActions Icon1={Bell} text="알림 설정하기" />
-        <QuickActions Icon1={MessageSquare} text="채팅 참여하기" /> */}
 
       {/* 티켓 예매하기 클릭 시 모달 */}
-      <Dialog open={ticketDialogOpen} onOpenChange={setTicketDialogOpen}>
+      <Dialog
+        open={ticketDialogOpen}
+        onOpenChange={setTicketDialogOpen}
+        aria-description="티켓 예매처 목록"
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>티켓 예매하기</DialogTitle>
@@ -157,7 +261,11 @@ export default function QuickActionsSection({
       </Dialog>
 
       {/* 플래너 만들기 클릭 시 모달 */}
-      <Dialog open={plannerDialogOpen} onOpenChange={setPlannerDialogOpen}>
+      <Dialog
+        open={plannerDialogOpen}
+        onOpenChange={setPlannerDialogOpen}
+        aria-description="해당 공연 정보로 플래너 만들기"
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>플래너 만들기</DialogTitle>
@@ -165,50 +273,24 @@ export default function QuickActionsSection({
           <FieldGroup className="max-h-[60vh] gap-6 overflow-y-auto p-4">
             <Field>
               <FieldLabel>제목</FieldLabel>
-              <Input type="text" placeholder="플래너 제목을 입력하세요" />
+              <Input
+                type="text"
+                placeholder="플래너 제목을 입력하세요"
+                value={plannerTitle}
+                onChange={(e) => setPlannerTitle(e.target.value)}
+              />
             </Field>
             <Field>
               <FieldLabel>날짜</FieldLabel>
               <ConcertDatePicker
                 startDate={new Date(concertStartDate?.split("-").join(",") ?? "")}
                 endDate={new Date(concertEndDate?.split("-").join(",") ?? "")}
+                onChange={(date) => setPlannerDate(date)}
               />
             </Field>
-            <div className="flex gap-4">
-              <Field>
-                <FieldLabel>시작 시간</FieldLabel>
-                <div className="relative">
-                  <Input
-                    type="time"
-                    id="time-picker"
-                    step="1"
-                    defaultValue="08:30:00"
-                    className="peer bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  />
-                  <div className="text-muted-foreground pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center pr-3 peer-disabled:opacity-50">
-                    <Clock8Icon className="size-4" />
-                  </div>
-                </div>
-              </Field>
-              <Field>
-                <FieldLabel>종료 시간</FieldLabel>
-                <div className="relative">
-                  <Input
-                    type="time"
-                    id="time-picker"
-                    step="1"
-                    defaultValue="08:30:00"
-                    className="peer bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  />
-                  <div className="text-muted-foreground pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center pr-3 peer-disabled:opacity-50">
-                    <Clock4Icon className="size-4" />
-                  </div>
-                </div>
-              </Field>
-            </div>
           </FieldGroup>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPlannerDialogOpen(false)}>
+            <Button variant="outline" onClick={handleClosePlannerModal}>
               취소
             </Button>
             <Button onClick={handleCreatePlanner}>만들기</Button>
@@ -217,7 +299,11 @@ export default function QuickActionsSection({
       </Dialog>
 
       {/* 공유하기 만들기 클릭 시 모달 */}
-      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+      <Dialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        aria-description="공연 정보 공유하기"
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>공유하기</DialogTitle>
@@ -259,6 +345,50 @@ export default function QuickActionsSection({
           </FieldGroup>
         </DialogContent>
       </Dialog>
+
+      {/* 알림 설정하기 클릭 시 모달 */}
+      <AlertDialog
+        open={alarmDialogOpen}
+        onOpenChange={setAlarmDialogOpen}
+        aria-description="알림 설정하기"
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>알림을 설정하시겠어요?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            이 공연의 예매 오픈 일정에 맞춰 안내 이메일을 보내드릴게요.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction>설정</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* 채팅 참여하기 클릭 시 모달 */}
+      <AlertDialog
+        open={chatDialogOpen}
+        onOpenChange={setChatDialogOpen}
+        aria-description="채팅 참여하기"
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>채팅에 참여하시겠어요?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            <p>
+              예매일이 임박한 공연이에요.
+              <br />
+              채팅에 참여해 실시간 서버 시간과 다른 이용자들과의 이야기를 함께 나눠보세요.
+            </p>
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction>참여</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

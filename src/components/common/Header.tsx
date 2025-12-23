@@ -61,9 +61,6 @@ export default async function Header() {
           <Link href="/artists" className={navLinkHover}>
             아티스트
           </Link>
-          <Link href="/review" className={navLinkHover}>
-            공연후기
-          </Link>
           <Link href="/concert-mate" className={navLinkHover}>
             동행구인
           </Link>
