@@ -357,7 +357,7 @@ export default function QuickActionsSection({
             <AlertDialogTitle>알림을 설정하시겠어요?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogDescription>
-            이 공연의 예매 오픈 일정에 맞춰 안내 이메일을 보내드릴게요.
+            이 공연을 찜하고, 예매 오픈 일정에 맞춰 안내 이메일을 받아보세요.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
@@ -377,11 +377,9 @@ export default function QuickActionsSection({
             <AlertDialogTitle>채팅에 참여하시겠어요?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogDescription>
-            <p>
-              예매일이 임박한 공연이에요.
-              <br />
-              채팅에 참여해 실시간 서버 시간과 다른 이용자들과의 이야기를 함께 나눠보세요.
-            </p>
+            예매일이 임박한 공연이에요.
+            <br />
+            채팅에 참여해 실시간 서버 시간과 다른 이용자들과의 이야기를 함께 나눠보세요.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>

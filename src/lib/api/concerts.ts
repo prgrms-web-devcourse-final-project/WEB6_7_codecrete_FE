@@ -103,7 +103,7 @@ export const getConcertDetail = async ({
 
     // const likeData = await likeRes.json();
 
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching concert detail:", error);
     return null;
@@ -129,7 +129,7 @@ export const getConcertVenueInfo = async ({ concertId }: { concertId: string }) 
     }
 
     const data = await res.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching concert venue info:", error);
     return createEmptyResponse("공연장 정보를 가져오는데 실패했습니다");
@@ -166,7 +166,15 @@ export const getTicketOfficesByConcertId = async ({
   }
 };
 
-// 어드민 : 티켓팅 시간 등록
+// -------- Admin API --------
+/**
+ * 티켓팅 시간 등록
+ *
+ * @param {string} concertId - 공연 ID
+ * @param {string} startDateTime - 티켓팅 시작 시간 (ISO 8601 형식)
+ * @param {string} endDateTime - 티켓팅 종료 시간 (ISO 8601 형식)
+ * @returns {Promise<ResponseData<ConcertDetail | null>>} - 업데이트된 공연 상세 정보
+ */
 export const patchTicketTimeSet = async ({
   concertId,
   startDateTime,
