@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // TODO: 앨범 더보기/접기 시 애니메이션 추가
 
@@ -58,15 +59,17 @@ export default function Discography({ albums }: { albums: ArtistAlbum[] }) {
                   </ItemDescription>
                 </ItemContent>
                 <ItemContent>
-                  <a
-                    href={album.spotifyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm hover:underline"
-                  >
+                  <div className={"flex items-center gap-2 text-sm"}>
                     <Image src="/spotify.svg" alt="Spotify" width={16} height={16} />
-                    <span>Listen on Spotify</span>
-                  </a>
+                    <Link
+                      href={album.spotifyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={"hover:underline"}
+                    >
+                      <span>Listen on Spotify</span>
+                    </Link>
+                  </div>
                 </ItemContent>
               </div>
             </Item>

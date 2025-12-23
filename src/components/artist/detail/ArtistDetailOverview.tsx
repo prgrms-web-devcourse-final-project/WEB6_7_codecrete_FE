@@ -4,6 +4,7 @@ import QuickStat from "@/components/artist/detail/QuickStat";
 import HotTrack from "@/components/artist/detail/HotTrack";
 import SimilarArtists from "@/components/artist/detail/SimilarArtists";
 import { ArtistDetail } from "@/types/artists";
+
 export default function ArtistDetailOverview({ artist }: { artist: ArtistDetail }) {
   return (
     <section className={"px-15 py-16"}>
@@ -16,8 +17,8 @@ export default function ArtistDetailOverview({ artist }: { artist: ArtistDetail 
         {/*오른쪽 파트*/}
         <div className={"sticky top-34 flex w-125 shrink-0 flex-col gap-12 self-start"}>
           <QuickStat artist={artist} />
-          <HotTrack />
-          <SimilarArtists />
+          <HotTrack tracks={artist.topTracks} />
+          <SimilarArtists relatedArtists={artist.relatedArtists} />
         </div>
       </div>
     </section>
