@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileUploadBox } from "../review/write/FileUploadBox";
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -19,22 +19,30 @@ import { Calendar } from "../ui/calendar";
 import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
 import { useTheme } from "next-themes";
+import { User } from "@/types/user";
+import { getUsersSettings } from "@/lib/api/users";
 
-export default function MyPageSetting() {
+export default function MyPageSetting({ userData }: { userData: User }) {
+  // TODO : 주석 다 지우기
+  // TODO : 기본 핸들러 다 채우고 이슈 다시 체크
   const { resolvedTheme, setTheme } = useTheme();
 
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
-  const [isVisibleConfirm, setIsVisibleConfirm] = useState(false);
+  const [password, setPassword] = useState(""); // 비밀번호
+  const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인
+  const [isVisible, setIsVisible] = useState(false); // 비밀번호 가리기 관련
+  const [isVisibleConfirm, setIsVisibleConfirm] = useState(false); // 비밀번호 가리기 관련
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(
+    userData.birthdate ? new Date(userData.birthdate) : undefined
+  ); // 생일 값
+  const [emailAlert, setEmailAlert] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const handleEditDialog = () => setShowEditDialog((prevState) => !prevState);
 
-  const handlePWVisible = () => setIsVisible((prevState) => !prevState);
-  const handlePWCVisible = () => setIsVisibleConfirm((prevState) => !prevState);
+  const handlePWVisible = () => setIsVisible((prevState) => !prevState); // 비밀번호 가리기 관련
+  const handlePWCVisible = () => setIsVisibleConfirm((prevState) => !prevState); // 비밀번호 가리기 관련
 
   const handleDarkMode = () => {
     if (resolvedTheme === "dark") {
@@ -43,6 +51,20 @@ export default function MyPageSetting() {
       setTheme("dark");
     }
   };
+
+  useEffect(() => {
+    if (showEditDialog) {
+      const loadData = async () => {
+        const res = await getUsersSettings();
+        if (res) {
+          setEmailAlert(res.emailNotifications);
+          setDarkMode(res.darkMode);
+          // TODO : 네트워크 느리면 느리게 뜰 수 있는 문제점
+        }
+      };
+      loadData();
+    }
+  }, [showEditDialog]);
 
   return (
     <>
@@ -55,6 +77,7 @@ export default function MyPageSetting() {
       >
         <SettingsIcon className="text-background size-8 fill-white stroke-zinc-900" />
       </Button>
+      {/* open -> true면 나타나, onOpenChange -> 닫기 버튼 누르기 등의 상태 변화가 생겼을 때 false로 바꿔 */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog} aria-description="설정">
         <DialogContent>
           <DialogHeader>
@@ -67,7 +90,7 @@ export default function MyPageSetting() {
             </Field>
             <Field>
               <Label htmlFor="nickname">닉네임 *</Label>
-              <Input id="nickname" placeholder="닉네임을 입력해주세요." />
+              <Input id="nickname" placeholder="닉네임을 입력해주세요." value={userData.nickname} />
             </Field>
             <Field>
               <Label htmlFor="nickname">비밀번호 *</Label>
@@ -118,7 +141,12 @@ export default function MyPageSetting() {
             <Field>
               <Label htmlFor="email">이메일 *</Label>
               <div className="relative space-y-1">
-                <Input type="email" placeholder="이메일을 입력하세요." className="pr-9" />
+                <Input
+                  type="email"
+                  placeholder="이메일을 입력하세요."
+                  className="pr-9"
+                  value={userData.email}
+                />
                 <p className="text-text-sub text-xs">유효한 이메일 주소를 입력하세요.</p>
               </div>
             </Field>
@@ -136,6 +164,7 @@ export default function MyPageSetting() {
               <Label htmlFor="birth">생년월일</Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
+                  {/* TODO : 저장된 생일 값이 잘 들어오고 있는지 확인 필요 */}
                   <Button variant="outline" id="date" className="w-48 justify-between font-normal">
                     {date ? date.toLocaleDateString() : "생년월일을 입력하세요."}
                     <CalendarIcon />
@@ -161,6 +190,8 @@ export default function MyPageSetting() {
                   id="emailAlert"
                   className="order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2.5 data-[state=checked]:[&_span]:rtl:-translate-x-2.5"
                   aria-describedby="이메일 수신 스위치"
+                  checked={emailAlert}
+                  onCheckedChange={(checked) => setEmailAlert(checked)}
                 />
                 <div className="flex grow gap-3">
                   <div className="grid grow gap-2">
@@ -177,6 +208,8 @@ export default function MyPageSetting() {
                   id="darkMode"
                   className="order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2.5 data-[state=checked]:[&_span]:rtl:-translate-x-2.5"
                   aria-describedby="다크모드 스위치"
+                  checked={darkMode}
+                  onCheckedChange={(checked) => setDarkMode(checked)}
                 />
                 <div className="flex grow gap-3">
                   <div className="grid grow gap-2">

@@ -17,7 +17,7 @@ export default function MyPageHeader({ userData }: { userData: User }) {
               <ProfileNoImage size="lg" />
             </AvatarFallback>
           </Avatar>
-          <MyPageSetting />
+          <MyPageSetting userData={userData} />
         </div>
         <div className="space-y-2">
           <h2 className="text-4xl font-bold text-white">{userData.nickname}</h2>
