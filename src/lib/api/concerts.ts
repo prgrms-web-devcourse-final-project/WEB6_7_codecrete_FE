@@ -206,3 +206,22 @@ export const getIsLikedConcert = async (
     return null;
   }
 };
+
+// 공연 리스트 - 전체 공연 수 불러오기
+export const totalConcertCount = async () => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/totalConcertCount`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return null;
+    }
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching users detail:", error);
+    return null;
+  }
+};
