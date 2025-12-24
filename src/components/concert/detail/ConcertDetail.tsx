@@ -10,11 +10,13 @@ export default function ConcertDetail({
   concertVenueData,
   concertTicketingData,
   userData,
+  isLiked,
 }: {
   concertDetail: ConcertDetail | null;
   concertVenueData: ConcertVenueInfo | null;
   concertTicketingData: TicketOffice[] | null;
   userData: User | null;
+  isLiked?: boolean;
 }) {
   if (!concertDetail && !concertVenueData && !concertTicketingData) {
     return null;
@@ -42,6 +44,7 @@ export default function ConcertDetail({
                 concertStartDate={concertDetail?.startDate}
                 concertEndDate={concertDetail?.endDate}
                 userData={userData}
+                isLiked={isLiked}
               />
             </div>
           </div>
