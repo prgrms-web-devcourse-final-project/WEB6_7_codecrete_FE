@@ -1,21 +1,53 @@
-import { twMerge } from "tailwind-merge";
 import ConcertDetailVenue from "@/components/concert/detail/ConcertDetailVenue";
 import ConcertDetailReview from "@/components/concert/detail/ConcertDetailReview";
 import ConcertDetailInfo from "@/components/concert/detail/ConcertDetailInfo";
-import ConcertDetailSideBar from "@/components/concert/detail/ConcertDetailSideBar";
+import { type ConcertVenueInfo, type ConcertDetail, TicketOffice } from "@/types/concerts";
+import QuickActionsSection from "./QuickActionsSection";
+import { User } from "@/types/user";
 
-export default function ConcertDetail() {
+export default function ConcertDetail({
+  concertDetail,
+  concertVenueData,
+  concertTicketingData,
+  userData,
+  isLiked,
+}: {
+  concertDetail: ConcertDetail | null;
+  concertVenueData: ConcertVenueInfo | null;
+  concertTicketingData: TicketOffice[] | null;
+  userData: User | null;
+  isLiked?: boolean;
+}) {
+  if (!concertDetail && !concertVenueData && !concertTicketingData) {
+    return null;
+  }
+
   return (
-    <section className={twMerge(`header bg-bg-main px-15 py-16`)}>
+    <section className="bg-bg-main px-15 py-10">
       <div className="mx-auto flex w-full max-w-400 gap-12">
-        <div className={twMerge(`left flex w-full flex-2 flex-col gap-12`)}>
-          <ConcertDetailInfo />
-          <ConcertDetailVenue />
+        <div className="flex-2 space-y-20">
+          <ConcertDetailInfo
+            concertImageUrls={concertDetail?.concertImageUrls}
+            alt={concertDetail?.name}
+          />
+          <ConcertDetailVenue concertVenue={concertVenueData} />
           <ConcertDetailReview />
         </div>
 
         <div className="right relative flex-1">
-          <ConcertDetailSideBar />
+          <div className="border-border sticky top-34 flex flex-col gap-4 rounded-xl border p-6">
+            <h2 className="text-text-main text-xl font-bold">빠른 실행</h2>
+            <div className="flex flex-col gap-3">
+              <QuickActionsSection
+                concertId={concertDetail?.concertId}
+                concertTicketingData={concertTicketingData}
+                concertStartDate={concertDetail?.startDate}
+                concertEndDate={concertDetail?.endDate}
+                userData={userData}
+                isLiked={isLiked}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>

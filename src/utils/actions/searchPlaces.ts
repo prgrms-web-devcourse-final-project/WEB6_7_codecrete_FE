@@ -6,7 +6,7 @@ interface Place {
 }
 
 export async function searchPlaces(keyword: string) {
-  const API_KEY = process.env.KAKAO_REST_API_KEY;
+  const API_KEY = process.env.NEXT_PUBLIC_KAKAOMAP_API_KEY;
 
   const res = await fetch(
     `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(keyword)}`,

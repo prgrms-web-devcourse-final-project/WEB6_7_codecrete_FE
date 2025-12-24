@@ -3,11 +3,17 @@ import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { getAuthStatus } from "@/lib/auth/auth.server";
+import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
 import LogoutButton from "@/components/home/LogoutButton";
 
 export default async function Header() {
   const isLoggedIn = await getAuthStatus();
+  let isAdmin = false;
+
+  if (isLoggedIn) {
+    const userData = (await getMe()).data;
+    isAdmin = userData?.role === "ADMIN";
+  }
 
   const navLinkHover =
     "relative inline-block transition-all duration-300 ease-in-out text-text-main hover:-translate-y-0.5 before:absolute before:-bottom-0.5 before:left-0 before:right-0 before:-z-10 before:h-0.5 before:bg-border-point before:origin-bottom before:scale-y-0 before:transform before:transition-transform before:duration-300 before:ease-in-out hover:before:scale-y-100";
@@ -58,11 +64,13 @@ export default async function Header() {
           <Link href="/concerts" className={navLinkHover}>
             공연
           </Link>
+          {isAdmin && (
+            <Link href="/concerts/admin" className={navLinkHover}>
+              관리자
+            </Link>
+          )}
           <Link href="/artists" className={navLinkHover}>
             아티스트
-          </Link>
-          <Link href="/review" className={navLinkHover}>
-            공연후기
           </Link>
           <Link href="/concert-mate" className={navLinkHover}>
             동행구인

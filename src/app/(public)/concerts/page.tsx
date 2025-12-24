@@ -1,5 +1,5 @@
-import ConcertListContent from "@/components/concert/list/ConcertListContent";
 import ConcertListIntro from "@/components/concert/list/ConcertListIntro";
+import ConcertListWrapper from "@/components/concert/list/ConcertListWrapper";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ sort?: string }> }) {
@@ -9,7 +9,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ s
     <>
       <BreadcrumbNavbar items={[{ label: "홈", href: "/" }, { label: "공연 목록" }]} />
       <ConcertListIntro />
-      <ConcertListContent searchParams={resolvedParams} />
+      <ConcertListWrapper searchParams={resolvedParams} />
     </>
   );
 }
