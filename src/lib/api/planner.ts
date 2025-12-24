@@ -1,4 +1,4 @@
-import { ResponseData } from "@/types/home";
+import { ResponseData } from "@/types/api";
 import ClientApi from "@/utils/helpers/clientApi";
 
 interface Planner {

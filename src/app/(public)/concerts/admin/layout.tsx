@@ -1,0 +1,16 @@
+import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
+import { redirect } from "next/navigation";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const isLoggedIn = await getAuthStatus();
+  let isAdmin = false;
+
+  if (isLoggedIn) {
+    const userData = (await getMe()).data;
+    isAdmin = userData?.role === "ADMIN";
+  }
+
+  if (!isAdmin) redirect("/home");
+
+  return <>{children}</>;
+}
