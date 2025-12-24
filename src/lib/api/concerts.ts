@@ -1,5 +1,8 @@
-import { ConcertDetail, TicketOffice } from "@/types/concerts";
-import { Concert, ConcertWithTicket, ResponseData } from "@/types/home";
+"use server";
+
+import { ResponseData } from "@/types/api";
+import { ConcertDetail, LikeConcert, TicketOffice } from "@/types/concerts";
+import { Concert, ConcertWithTicket } from "@/types/home";
 import ClientApi from "@/utils/helpers/clientApi";
 
 // 빈 응답 생성 함수
@@ -90,19 +93,6 @@ export const getConcertDetail = async ({
 
     const data = await res.json();
 
-    // 좋아요 여부까지 가져오기
-    // const likeRes = await ClientApi(`/api/v1/concerts/isLike/${concertId}`, {
-    //   method: "GET",
-    //   cache: "no-store",
-    // });
-
-    // if (!likeRes.ok) {
-    //   console.error("Like API Error:", likeRes.status);
-    //   return data; // 좋아요 정보 없이 기본 데이터 반환
-    // }
-
-    // const likeData = await likeRes.json();
-
     return data.data;
   } catch (error) {
     console.error("Error fetching concert detail:", error);
@@ -166,54 +156,55 @@ export const getTicketOfficesByConcertId = async ({
   }
 };
 
-// -------- Admin API --------
-/**
- * 티켓팅 시간 등록
- *
- * @param {string} concertId - 공연 ID
- * @param {string} startDateTime - 티켓팅 시작 시간 (ISO 8601 형식)
- * @param {string} endDateTime - 티켓팅 종료 시간 (ISO 8601 형식)
- * @returns {Promise<ResponseData<ConcertDetail | null>>} - 업데이트된 공연 상세 정보
- */
-export const patchTicketTimeSet = async ({
-  concertId,
-  startDateTime,
-  endDateTime,
-}: {
-  concertId: string;
-  startDateTime: string;
-  endDateTime: string;
-}): Promise<ResponseData<ConcertDetail | null>> => {
+// 콘서트 찜하기
+export const postLikeConcert = async (concertId: string): Promise<boolean> => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/ticketTimeSet`, {
-      method: "PATCH",
+    const res = await ClientApi(`/api/v1/concerts/like/${concertId}`, {
+      method: "POST",
+    });
+    return res.ok;
+  } catch (error) {
+    console.error("Error liking concert:", error);
+    return false;
+  }
+};
+
+export const deleteLikeConcert = async (concertId: string): Promise<boolean> => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/dislike/${concertId}`, {
+      method: "DELETE",
+    });
+    return res.ok;
+  } catch (error) {
+    console.error("Error unliking concert:", error);
+    return false;
+  }
+};
+
+// 찜한 콘서트인지 확인
+export const getIsLikedConcert = async (
+  concertId: string,
+  cookie: string
+): Promise<LikeConcert | null> => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/isLike/${concertId}`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Cookie: cookie,
       },
-      body: JSON.stringify({
-        concertId,
-        startDateTime,
-        endDateTime,
-      }),
+      cache: "no-store",
     });
+
     if (!res.ok) {
       console.error("API Error:", res.status, res.statusText);
-      return {
-        status: res.status,
-        resultCode: "ERROR",
-        msg: `API 요청 실패: ${res.status}`,
-        data: null,
-      };
+      return null;
     }
+
     const data = await res.json();
-    return data;
+    return data.data;
   } catch (error) {
-    console.error("Error setting ticket time:", error);
-    return {
-      status: 500,
-      resultCode: "ERROR",
-      msg: "티켓팅 시간 등록에 실패했습니다",
-      data: null,
-    };
+    console.error("Error checking liked concert:", error);
+    return null;
   }
 };

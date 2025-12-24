@@ -19,10 +19,11 @@ import { ConcertDetail, TicketOffice } from "@/types/concerts";
 import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { patchTicketTimeSet } from "@/lib/api/concerts";
 import { createPlanner } from "@/lib/api/planner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { ko } from "date-fns/locale";
+import { patchTicketTimeSet } from "@/lib/api/admin";
 
 export default function ConcertHeaderBtn({
   concertDetail,
@@ -46,6 +47,8 @@ export default function ConcertHeaderBtn({
   const [openEnd, setOpenEnd] = useState(false);
   const [startTicketDate, setStartTicketDate] = useState<Date | undefined>(undefined);
   const [endTicketDate, setEndTicketDate] = useState<Date | undefined>(undefined);
+  const [startTime, setStartTime] = useState("20:00:00");
+  const [endTime, setEndTime] = useState("20:00:00");
 
   // 플래너 생성 상태 관리
   const [plannerTitle, setPlannerTitle] = useState<string>("");
@@ -113,19 +116,38 @@ export default function ConcertHeaderBtn({
       toast.error("시작 및 종료 티켓팅 일정을 모두 선택해주세요.");
       return;
     }
-    if (startTicketDate >= endTicketDate) {
+
+    // 날짜와 시간을 합쳐서 완전한 DateTime 생성
+    const startDateTime = new Date(startTicketDate);
+    const [startHour, startMinute, startSecond] = startTime.split(":").map(Number);
+    startDateTime.setHours(startHour, startMinute, startSecond);
+
+    const endDateTime = new Date(endTicketDate);
+    const [endHour, endMinute, endSecond] = endTime.split(":").map(Number);
+    endDateTime.setHours(endHour, endMinute, endSecond);
+
+    if (startDateTime >= endDateTime) {
       toast.error("티켓팅 시작 일시는 종료 일시보다 앞서야 합니다.");
       return;
     }
 
     try {
-      await patchTicketTimeSet({
+      const result = await patchTicketTimeSet({
         concertId: concertDetail.concertId,
-        startDateTime: startTicketDate.toISOString(),
-        endDateTime: endTicketDate.toISOString(),
+        ticketTime: startDateTime.toISOString(),
+        ticketEndTime: endDateTime.toISOString(),
       });
+
+      if (result.resultCode === "ERROR") {
+        toast.error(result.msg || "티켓팅 일정 저장에 실패했습니다.");
+        return;
+      }
+
       toast.success("티켓팅 일정이 저장되었습니다.");
       setTicketingDialogOpen(false);
+
+      // 페이지 데이터 새로고침
+      router.refresh();
     } catch (error) {
       // 에러 로깅 및 사용자 피드백
       console.error("Failed to patch ticketing time:", error);
@@ -292,6 +314,7 @@ export default function ConcertHeaderBtn({
                         setStartTicketDate(date);
                         setOpenStart(false);
                       }}
+                      locale={ko}
                     />
                   </PopoverContent>
                 </Popover>
@@ -304,7 +327,8 @@ export default function ConcertHeaderBtn({
                   type="time"
                   id="time-start"
                   step="1"
-                  defaultValue="09:30:00"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
                   className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                 />
               </Field>
@@ -337,6 +361,7 @@ export default function ConcertHeaderBtn({
                         setEndTicketDate(date);
                         setOpenEnd(false);
                       }}
+                      locale={ko}
                     />
                   </PopoverContent>
                 </Popover>
@@ -349,7 +374,8 @@ export default function ConcertHeaderBtn({
                   type="time"
                   id="time-end"
                   step="1"
-                  defaultValue="09:30:00"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
                   className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                 />
               </Field>

@@ -5,12 +5,15 @@ import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import {
   getConcertDetail,
   getConcertVenueInfo,
+  getIsLikedConcert,
   getTicketOfficesByConcertId,
 } from "@/lib/api/concerts";
 import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
+import { cookies } from "next/headers";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const cookieStore = await cookies();
 
   const concertDetailData = await getConcertDetail({ concertId: id });
   const concertVenueData = await getConcertVenueInfo({ concertId: id });
@@ -22,6 +25,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   // 로그인 했을 때만 사용자 데이터 가져오기
   let userData = null;
   if (isAuthenticated) userData = (await getMe()).data;
+
+  // 찜한 공연인지 여부 가져오기
+  const isLikedConcert = await getIsLikedConcert(id, cookieStore.toString());
 
   return (
     <>
@@ -37,12 +43,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         concertDetail={concertDetailData}
         concertTicketingData={concertTicketingData}
         userData={userData}
+        isLiked={isLikedConcert?.isLike}
       />
       <ConcertDetail
         concertDetail={concertDetailData}
         concertVenueData={concertVenueData}
         concertTicketingData={concertTicketingData}
         userData={userData}
+        isLiked={isLikedConcert?.isLike}
       />
       <ConcertSimilar />
     </>

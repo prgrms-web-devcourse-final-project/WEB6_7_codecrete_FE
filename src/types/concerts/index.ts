@@ -13,6 +13,7 @@ export type ConcertDetail = {
   posterUrl: string;
   startDate: string; // "YYYY-MM-DD"
   ticketTime: string | null;
+  ticketEndTime: string | null;
   viewCount: number;
 };
 
@@ -48,4 +49,10 @@ export type ConcertVenueInfo = {
 export interface TicketOffice {
   ticketOfficeName: string;
   ticketOfficeUrl: string;
+}
+
+// 찜한 공연인지 여부
+export interface LikeConcert {
+  isLike: boolean;
+  concertId: string;
 }

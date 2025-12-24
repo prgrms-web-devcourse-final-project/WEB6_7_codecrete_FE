@@ -40,6 +40,7 @@ import {
 import { createPlanner } from "@/lib/api/planner";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
+import { postLikeConcert } from "@/lib/api/concerts";
 
 export default function QuickActionsSection({
   concertId,
@@ -47,12 +48,14 @@ export default function QuickActionsSection({
   concertStartDate,
   concertEndDate,
   userData,
+  isLiked,
 }: {
   concertId?: string;
   concertTicketingData?: TicketOffice[] | null;
   concertStartDate?: string;
   concertEndDate?: string;
   userData: User | null;
+  isLiked?: boolean;
 }) {
   // 링크 이동
   const router = useRouter();
@@ -147,6 +150,19 @@ export default function QuickActionsSection({
       console.error("Failed to copy text: ", e);
       toast.error("복사에 실패했습니다. 다시 시도해주세요.");
     }
+  };
+
+  // 알림 설정하기 핸들러 (찜하기)
+  const handleLikeConcert = async () => {
+    if (!concertId) return;
+
+    if (isLiked) {
+      toast.error("이미 알림 설정된 공연입니다.");
+      return;
+    }
+    await postLikeConcert(concertId);
+    toast.success("알림이 설정되었습니다.");
+    router.refresh();
   };
 
   return (
@@ -361,7 +377,7 @@ export default function QuickActionsSection({
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction>설정</AlertDialogAction>
+            <AlertDialogAction onClick={handleLikeConcert}>설정</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
