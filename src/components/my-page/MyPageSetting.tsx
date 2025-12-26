@@ -38,7 +38,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
 
   // 설정 값들
   const [previewImg, setPreviewImg] = useState(""); // 프로필 이미지
-  const [nickName, setNickName] = useState(userData.nickname); // 닉네임
+  const [nickname, setNickname] = useState(userData.nickname); // 닉네임
   const [password, setPassword] = useState(""); // 비밀번호
   const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인
   const [email, setEmail] = useState(userData.email); // 이메일
@@ -97,7 +97,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
     if (!open) {
       // 닫기 검문 조건
       const emailChanged = userData.email !== email;
-      const nickNameChanged = userData.nickname !== nickName;
+      const nickNameChanged = userData.nickname !== nickname;
       const birthDateChanged = userData.birthdate !== date;
       const ProfileImageChanged = userData.profileImageUrl !== previewImg;
       const emailAlertChanged = initialUsersSettings.current?.emailAlert !== emailAlert;
@@ -122,7 +122,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   // 모달을 닫으면 입력한 데이터 날아가도록 함
   const resetFields = () => {
     setPreviewImg("");
-    setNickName(userData.nickname);
+    setNickname(userData.nickname);
     setEmail(userData.email);
     setDate(userData.birthdate ? new Date(userData.birthdate) : undefined);
     if (initialUsersSettings.current) {
@@ -159,8 +159,8 @@ export default function MyPageSetting({ userData }: { userData: User }) {
               <Input
                 id="nickname"
                 placeholder="닉네임을 입력해주세요."
-                value={nickName}
-                onChange={(e) => setNickName(e.target.value)}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
               />
             </Field>
             <Field>
