@@ -6,6 +6,7 @@ import { ConcertData } from "@/components/concert/ConcertType";
 import ListSortClient from "@/components/concert/list/ListSortClient";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { totalConcertCount } from "@/lib/api/concerts";
 
 export default function ConcertListContent({
   initialList,
@@ -17,6 +18,7 @@ export default function ConcertListContent({
   const [concertsList, setConcertsList] = useState(initialList);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
 
   const oTarget = useRef(null);
   const pageRef = useRef(1); // 0 시작 이므로
@@ -83,12 +85,25 @@ export default function ConcertListContent({
     setLoading(false);
   }, [initialList, sortType]);
 
+  useEffect(() => {
+    const fetchTotalCount = async () => {
+      const count = await totalConcertCount();
+      if (count !== null) {
+        setTotalCount(count);
+      }
+    };
+
+    fetchTotalCount();
+  }, []);
+
   return (
     <section className="px-15 py-16">
       <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-9`)}>
         <div className="header flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-text-main text-2xl font-bold">{concertsList.length}</span>
+            <span className="text-text-main text-2xl font-bold">
+              {totalCount ?? concertsList.length}
+            </span>
             <span className="text-text-main text-lg">items</span>
           </div>
           <ListSortClient />
