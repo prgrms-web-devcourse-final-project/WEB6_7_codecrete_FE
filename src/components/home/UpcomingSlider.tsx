@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ConcertWithTicket } from "@/types/home";
 import Image from "next/image";
 
-export default function UpcomingSlider({ concerts }: { concerts: ConcertWithTicket[] }) {
+export default function UpcomingSlider({ concerts }: { concerts: ConcertWithTicket[] | null }) {
   // Swiper 인스턴스 저장 (직접 제어용)
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
@@ -48,7 +48,7 @@ export default function UpcomingSlider({ concerts }: { concerts: ConcertWithTick
             slidesPerView="auto"
             className="w-full overflow-visible!"
           >
-            {concerts.map((concert) => {
+            {concerts?.map((concert) => {
               const startDate = new Date(concert.startDate);
               const endDate = new Date(concert.endDate);
 

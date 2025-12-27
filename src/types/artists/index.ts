@@ -49,4 +49,5 @@ export type ArtistListItem = {
   genreName: string; // 필요 x
   imageUrl: string;
   likeCount: number; // 필요 x
+  isLiked: boolean;
 };

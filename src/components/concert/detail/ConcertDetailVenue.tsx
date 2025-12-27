@@ -20,8 +20,8 @@ export default function ConcertDetailVenue({
     );
   }
 
-  const placeUrl = concertVenue.placeUrl.trim();
-  const placeTelephone = concertVenue.telephone.trim();
+  const placeUrl = concertVenue.placeUrl ? concertVenue.placeUrl.trim() : "";
+  const placeTelephone = concertVenue.telephone ? concertVenue.telephone.trim() : "";
 
   const barrierFreeFacilities = [
     concertVenue.hasBarrierFreeElevator && "엘리베이터",

@@ -50,7 +50,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       />
       <ConcertDetail
         concertDetail={concertDetailData}
-        concertVenueData={concertVenueData}
+        concertVenueData={concertVenueData.data}
         concertTicketingData={concertTicketingData}
         userData={userData}
         isLiked={isLikedConcert?.isLike}
