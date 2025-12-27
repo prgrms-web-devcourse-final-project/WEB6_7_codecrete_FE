@@ -6,6 +6,15 @@ import ClientApi from "@/utils/helpers/clientApi";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 import { cookies } from "next/headers";
 
+// TODO : 임시로 타입 정의 나중에 삭제 필요
+type Artist = {
+  artistId: number;
+  artistName: string;
+  nameKo: string;
+  imageUrl: string;
+  isLiked: boolean;
+};
+
 const PAGE_SIZE = 12;
 
 /**
@@ -67,5 +76,27 @@ export const getLikedConcertCount = async (): Promise<ResponseData<number | null
   } catch (error) {
     console.error("Error fetching liked concert count:", error);
     return createEmptyResponse("찜한 공연 수를 가져오는데 실패했습니다");
+  }
+};
+
+export const getLikedArtistList = async (): Promise<ResponseData<Artist[] | null>> => {
+  try {
+    const cookieStore = await cookies();
+    const res = await ClientApi(`/api/v1/artists/likes`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+        cache: "no-store",
+      },
+    });
+    if (!res.ok) {
+      throw new Error("찜한 아티스트 목록을 불러오는데 실패했습니다.");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching liked artist list:", error);
+    return createEmptyResponse("찜한 아티스트 목록을 가져오는데 실패했습니다");
   }
 };

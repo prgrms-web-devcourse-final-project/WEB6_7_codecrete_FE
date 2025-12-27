@@ -1,7 +1,20 @@
+"use client";
+
 import { SortSelect } from "../common/SortSelect";
 import MyPageLikedArtistListItem from "./MyPageLikedArtistListItem";
 
-export default function MyPageLikedArtistList() {
+// TODO : 임시로 타입 정의 나중에 삭제 필요
+type Artist = {
+  artistId: number;
+  artistName: string;
+  nameKo: string;
+  imageUrl: string;
+  isLiked: boolean;
+};
+
+export default function MyPageLikedArtistList({ initialList }: { initialList: Artist[] | null }) {
+  const artistList = initialList || [];
+
   return (
     <div className="mx-auto max-w-400 space-y-8">
       <div className="flex justify-between">
@@ -13,7 +26,7 @@ export default function MyPageLikedArtistList() {
       </div>
       <div className="grid grid-cols-5 gap-8">
         {/* TODO: 나중에 아티스트 카드로 바꾸기 */}
-        {Array.from({ length: 10 }).map((_, index) => (
+        {artistList.map((artist, index) => (
           <MyPageLikedArtistListItem key={index} />
         ))}
       </div>
