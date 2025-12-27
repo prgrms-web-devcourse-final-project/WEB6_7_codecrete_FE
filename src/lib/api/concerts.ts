@@ -1,15 +1,8 @@
 import { ResponseData } from "@/types/api";
-import { ConcertDetail, LikeConcert, TicketOffice } from "@/types/concerts";
+import { ConcertDetail, ConcertVenueInfo, LikeConcert, TicketOffice } from "@/types/concerts";
 import { Concert, ConcertWithTicket } from "@/types/home";
 import ClientApi from "@/utils/helpers/clientApi";
-
-// 빈 응답 생성 함수
-const createEmptyResponse = (message: string): ResponseData<ConcertWithTicket[]> => ({
-  status: 500,
-  resultCode: "ERROR",
-  msg: message,
-  data: [],
-});
+import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 
 /**
  * 다가오는 공연 목록 가져오기
@@ -24,7 +17,7 @@ export const getUpcomingConcerts = async ({
 }: {
   page?: number;
   size?: number;
-} = {}): Promise<ResponseData<ConcertWithTicket[]>> => {
+} = {}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
   try {
     const res = await ClientApi(`/api/v1/concerts/list/UPCOMING?page=${page}&size=${size}`, {
       method: "GET",
@@ -104,7 +97,11 @@ export const getConcertDetail = async ({
  * @param {string} concertId - 공연 ID
  * @returns {Promise<ConcertVenueInfo | null>} - 공연장 정보 또는 null
  */
-export const getConcertVenueInfo = async ({ concertId }: { concertId: string }) => {
+export const getConcertVenueInfo = async ({
+  concertId,
+}: {
+  concertId: string;
+}): Promise<ResponseData<ConcertVenueInfo | null>> => {
   try {
     const res = await ClientApi(`/api/v1/concerts/placeDetail?concertId=${concertId}`, {
       method: "GET",
@@ -117,7 +114,7 @@ export const getConcertVenueInfo = async ({ concertId }: { concertId: string }) 
     }
 
     const data = await res.json();
-    return data.data;
+    return data;
   } catch (error) {
     console.error("Error fetching concert venue info:", error);
     return createEmptyResponse("공연장 정보를 가져오는데 실패했습니다");
