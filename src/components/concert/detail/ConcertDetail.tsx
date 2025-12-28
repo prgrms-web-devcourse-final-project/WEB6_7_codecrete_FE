@@ -40,7 +40,7 @@ export default async function ConcertDetail({ concertId }: { concertId: string }
             concertImageUrls={concertDetail?.concertImageUrls}
             alt={concertDetail?.name}
           />
-          <ConcertDetailVenue concertVenue={concertVenue} />
+          <ConcertDetailVenue concertVenue={concertVenue.data} />
           <ConcertDetailReview />
         </div>
 
