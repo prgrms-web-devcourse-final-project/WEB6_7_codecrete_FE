@@ -9,7 +9,7 @@ export default function Logo() {
         alt="NCB Ticket"
         width={329}
         height={64}
-        className="h-8 w-auto lg:h-12 xl:h-16"
+        className="h-8 w-auto lg:h-12"
         priority
       />
     </Link>
