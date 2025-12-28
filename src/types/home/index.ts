@@ -34,4 +34,5 @@ export interface SliderHeaderProps {
   description: string;
   onPrev: () => void;
   onNext: () => void;
+  className?: string;
 }

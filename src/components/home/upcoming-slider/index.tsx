@@ -25,6 +25,7 @@ export default function UpcomingSlider({ concerts }: UpcomingSliderProps) {
           description="티켓팅 광탈하고 울지 말고 미리미리 예매하자구요"
           onPrev={() => swiperInstance?.slidePrev()}
           onNext={() => swiperInstance?.slideNext()}
+          className="mx-auto w-full max-w-400"
         />
 
         {/* 슬라이더 */}

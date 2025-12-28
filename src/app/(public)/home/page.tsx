@@ -1,4 +1,4 @@
-import FeaturedSlider from "@/components/home/FeaturedSlider";
+import FeaturedSlider from "@/components/home/featured-slider";
 import HeroSlider from "@/components/home/hero-slider";
 import PlannerBanner from "@/components/home/PlannerBanner";
 import UpcomingSlider from "@/components/home/upcoming-slider";
