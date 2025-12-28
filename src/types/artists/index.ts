@@ -57,3 +57,12 @@ export type ArtistListData = {
 export type ArtistListResponse = ApiResponse<ArtistListData>;
 export type LikeArtistResponse = ApiResponse<null>;
 export type ArtistDetailResponse = ApiResponse<ArtistDetail>;
+
+export type ArtistListSortSelectProps = {
+  onValueChange?: (value: string) => void;
+  sortList?: {
+    value: string;
+    name: string;
+  }[];
+  defaultValue: string;
+};
