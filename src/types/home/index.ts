@@ -28,3 +28,10 @@ export interface SlideContentProps {
   slide: (typeof SLIDES)[number];
   priority?: boolean;
 }
+
+export interface SliderHeaderProps {
+  title: string;
+  description: string;
+  onPrev: () => void;
+  onNext: () => void;
+}

@@ -22,7 +22,7 @@ export default function HeroSlider() {
   }, []);
 
   return (
-    <div className="relative h-[400px] w-full overflow-hidden bg-black text-white md:h-[600px] lg:h-130">
+    <div className="relative h-100 w-full overflow-hidden bg-black text-white md:h-150 lg:h-130">
       {/* 메인 슬라이더 */}
       <Swiper
         direction={isMobile ? "horizontal" : "vertical"}
