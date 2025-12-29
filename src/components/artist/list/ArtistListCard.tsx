@@ -10,12 +10,7 @@ import { ArtistListContent } from "@/types/artists";
 import { toast } from "sonner";
 import { toggleArtistLike } from "@/lib/artists/artists.server";
 
-// TODO:
-//  - 아티스트 좋아요(팔로우) 상태를 서버에서 함께 내려받아 초기 상태로 관리해야 함
-//  - 좋아요 상태에 따라 하트 아이콘을 빨간색(fill-red-500)으로 표시
-//  - 이미 좋아요된 상태에서 버튼 클릭 시 좋아요 취소(unlike) API 호출하도록 분기 처리
-//  - 좋아요/취소 시 optimistic update 적용 검토
-//  - 실제 서버에서 받은 초기 like 상태를 props나 state로 관리하기
+// TODO: 좋아요/취소 시 optimistic update 적용 검토
 
 export default function ArtistListCard({ artist }: { artist: ArtistListContent }) {
   const [isLoading, setIsLoading] = useState(false);
