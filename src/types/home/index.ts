@@ -1,3 +1,6 @@
+import { SLIDES } from "@/components/home/hero-slider/constants";
+import type { Swiper as SwiperType } from "swiper";
+
 export type Concert = {
   id: string;
   name: string;
@@ -17,9 +20,19 @@ export type ConcertWithTicket = Concert & {
   ticketOfficeUrl?: string;
 };
 
-export type ResponseData<T> = {
-  status: number;
-  resultCode: string;
-  msg: string;
-  data: T;
-};
+export interface ThumbsSliderProps {
+  onSwiper: (swiper: SwiperType) => void;
+}
+
+export interface SlideContentProps {
+  slide: (typeof SLIDES)[number];
+  priority?: boolean;
+}
+
+export interface SliderHeaderProps {
+  title: string;
+  description: string;
+  onPrev: () => void;
+  onNext: () => void;
+  className?: string;
+}

@@ -1,8 +1,9 @@
-// 사용자 정보 조회
+"use server";
 
 import { cookies } from "next/headers";
 import { GetMeResponse } from "@/types/auth";
 
+// 사용자 정보 조회
 export async function getMe(): Promise<GetMeResponse> {
   // TODO: 보안 강화를 위한 쿠키 필터링 로직 개선
   // - 현재 모든 쿠키를 Cookie 헤더로 전달 중

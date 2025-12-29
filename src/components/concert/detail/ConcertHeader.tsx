@@ -1,25 +1,39 @@
 import Image from "next/image";
 import ConcertHeaderArtist from "@/components/concert/detail/ConcertHeaderArtist";
 import ConcertHeaderBtn from "@/components/concert/detail/ConcertHeaderBtn";
-import { TicketOffice, type ConcertDetail } from "@/types/concerts";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { HeartIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import ConcertHeaderInfo from "./ConcertHeaderInfo";
 import { formatDateRange, formatPrice } from "@/utils/helpers/formatters";
-import { User } from "@/types/user";
+import ConcertLikeButton from "./ConcertLikeButton";
+import {
+  getConcertDetail,
+  getTicketOfficesByConcertId,
+  getIsLikedConcert,
+} from "@/lib/api/concerts";
+import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
+import { cookies } from "next/headers";
 
-export default function ConcertHeader({
-  concertDetail,
-  concertTicketingData,
-  userData,
-}: {
-  concertDetail: ConcertDetail | null;
-  concertTicketingData: TicketOffice[] | null;
-  userData: User | null;
-}) {
+export default async function ConcertHeader({ concertId }: { concertId: string }) {
+  const cookieStore = await cookies();
+
+  const [concertDetail, concertTicketing, isAuthenticated] = await Promise.all([
+    getConcertDetail({ concertId }),
+    getTicketOfficesByConcertId({ concertId }),
+    getAuthStatus(),
+  ]);
+
+  let userData = null;
+  let isLikedConcert = null;
+
+  if (isAuthenticated) {
+    [userData, isLikedConcert] = await Promise.all([
+      getMe().then((res) => res.data),
+      getIsLikedConcert(concertId, cookieStore.toString()),
+    ]);
+  }
+
   if (!concertDetail) {
     return null;
   }
@@ -55,9 +69,10 @@ export default function ConcertHeader({
                 <p className="text-text-sub text-xl">{concertDetail.description}</p>
               </div>
             </div>
-            <Button variant="outline" size="icon" className="border-border hover:bg-border">
-              <HeartIcon />
-            </Button>
+            <ConcertLikeButton
+              concertId={concertDetail.concertId}
+              isLiked={isLikedConcert?.isLike}
+            />
           </div>
           <div className="border-border grid grid-cols-2 gap-x-4 gap-y-6 border-y py-8">
             <ConcertHeaderInfo
@@ -75,13 +90,17 @@ export default function ConcertHeader({
             <ConcertHeaderInfo
               type="ticketing"
               label="예매 일정"
-              title={concertDetail.ticketTime || "미정"}
+              title={
+                concertDetail?.ticketTime && concertDetail.ticketEndTime
+                  ? formatDateRange(concertDetail?.ticketTime, concertDetail?.ticketEndTime)
+                  : "정보없음"
+              }
             />
           </div>
           <ConcertHeaderArtist />
           <ConcertHeaderBtn
             concertDetail={concertDetail}
-            concertTicketingData={concertTicketingData}
+            concertTicketingData={concertTicketing}
             userData={userData}
           />
         </div>
