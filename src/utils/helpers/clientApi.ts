@@ -17,12 +17,20 @@ type NextFetchOptions = RequestInit & {
  * @returns {Promise<Response>} fetch 응답
  */
 export default async function ClientApi(path: string, init?: NextFetchOptions) {
+  // FormData가 아닐 때만 기본값으로 JSON 설정
+  const isFormData = init?.body instanceof FormData;
+
+  const headers: Record<string, string> = {
+    ...((init?.headers as Record<string, string>) || {}),
+  };
+
+  if (!isFormData && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers || {}),
-    },
+    headers,
     credentials: "include",
   });
 

@@ -152,7 +152,6 @@ export default function MyPageSetting({ userData }: { userData: User }) {
       toast.error("닉네임을 입력해주세요.");
       return;
     }
-
     if (!password.trim()) {
       toast.error("비밀번호를 입력해주세요.");
       return;
@@ -185,6 +184,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
         setShowEditDialog(false);
 
         router.refresh();
+        setPreviewImg("");
       } else {
         toast.error("일부 설정 저장에 실패했습니다.");
       }

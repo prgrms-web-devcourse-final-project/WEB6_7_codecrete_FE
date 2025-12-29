@@ -48,7 +48,7 @@ export const changeProfileImage = async (data: { profileFile: File | null }) => 
     if (!data.profileFile) return { msg: "no image to upload" };
 
     const formData = new FormData();
-    formData.append("profileImage", data.profileFile);
+    formData.append("file", data.profileFile);
 
     const res = await ClientApi(`/api/v1/users/profile-image`, {
       method: "PATCH",
