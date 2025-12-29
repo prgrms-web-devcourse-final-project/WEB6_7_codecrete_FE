@@ -7,3 +7,10 @@ export type ChatMessageProps = {
 };
 
 export type TicketVendor = "nol" | "ticketlink" | "melon";
+
+export type ChatResponse = {
+  status: number;
+  resultCode: string;
+  msg: string;
+  data: string;
+};

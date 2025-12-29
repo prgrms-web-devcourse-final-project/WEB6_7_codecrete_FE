@@ -1,22 +1,23 @@
 import ClientApi from "@/utils/helpers/clientApi";
+import { ChatResponse } from "@/types/chat";
 
 // 채팅방 입장 함수
 export async function joinChatRoom(concertId: number) {
   try {
     const res = await ClientApi(`/api/v1/chat-room/concert/${concertId}/join`, { method: "POST" });
 
+    let json: ChatResponse | null = null;
+
+    try {
+      json = await res.json();
+    } catch {}
+
     if (!res.ok) {
-      let message = "채팅방 입장에 실패했습니다.";
-
-      try {
-        const json = await res.json();
-        if (json?.msg) {
-          message = json.msg;
-        }
-      } catch {}
-
+      const message = json?.msg ?? "채팅방 입장에 실패했습니다.";
       throw new Error(message);
     }
+
+    return json?.msg ?? "채팅방에 입장했습니다.";
   } catch (e) {
     // 네트워크 에러 (Failed to fetch)
     if (e instanceof TypeError) {

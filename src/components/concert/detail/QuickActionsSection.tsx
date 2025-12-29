@@ -2,15 +2,15 @@
 
 import { useRef, useState } from "react";
 import {
-  ExternalLink,
-  TicketIcon,
-  CalendarPlus2Icon,
   ArrowRightIcon,
-  Share2Icon,
+  BellIcon,
+  CalendarPlus2Icon,
   CheckIcon,
   CopyIcon,
-  BellIcon,
+  ExternalLink,
   MessageSquareIcon,
+  Share2Icon,
+  TicketIcon,
 } from "lucide-react";
 import {
   Dialog,
@@ -29,18 +29,19 @@ import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogFooter,
-  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { createPlanner } from "@/lib/api/planner";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 import { postLikeConcert } from "@/lib/api/concerts";
+import { joinChatRoom } from "@/lib/chat/chat.client";
 
 export default function QuickActionsSection({
   concertId,
@@ -163,6 +164,25 @@ export default function QuickActionsSection({
     await postLikeConcert(concertId);
     toast.success("알림이 설정되었습니다.");
     router.refresh();
+  };
+
+  // 채팅방 입장 핸들러
+  const handleJoinChat = async (concertId?: string) => {
+    const id = Number(concertId);
+
+    if (!concertId || Number.isNaN(id)) {
+      toast.error("잘못된 공연 정보입니다.");
+      return;
+    }
+
+    try {
+      await joinChatRoom(id);
+      toast.success("채팅방에 입장했습니다.");
+
+      router.push(`/concerts/${id}/chat`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "채팅방 입장 실패");
+    }
   };
 
   return (
@@ -399,7 +419,7 @@ export default function QuickActionsSection({
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction>참여</AlertDialogAction>
+            <AlertDialogAction onClick={() => handleJoinChat(concertId)}>참여</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
