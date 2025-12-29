@@ -22,6 +22,8 @@ export default function ArtistListClient({
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialArtists.length >= 20);
 
+  const isFetchingRef = useRef<boolean>(false);
+
   const observeRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -37,27 +39,34 @@ export default function ArtistListClient({
   };
 
   const fetchNextPage = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (isFetchingRef.current || !hasMore) return;
 
+    isFetchingRef.current = true;
     setIsLoading(true);
 
     try {
       const nextPage = page + 1;
       const nextArtists = await getArtists(nextPage, 20, sort);
 
-      setArtists((prev) => [...prev, ...nextArtists]);
+      setArtists((prev) => {
+        const existingIds = new Set(prev.map((artist) => artist.id));
+        const uniqueNextData = nextArtists.filter((artist) => !existingIds.has(artist.id));
+        return [...prev, ...uniqueNextData];
+      });
       setPage(nextPage);
 
       if (nextArtists.length < 20) {
         setHasMore(false);
+        toast.info("모든 아티스트를 불러왔습니다.");
       }
     } catch (e) {
       console.error("무한 스크롤 데이터 페칭 에러:", e);
       toast.error("데이터를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
-  }, [page, sort, isLoading, hasMore]);
+  }, [page, sort, hasMore]);
 
   useEffect(() => {
     const currentTarget = observeRef.current;
@@ -65,11 +74,11 @@ export default function ArtistListClient({
     const observer = new IntersectionObserver(
       (entries) => {
         // entries[0]이 화면에 보이고(isIntersecting), 데이터가 더 있다면(hasMore) 실행
-        if (entries[0].isIntersecting && hasMore && !isLoading) {
+        if (entries[0].isIntersecting && hasMore && !isFetchingRef.current) {
           fetchNextPage();
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0, rootMargin: "0px 0px 300px 0px" }
     );
 
     if (currentTarget) {
@@ -80,7 +89,7 @@ export default function ArtistListClient({
       if (currentTarget) observer.unobserve(currentTarget);
       observer.disconnect();
     };
-  }, [fetchNextPage, hasMore, isLoading]);
+  }, [fetchNextPage, hasMore]);
 
   return (
     <>
@@ -89,7 +98,9 @@ export default function ArtistListClient({
 
       <div ref={observeRef} className="flex min-h-[100px] justify-center py-10">
         {isLoading && <Loader2 className="text-primary h-8 w-8 animate-spin" />}
-        {!hasMore && artists.length > 0 && toast.info("모든 아티스트를 불러왔습니다.")}
+        {!hasMore && artists.length > 0 && (
+          <p className="text-text-main text-sm">모든 아티스트를 불러왔습니다.</p>
+        )}
       </div>
     </>
   );
