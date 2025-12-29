@@ -3,9 +3,9 @@
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
-import { likeArtist } from "@/lib/artists/artists";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
+import { toggleArtistLike } from "@/lib/artists/artists.server";
 
 type FollowButtonProps = {
   artistId: number;
@@ -32,7 +32,7 @@ export default function FollowButton({
       // TODO: isLiked 상태에 따라 API 호출 분기 (likeArtist / unlikeArtist)
       // TODO: API 실패 시 optimistic UI 롤백 처리 (isLiked / 부모 likeCount 동기화)
       // TODO: 연속 클릭 방지 강화 (AbortController 또는 요청 중복 취소)
-      await likeArtist(artistId);
+      await toggleArtistLike(artistId, isLiked);
 
       const nextIsLiked = !isLiked;
       setIsLiked(nextIsLiked);

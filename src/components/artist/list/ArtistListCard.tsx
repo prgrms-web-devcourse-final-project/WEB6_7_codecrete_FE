@@ -5,21 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Heart, Loader2 } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
-import React, { useState } from "react";
-import { ArtistListItem } from "@/types/artists";
-import { likeArtist } from "@/lib/artists/artists";
+import React, { memo, useState } from "react";
+import { ArtistListContent } from "@/types/artists";
 import { toast } from "sonner";
+import { toggleArtistLike } from "@/lib/artists/artists.server";
 
-// TODO:
-//  - 아티스트 좋아요(팔로우) 상태를 서버에서 함께 내려받아 초기 상태로 관리해야 함
-//  - 좋아요 상태에 따라 하트 아이콘을 빨간색(fill-red-500)으로 표시
-//  - 이미 좋아요된 상태에서 버튼 클릭 시 좋아요 취소(unlike) API 호출하도록 분기 처리
-//  - 좋아요/취소 시 optimistic update 적용 검토
-//  - 실제 서버에서 받은 초기 like 상태를 props나 state로 관리하기
+// TODO: 좋아요/취소 시 optimistic update 적용 검토
 
-export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
+function ArtistListCard({ artist }: { artist: ArtistListContent }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(artist.isLiked);
+  const [imgSrc, setImgSrc] = useState(artist.imageUrl || "/images/artist-placeholder.png");
 
   const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -29,8 +25,7 @@ export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
 
     setIsLoading(true);
     try {
-      // TODO: isLiked 상태에 따라 API 호출 분기 (likeArtist / unlikeArtist)
-      await likeArtist(artist.id);
+      await toggleArtistLike(artist.id, isLiked);
 
       const nextIsLiked = !isLiked;
       setIsLiked(nextIsLiked);
@@ -50,11 +45,12 @@ export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
     >
       <div className="border-border/60 relative aspect-square overflow-hidden rounded-lg border">
         <Image
-          src={artist.imageUrl || "/images/artist-placeholder.png"}
+          src={imgSrc}
           alt={artist.artistName}
           fill
           sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw"
           className="object-cover"
+          onError={() => setImgSrc("/images/artist-placeholder.png")}
         />
         <Button
           onClick={handleLikeClick}
@@ -83,3 +79,5 @@ export default function ArtistListCard({ artist }: { artist: ArtistListItem }) {
     </Link>
   );
 }
+
+export default memo(ArtistListCard);

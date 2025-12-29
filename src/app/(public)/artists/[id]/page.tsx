@@ -3,7 +3,7 @@ import ArtistDetailOverview from "@/components/artist/detail/ArtistDetailOvervie
 import ArtistDetailUpcoming from "@/components/artist/detail/ArtistDetailUpcoming";
 import ArtistDetailPast from "@/components/artist/detail/ArtistDetailPast";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
-import { getArtistDetail } from "@/lib/artists/artists";
+import { getArtistDetail } from "@/lib/artists/artists.server";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
