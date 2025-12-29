@@ -3,6 +3,7 @@ import { ConcertDetail, ConcertVenueInfo, LikeConcert, TicketOffice } from "@/ty
 import { Concert, ConcertWithTicket } from "@/types/home";
 import ClientApi from "@/utils/helpers/clientApi";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
+import ServerApi from "@/utils/helpers/serverApi";
 
 /**
  * 다가오는 공연 목록 가져오기
@@ -19,9 +20,8 @@ export const getUpcomingConcerts = async ({
   size?: number;
 } = {}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/list/UPCOMING?page=${page}&size=${size}`, {
+    const res = await ServerApi(`/api/v1/concerts/list/UPCOMING?page=${page}&size=${size}`, {
       method: "GET",
-      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -72,9 +72,8 @@ export const getConcertDetail = async ({
   concertId: string;
 }): Promise<ConcertDetail | null> => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/concertDetail?concertId=${concertId}`, {
+    const res = await ServerApi(`/api/v1/concerts/concertDetail?concertId=${concertId}`, {
       method: "GET",
-      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -103,9 +102,8 @@ export const getConcertVenueInfo = async ({
   concertId: string;
 }): Promise<ResponseData<ConcertVenueInfo | null>> => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/placeDetail?concertId=${concertId}`, {
+    const res = await ServerApi(`/api/v1/concerts/placeDetail?concertId=${concertId}`, {
       method: "GET",
-      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -133,9 +131,8 @@ export const getTicketOfficesByConcertId = async ({
   concertId: string;
 }): Promise<TicketOffice[] | null> => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/ticketOffices?concertId=${concertId}`, {
+    const res = await ServerApi(`/api/v1/concerts/ticketOffices?concertId=${concertId}`, {
       method: "GET",
-      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -177,17 +174,10 @@ export const deleteLikeConcert = async (concertId: string): Promise<boolean> => 
 };
 
 // 찜한 콘서트인지 확인
-export const getIsLikedConcert = async (
-  concertId: string,
-  cookie: string
-): Promise<LikeConcert | null> => {
+export const getIsLikedConcert = async (concertId: string): Promise<LikeConcert | null> => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/isLike/${concertId}`, {
+    const res = await ServerApi(`/api/v1/concerts/isLike/${concertId}`, {
       method: "GET",
-      headers: {
-        Cookie: cookie,
-      },
-      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -206,9 +196,8 @@ export const getIsLikedConcert = async (
 // 공연 리스트 - 전체 공연 수 불러오기
 export const totalConcertCount = async () => {
   try {
-    const res = await ClientApi(`/api/v1/concerts/totalConcertCount`, {
+    const res = await ServerApi(`/api/v1/concerts/totalConcertCount`, {
       method: "GET",
-      cache: "no-store",
     });
     if (!res.ok) {
       console.error("API Error:", res.status, res.statusText);

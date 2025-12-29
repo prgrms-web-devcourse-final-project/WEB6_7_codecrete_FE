@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { deleteLikeConcert, postLikeConcert } from "@/lib/api/concerts";
+import { getAuthStatus } from "@/lib/auth/auth.server";
 import { HeartIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -20,6 +21,11 @@ export default function ConcertLikeButton({
   // TODO : 낙관적 업데이트 적용
   const handleLikeConcert = async () => {
     if (!concertId) return;
+    if ((await getAuthStatus()) === false) {
+      toast.error("로그인 후 이용해주세요.");
+      return;
+    }
+
     if (isLiked) {
       const ok = await deleteLikeConcert(concertId);
       if (!ok) {

@@ -13,11 +13,8 @@ import {
   getIsLikedConcert,
 } from "@/lib/api/concerts";
 import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
-import { cookies } from "next/headers";
 
 export default async function ConcertHeader({ concertId }: { concertId: string }) {
-  const cookieStore = await cookies();
-
   const [concertDetail, concertTicketing, isAuthenticated] = await Promise.all([
     getConcertDetail({ concertId }),
     getTicketOfficesByConcertId({ concertId }),
@@ -30,7 +27,7 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
   if (isAuthenticated) {
     [userData, isLikedConcert] = await Promise.all([
       getMe().then((res) => res.data),
-      getIsLikedConcert(concertId, cookieStore.toString()),
+      getIsLikedConcert(concertId),
     ]);
   }
 

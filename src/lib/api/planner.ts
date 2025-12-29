@@ -1,5 +1,5 @@
 import { ResponseData } from "@/types/api";
-import ClientApi from "@/utils/helpers/clientApi";
+import ServerApi from "@/utils/helpers/serverApi";
 
 interface Planner {
   id: number;
@@ -22,11 +22,8 @@ export const createPlanner = async ({
   planDate: string;
 }): Promise<ResponseData<Planner>> => {
   try {
-    const res = await ClientApi("/api/v1/plans", {
+    const res = await ServerApi("/api/v1/plans", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ concertId, title, planDate }),
     });
 
