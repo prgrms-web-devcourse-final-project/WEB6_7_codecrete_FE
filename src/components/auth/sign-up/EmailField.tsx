@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { SignUpFormValues } from "@/lib/zod/auth";
-import { sendEmailCode, verifyEmailCode } from "@/lib/auth/auth.client";
+import { sendEmailCode, verifyEmailCode } from "@/lib/api/auth/auth.client";
 import { toast } from "sonner";
 import FieldError from "@/components/auth/FieldError";
 

@@ -10,7 +10,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { SignUpFormValues, signUpSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { signUp } from "@/lib/auth/auth.client";
+import { signUp } from "@/lib/api/auth/auth.client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 

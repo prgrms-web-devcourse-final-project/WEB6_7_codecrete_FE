@@ -9,7 +9,7 @@ import {
   getTicketOfficesByConcertId,
   getIsLikedConcert,
 } from "@/lib/api/concerts";
-import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
+import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
 import { cookies } from "next/headers";
 
 export default async function ConcertDetail({ concertId }: { concertId: string }) {

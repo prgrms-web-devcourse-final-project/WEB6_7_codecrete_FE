@@ -1,5 +1,5 @@
 import { LogInIcon, User2Icon, UserPlus2Icon } from "lucide-react";
-import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
+import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
 import LogoutButton from "@/components/home/LogoutButton";
 import Logo from "./Logo";
 import SearchButton from "./SearchButton";

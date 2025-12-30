@@ -6,7 +6,7 @@ import { useFormContext } from "react-hook-form";
 import { SignUpFormValues } from "@/lib/zod/auth";
 import FieldError from "@/components/auth/FieldError";
 import { useState } from "react";
-import { checkNickname } from "@/lib/auth/auth.client";
+import { checkNickname } from "@/lib/api/auth/auth.client";
 import { NicknameFieldProps } from "@/types/auth";
 import { toast } from "sonner";
 

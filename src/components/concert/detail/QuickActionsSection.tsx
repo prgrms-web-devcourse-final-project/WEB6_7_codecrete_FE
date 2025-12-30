@@ -41,7 +41,7 @@ import { createPlanner } from "@/lib/api/planner";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 import { postLikeConcert } from "@/lib/api/concerts";
-import { joinChatRoom } from "@/lib/chat/chat.client";
+import { joinChatRoom } from "@/lib/api/chat/chat.client";
 
 export default function QuickActionsSection({
   concertId,
