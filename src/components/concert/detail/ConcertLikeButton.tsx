@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { deleteLikeConcert, postLikeConcert } from "@/lib/api/concert.client";
-import { getAuthStatus } from "@/lib/auth/auth.server";
 import { HeartIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,9 +9,11 @@ import { twMerge } from "tailwind-merge";
 
 export default function ConcertLikeButton({
   concertId,
+  isAuthenticated,
   isLiked,
 }: {
   concertId: string;
+  isAuthenticated: boolean;
   isLiked?: boolean;
 }) {
   const [liked, setLiked] = useState<boolean>(isLiked ?? false);
@@ -20,7 +21,7 @@ export default function ConcertLikeButton({
   // 알림 설정하기 핸들러 (찜하기)
   const handleLikeConcert = async () => {
     if (!concertId) return;
-    if ((await getAuthStatus()) === false) {
+    if (!isAuthenticated) {
       toast.error("로그인 후 이용해주세요.");
       return;
     }

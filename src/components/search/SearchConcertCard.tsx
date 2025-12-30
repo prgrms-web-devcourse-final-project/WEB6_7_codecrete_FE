@@ -9,7 +9,13 @@ import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/forma
 import ConcertLikeButton from "../concert/detail/ConcertLikeButton";
 import { AspectRatio } from "../ui/aspect-ratio";
 
-export default function SearchConcertCard({ concert }: { concert: ConcertDataWithLiked }) {
+export default function SearchConcertCard({
+  concert,
+  isAuthenticated,
+}: {
+  concert: ConcertDataWithLiked;
+  isAuthenticated: boolean;
+}) {
   const concertId = concert.id.toString();
 
   return (
@@ -44,7 +50,7 @@ export default function SearchConcertCard({ concert }: { concert: ConcertDataWit
               )}
               <li>
                 <MapPinIcon />
-                KSPO DOME(올림픽체조경기장)
+                {concert.placeName}
               </li>
               {concert.minPrice && concert.maxPrice && (
                 <li>
@@ -58,7 +64,11 @@ export default function SearchConcertCard({ concert }: { concert: ConcertDataWit
             <Button>자세히보기</Button>
           </Link>
         </div>
-        <ConcertLikeButton concertId={concertId} isLiked={concert.isLiked} />
+        <ConcertLikeButton
+          concertId={concertId}
+          isAuthenticated={isAuthenticated}
+          isLiked={concert.isLiked}
+        />
       </CardContent>
     </Card>
   );

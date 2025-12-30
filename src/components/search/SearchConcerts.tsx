@@ -95,7 +95,11 @@ export default function SearchConcerts({
       <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
         <div className="flex flex-col gap-6">
           {searchedConcerts.map((concert) => (
-            <SearchConcertCard key={concert.id} concert={concert} />
+            <SearchConcertCard
+              key={concert.id}
+              concert={concert}
+              isAuthenticated={isAuthenticated}
+            />
           ))}
         </div>
       </div>

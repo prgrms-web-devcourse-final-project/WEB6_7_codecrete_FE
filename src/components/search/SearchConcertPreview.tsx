@@ -43,7 +43,7 @@ export default async function SearchConcertPreview({ keyword }: { keyword: strin
       </div>
       <div className="flex flex-col gap-6">
         {concerts.map((concert) => (
-          <SearchConcertCard key={concert.id} concert={concert} />
+          <SearchConcertCard key={concert.id} concert={concert} isAuthenticated={isAuthenticated} />
         ))}
       </div>
     </div>
