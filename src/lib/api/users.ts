@@ -1,4 +1,5 @@
 import ClientApi from "@/utils/helpers/clientApi";
+// TODO : 해당 파일 위치 변경
 
 // 이메일 알림 및 다크모드 설정 정보 가져오기
 export const getUsersSettings = async () => {
@@ -89,6 +90,7 @@ export const changeNickname = async (data: { nickname: string }) => {
   }
 };
 
+// 생일 수정
 export const changeBirth = async (data: { birth?: string }) => {
   try {
     const res = await ClientApi(`/api/v1/users/birth`, {
@@ -104,6 +106,26 @@ export const changeBirth = async (data: { birth?: string }) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching users birth date change:", error);
+    return null;
+  }
+};
+
+// 비밀번호 변경
+export const changePassword = async (data: { currentPassword: string; newPassword: string }) => {
+  try {
+    const res = await ClientApi(`/api/v1/users/password`, {
+      method: "PATCH",
+      cache: "no-store",
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return null;
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching users password change:", error);
     return null;
   }
 };

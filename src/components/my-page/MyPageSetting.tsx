@@ -23,6 +23,7 @@ import { User } from "@/types/user";
 import {
   changeBirth,
   changeNickname,
+  changePassword,
   changeProfileImage,
   changeUsersSettings,
   getUsersSettings,
@@ -37,8 +38,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function MyPageSetting({ userData }: { userData: User }) {
-  // TODO : 주석 다 지우기
-  // TODO : 기본 핸들러 다 채우고 이슈 다시 체크
+  // TODO : 계정 복구 기능 추가
   const router = useRouter();
   const { setTheme } = useTheme();
 
@@ -46,12 +46,13 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   const [open, setOpen] = useState(false);
 
   // 설정 값들
-  const [previewImg, setPreviewImg] = useState(""); // 프로필 이미지
-  const [profileFile, setProfileFile] = useState<File | null>(null); // 프로필 이미지
-  const [nickname, setNickname] = useState(userData.nickname); // 닉네임
-  const [password, setPassword] = useState(""); // 비밀번호
-  const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인
-  const [email, setEmail] = useState(userData.email); // 이메일
+  const [previewImg, setPreviewImg] = useState(""); // 프로필 이미지 프리뷰
+  const [profileFile, setProfileFile] = useState<File | null>(null); // 프로필 이미지 파일
+  const [nickname, setNickname] = useState(userData.nickname);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [password, setPassword] = useState(""); // 새 비밀번호
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [email, setEmail] = useState(userData.email);
   // TODO : 이메일 변경 및 확인 기능 추가
   // const [emailConfirm, setEmailConfirm] = useState(""); // 이메일 확인
   const [date, setDate] = useState<Date | null>(
@@ -62,14 +63,16 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   const initialUsersSettings = useRef<{ emailAlert: boolean; darkMode: boolean } | null>(null);
   // 값 비교를 위한 초기값 저장
 
-  const [isVisible, setIsVisible] = useState(false); // 비밀번호 가리기 관련
-  const [isVisibleConfirm, setIsVisibleConfirm] = useState(false); // 비밀번호 가리기 관련
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // 모달 닫기 확인 모달
-
   const handleEditDialog = () => setShowEditDialog((prevState) => !prevState);
 
-  const handlePWVisible = () => setIsVisible((prevState) => !prevState); // 비밀번호 가리기 관련
-  const handlePWCVisible = () => setIsVisibleConfirm((prevState) => !prevState); // 비밀번호 가리기 관련
+  // 비밀번호 가리기
+  const [isVisibleCurrent, setIsVisibleCurrent] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isVisibleConfirm, setIsVisibleConfirm] = useState(false);
+  const handleCPWVisible = () => setIsVisibleCurrent((prevState) => !prevState);
+  const handlePWVisible = () => setIsVisible((prevState) => !prevState);
+  const handlePWCVisible = () => setIsVisibleConfirm((prevState) => !prevState);
 
   // 이메일알림 및 다크모드 설정 상태 가져오기
   useEffect(() => {
@@ -117,13 +120,19 @@ export default function MyPageSetting({ userData }: { userData: User }) {
     const ProfileImageChanged = previewImg !== "" && userData.profileImageUrl !== previewImg;
     const emailAlertChanged = initialUsersSettings.current?.emailAlert !== emailAlert;
     const darkModeChanged = initialUsersSettings.current?.darkMode !== darkMode;
+    const currentPasswordChanged = "" !== currentPassword;
+    const passwordChanged = "" !== password;
+    const passwordConfirmChanged = "" !== passwordConfirm;
     const isChanged =
       emailChanged ||
       nickNameChanged ||
       birthDateChanged ||
       ProfileImageChanged ||
       emailAlertChanged ||
-      darkModeChanged;
+      darkModeChanged ||
+      currentPasswordChanged ||
+      passwordChanged ||
+      passwordConfirmChanged;
 
     if (!open) {
       if (isChanged) {
@@ -149,26 +158,26 @@ export default function MyPageSetting({ userData }: { userData: User }) {
 
       setTheme(originalDark ? "dark" : "light");
     }
+    setCurrentPassword("");
     setPassword("");
     setPasswordConfirm("");
   };
 
+  // 비밀번호 유효성 검사 (1)
+  // 비밀번호 조합 조건
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+  const isPasswordValid = passwordRegex.test(password);
+  const isCurrentPasswordValid = passwordRegex.test(currentPassword);
+  // 비밀번호 === 비밀번호 확인
+  const isPasswordMatch = password === passwordConfirm;
+
   // 수정 사항 제출
+  // TODO : 수정 사항이 있는 경우에만 제출이 가능하도록 함
   const handleSubmit = async () => {
     if (!nickname.trim()) {
       toast.error("닉네임을 입력해주세요.");
       return;
     }
-    /*
-    if (!password.trim()) {
-      toast.error("비밀번호를 입력해주세요.");
-      return;
-    }
-    if (!passwordConfirm.trim()) {
-      toast.error("비밀번호 확인이 필요합니다.");
-      return;
-    }
-*/
     if (!email.trim()) {
       toast.error("이메일을 입력해주세요.");
       return;
@@ -177,7 +186,33 @@ export default function MyPageSetting({ userData }: { userData: User }) {
     const birth = date
       ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
       : undefined;
-    // TODO : 수정 사항이 있는 경우에만 제출이 가능하도록 함
+
+    // 비밀번호 유효성 검사 (2)
+    const isCurrentPasswordInputted = currentPassword.length > 0;
+    const isPasswordInputted = password.length > 0;
+    const isConfirmInputted = passwordConfirm.length > 0;
+
+    if (isPasswordInputted || isConfirmInputted) {
+      if (!isCurrentPasswordInputted) {
+        toast.error("비밀번호를 변경하려면 현재 비밀번호를 입력해야 합니다.");
+        return;
+      }
+
+      if (!isPasswordInputted || !isConfirmInputted) {
+        toast.error("비밀번호 칸을 모두 입력해주세요.");
+        return;
+      }
+
+      if (!isPasswordValid) {
+        toast.error("비밀번호가 형식에 맞지 않습니다.");
+        return;
+      }
+
+      if (!isPasswordMatch) {
+        toast.error("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+    }
 
     try {
       const results = await Promise.all([
@@ -187,9 +222,17 @@ export default function MyPageSetting({ userData }: { userData: User }) {
           emailNotifications: emailAlert,
           darkMode: darkMode,
         }),
-        // TODO : 백엔드 코드 수정 후 적용 확인 필요
         changeBirth({ birth: birth }),
+        isPasswordInputted
+          ? changePassword({ currentPassword: currentPassword, newPassword: password })
+          : Promise.resolve("no-change"),
       ]);
+
+      const passwordResult = results[4];
+      if (isPasswordInputted && passwordResult === null) {
+        toast.error("현재 비밀번호가 일치하지 않습니다.");
+        return;
+      }
 
       if (results.every((res) => res !== null)) {
         toast.success("프로필 설정이 성공적으로 저장되었습니다.");
@@ -219,7 +262,6 @@ export default function MyPageSetting({ userData }: { userData: User }) {
       >
         <SettingsIcon className="text-background size-8 fill-white stroke-zinc-900" />
       </Button>
-      {/* open -> true면 나타나, onOpenChange -> 닫기 버튼 누르기 등의 상태 변화가 생겼을 때 false로 바꿔 */}
       <Dialog open={showEditDialog} onOpenChange={handleClose} aria-description="설정">
         <DialogContent>
           <DialogHeader>
@@ -239,14 +281,45 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                 onChange={(e) => setNickname(e.target.value)}
               />
             </Field>
+            {/* TODO : 소셜 로그인은 비밀번호 변경 불가능 하도록 처리 */}
             <Field>
-              <Label htmlFor="nickname">비밀번호</Label>
+              <Label htmlFor="nickname">현재 비밀번호</Label>
+              <div className="relative space-y-1">
+                <Input
+                  type={isVisibleCurrent ? "text" : "password"}
+                  placeholder="현재 비밀번호를 입력하세요."
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value.replace(/\s/g, ""))}
+                  className="pr-9"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCPWVisible}
+                  className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
+                >
+                  {isVisibleCurrent ? <EyeOffIcon /> : <EyeIcon />}
+                  <span className="sr-only">
+                    {isVisibleCurrent ? "Hide password" : "Show password"}
+                  </span>
+                </Button>
+                {currentPassword.length > 0 && (
+                  <p
+                    className={`text-xs ${isCurrentPasswordValid ? "text-text-sub" : "text-red-500"}`}
+                  >
+                    {isCurrentPasswordValid ? "" : "영문, 숫자 8자 이상 입력하세요. 명령입니다."}
+                  </p>
+                )}
+              </div>
+            </Field>
+            <Field>
+              <Label htmlFor="nickname">새 비밀번호</Label>
               <div className="relative space-y-1">
                 <Input
                   type={isVisible ? "text" : "password"}
-                  placeholder="비밀번호를 입력하세요."
+                  placeholder="새 비밀번호를 입력하세요."
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value.replace(/\s/g, ""))}
                   className="pr-9"
                 />
                 <Button
@@ -258,7 +331,11 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                   {isVisible ? <EyeOffIcon /> : <EyeIcon />}
                   <span className="sr-only">{isVisible ? "Hide password" : "Show password"}</span>
                 </Button>
-                <p className="text-text-sub text-xs">영문, 숫자 8자 이상 입력하세요. 명령입니다.</p>
+                {password.length > 0 && (
+                  <p className={`text-xs ${isPasswordValid ? "text-text-sub" : "text-red-500"}`}>
+                    {isPasswordValid ? "" : "영문, 숫자 8자 이상 입력하세요. 명령입니다."}
+                  </p>
+                )}
               </div>
             </Field>
             <Field>
@@ -268,7 +345,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                   type={isVisibleConfirm ? "text" : "password"}
                   placeholder="비밀번호를 입력하세요."
                   value={passwordConfirm}
-                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  onChange={(e) => setPasswordConfirm(e.target.value.replace(/\s/g, ""))}
                   className="pr-9"
                 />
                 <Button
@@ -282,7 +359,11 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                     {isVisibleConfirm ? "Hide password" : "Show password"}
                   </span>
                 </Button>
-                <p className="text-text-sub text-xs">영문, 숫자 8자 이상 입력하세요. 명령입니다.</p>
+                {passwordConfirm.length > 0 && (
+                  <p className={`text-xs ${isPasswordMatch ? "text-text-sub" : "text-red-500"}`}>
+                    {isPasswordMatch ? "" : "비밀번호가 일치하지 않습니다."}
+                  </p>
+                )}
               </div>
             </Field>
             <Field>
