@@ -2,11 +2,11 @@
 
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../ui/empty";
 import { SpotlightIcon } from "lucide-react";
-import { ConcertDataWithLiked } from "../concert/ConcertType";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import SearchConcertCard from "./SearchConcertCard";
 import { getSearchConcerts } from "@/lib/api/search.client";
+import { ConcertDataWithLiked } from "@/types/concerts";
 
 export default function SearchConcerts({
   initialConcerts,

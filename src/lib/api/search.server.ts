@@ -1,6 +1,6 @@
-import { ConcertDataWithLiked } from "@/components/concert/ConcertType";
 import ServerApi from "@/utils/helpers/serverApi";
 import { getIsLikedConcert } from "./concerts.server";
+import { ConcertDataWithLiked } from "@/types/concerts";
 
 /**
  * 검색어로 공연 목록을 가져옵니다.

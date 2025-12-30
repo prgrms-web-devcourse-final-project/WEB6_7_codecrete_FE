@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, MapPinIcon, Ticket, TicketsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ConcertDataWithLiked } from "../concert/ConcertType";
 import { PLACEHOLDER_IMAGE } from "../home/upcoming-slider/constants";
 import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/formatters";
 import ConcertLikeButton from "../concert/detail/ConcertLikeButton";
 import { AspectRatio } from "../ui/aspect-ratio";
+import { ConcertDataWithLiked } from "@/types/concerts";
 
 export default function SearchConcertCard({
   concert,

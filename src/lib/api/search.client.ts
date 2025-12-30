@@ -1,7 +1,7 @@
-import { ConcertDataWithLiked } from "@/components/concert/ConcertType";
 import ClientApi from "@/utils/helpers/clientApi";
 import { getIsLikedConcert } from "./concert.client";
 import { AutoCompleteConcerts } from "@/types/search";
+import { ConcertDataWithLiked } from "@/types/concerts";
 
 /**
  * 검색어로 공연 목록을 가져옵니다.
