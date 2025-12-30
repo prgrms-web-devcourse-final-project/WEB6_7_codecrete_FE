@@ -12,10 +12,9 @@ export default function ChatPage() {
 
   return (
     <>
-      {/*아래는 허스키를 피하기 위한 꼼수*/}
       {console.error(concertId)}
       <ChatHeader />
-      <div className="border-border flex min-h-screen border-t">
+      <div className="border-border bg-bg-main flex h-[calc(100dvh-92px)] overflow-hidden border-t">
         <ChatRoom />
         <ChatAside />
       </div>

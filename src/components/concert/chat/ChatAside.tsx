@@ -16,7 +16,7 @@ export default function ChatAside() {
   const [vendor, setVendor] = useState<TicketVendor>("nol");
 
   return (
-    <aside className="bg-bg-sub flex max-w-400 flex-col gap-6 p-10">
+    <aside className="bg-bg-sub flex h-full max-w-400 flex-col gap-6 overflow-y-scroll p-10">
       <ChatTimeCard vendor={vendor} setVendor={setVendor} />
       <ConcertInfoCard />
       <ChatRulesCard />

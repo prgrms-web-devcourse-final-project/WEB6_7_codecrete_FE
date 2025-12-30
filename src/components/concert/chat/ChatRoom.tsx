@@ -30,7 +30,11 @@ export default function ChatRoom() {
           </p>
         </div>
       </div>
-      <div className={"bg-bg-main flex flex-1 flex-col gap-6 border-b p-8"}>
+      <div
+        className={
+          "scrollbar-hide bg-bg-main flex flex-1 flex-col gap-6 overflow-y-scroll border-b p-8"
+        }
+      >
         <div className={"flex justify-center"}>
           <InfoBadge>
             <span className={"text-text-sub"}>오늘 - 2025년 12월 8일</span>
@@ -45,6 +49,20 @@ export default function ChatRoom() {
         <ChatMessage message={"헬로우"} username={"진환"} time={"10:19"} />
         <ChatMessage message={"안녕하세요"} username={"민주"} time={"10:19"} isMe={true} />
         <ChatMessage message={"지금 뭐하세요?"} username={"민주"} time={"10:19"} isMe={true} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
+        <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
         <ChatMessage message={"지금 운동중입니다"} username={"진환"} time={"10:25"} />
         <ChatMessage
           message={"이야 열심히 하시네요"}

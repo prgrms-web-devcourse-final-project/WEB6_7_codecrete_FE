@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           <Header />
-          <main className="min-h-dvh">{children}</main>
+          <main>{children}</main>
           <Footer />
           <Toaster className={pretendard.className} />
           <TopButton />
