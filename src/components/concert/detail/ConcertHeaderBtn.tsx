@@ -19,11 +19,12 @@ import { ConcertDetail, TicketOffice } from "@/types/concerts";
 import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { createPlanner } from "@/lib/api/planner/planner";
+import { createPlanner } from "@/lib/api/planner/planner.client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ko } from "date-fns/locale";
 import { patchTicketTimeSet } from "@/lib/api/admin/admin.client";
+import { getConcertStartDate, isSameDay } from "@/utils/helpers/handleDate";
 
 export default function ConcertHeaderBtn({
   concertDetail,
@@ -79,7 +80,10 @@ export default function ConcertHeaderBtn({
 
   // 플래너 생성 핸들러
   const handleCreatePlanner = async () => {
-    if (!concertDetail?.concertId) return;
+    if (!concertDetail?.concertId) {
+      toast.error("선택된 공연이 없습니다.");
+      return;
+    }
     if (!plannerTitle) {
       toast.error("플래너 제목을 입력해주세요.");
       return;
@@ -89,10 +93,17 @@ export default function ConcertHeaderBtn({
       return;
     }
 
+    // 공연 당일 확인
+    const concertStart = getConcertStartDate(concertDetail.startDate);
+    if (isSameDay(plannerDate, concertStart)) {
+      toast.error("공연 당일은 플래너를 생성할 수 없습니다.");
+      return;
+    }
+
     const data = await createPlanner({
       concertId: concertDetail.concertId,
-      title: plannerTitle,
-      planDate: plannerDate.toISOString().slice(0, 10),
+      title: plannerTitle.trim(),
+      planDate: plannerDate.toISOString(),
     });
 
     if (!data) {

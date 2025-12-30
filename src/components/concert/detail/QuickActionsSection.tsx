@@ -37,10 +37,11 @@ import {
   AlertDialogFooter,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-import { createPlanner } from "@/lib/api/planner/planner";
+import { createPlanner } from "@/lib/api/planner/planner.client";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 import { postLikeConcert } from "@/lib/api/concerts/concerts.client";
+import { getConcertStartDate, isSameDay } from "@/utils/helpers/handleDate";
 
 export default function QuickActionsSection({
   concertId,
@@ -109,7 +110,10 @@ export default function QuickActionsSection({
 
   // 플래너 생성 핸들러
   const handleCreatePlanner = async () => {
-    if (!concertId) return;
+    if (!concertId) {
+      toast.error("선택된 공연이 없습니다.");
+      return;
+    }
     if (!plannerTitle) {
       toast.error("플래너 제목을 입력해주세요.");
       return;
@@ -119,10 +123,17 @@ export default function QuickActionsSection({
       return;
     }
 
+    // 공연 당일 확인
+    const concertStart = getConcertStartDate(concertStartDate!);
+    if (isSameDay(plannerDate, concertStart)) {
+      toast.error("공연 당일은 플래너를 생성할 수 없습니다.");
+      return;
+    }
+
     const data = await createPlanner({
-      concertId,
-      title: plannerTitle,
-      planDate: plannerDate.toISOString().slice(0, 10),
+      concertId: concertId,
+      title: plannerTitle.trim(),
+      planDate: plannerDate.toISOString(),
     });
 
     if (!data) {
@@ -132,6 +143,7 @@ export default function QuickActionsSection({
 
     toast.success("플래너가 생성되었습니다.");
     setPlannerDialogOpen(false);
+
     router.push(`/planner/${data.data.id}`);
   };
 

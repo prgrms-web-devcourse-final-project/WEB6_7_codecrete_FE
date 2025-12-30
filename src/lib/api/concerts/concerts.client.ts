@@ -1,4 +1,4 @@
-import { LikeConcert } from "@/types/concerts";
+import { ConcertDetail, LikeConcert } from "@/types/concerts";
 import ClientApi from "@/utils/helpers/clientApi";
 
 // 콘서트 찜하기
@@ -42,6 +42,36 @@ export const getIsLikedConcert = async (concertId: string): Promise<LikeConcert 
     return data.data;
   } catch (error) {
     console.error("Error checking liked concert:", error);
+    return null;
+  }
+};
+
+/**
+ * 공연 ID로 공연 상세 정보 가져오기
+ *
+ * @param {string} concertId - 공연 ID
+ * @returns {Promise<ConcertDetail | null>} - 공연 상세 정보 또는 null
+ */
+export const getConcertDetail = async ({
+  concertId,
+}: {
+  concertId: string;
+}): Promise<ConcertDetail | null> => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/concertDetail?concertId=${concertId}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching concert detail:", error);
     return null;
   }
 };
