@@ -97,14 +97,6 @@ export default function PlannerCreate() {
     setPlannerDialogOpen(false);
   };
 
-  // 검색 이벤트
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && search.trim().length >= 2) {
-      e.preventDefault();
-      router.push(`/search/overview?keyword=${encodeURIComponent(search.trim())}`);
-    }
-  };
-
   // 콘서트 선택 시 API 호출
   const handleSelectConcert = async (concert: AutoCompleteConcerts) => {
     setSelectedConcert(concert);
@@ -226,7 +218,6 @@ export default function PlannerCreate() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="콘서트 이름으로 검색하세요."
                   autoFocus
-                  onKeyDown={handleKeyDown}
                 />
                 <div className="border-input scrollbar-hide max-h-50 overflow-y-auto rounded-md border">
                   {optimisticResults.length === 0 ? (
@@ -277,13 +268,13 @@ export default function PlannerCreate() {
                     <div className="flex-1">
                       <strong className="text-sm font-medium">{selectedConcert.name}</strong>
                       {concertDetail && (
-                        <ul className="[&>li]:text-muted-foreground mt-2 space-y-1 text-xs [&>li]:flex [&>li]:items-center [&>li]:gap-1">
+                        <ul className="[&>li]:text-muted-foreground mt-2 space-y-1 text-xs [&>li]:flex [&>li]:items-start [&>li]:gap-1">
                           <li>
-                            <CalendarDaysIcon className="size-3" />
+                            <CalendarDaysIcon className="mt-0.5 size-3" />
                             {formatDateRange(concertDetail.startDate, concertDetail.endDate)}
                           </li>
                           <li>
-                            <MapPinIcon className="size-3" />
+                            <MapPinIcon className="mt-0.5 size-3" />
                             {concertDetail.placeAddress} {concertDetail.placeName}
                           </li>
                         </ul>
