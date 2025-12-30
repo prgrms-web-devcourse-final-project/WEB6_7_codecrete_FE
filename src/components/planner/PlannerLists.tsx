@@ -37,6 +37,9 @@ export default function PlannerLists({ planLists }: { planLists: PlannerListWith
           <DialogTitle>플래너 목록</DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] gap-6 space-y-4 overflow-y-auto p-4">
+          {planLists.length === 0 && (
+            <p className="text-muted-foreground text-center text-sm">생성된 플래너가 없습니다.</p>
+          )}
           {planLists.map((plan) => (
             <button
               key={plan.id}
