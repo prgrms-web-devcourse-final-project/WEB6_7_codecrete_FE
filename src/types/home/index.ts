@@ -6,6 +6,7 @@ export type Concert = {
   name: string;
   placeName: string;
   ticketTime: string;
+  ticketEndTime: string;
   startDate: string;
   endDate: string;
   posterUrl: string;

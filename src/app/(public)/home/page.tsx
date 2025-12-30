@@ -3,7 +3,7 @@ import HeroSlider from "@/components/home/hero-slider";
 import PlannerBanner from "@/components/home/PlannerBanner";
 import UpcomingSlider from "@/components/home/upcoming-slider";
 import UpcomingSkeleton from "@/components/loading/UpcomingSkeleton";
-import { getUpcomingConcerts } from "@/lib/api/concerts";
+import { getUpcomingConcerts } from "@/lib/api/concerts.server";
 import { Suspense } from "react";
 
 export default async function Page() {

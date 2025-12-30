@@ -1,16 +1,13 @@
-"use server";
-
 import { ResponseData } from "@/types/api";
 import { ConcertData, ConcertDetail } from "@/types/concerts";
 import ClientApi from "@/utils/helpers/clientApi";
-import { cookies } from "next/headers";
 
 /**
  * 티켓팅 시간 등록
  *
  * @param {string} concertId - 공연 ID
- * @param {string} startDateTime - 티켓팅 시작 시간 (ISO 8601 형식)
- * @param {string} endDateTime - 티켓팅 종료 시간 (ISO 8601 형식)
+ * @param {string} ticketTime - 티켓팅 시작 시간 (ISO 8601 형식)
+ * @param {string} ticketEndTime - 티켓팅 종료 시간 (ISO 8601 형식)
  * @returns {Promise<ResponseData<ConcertDetail | null>>} - 업데이트된 공연 상세 정보
  */
 export const patchTicketTimeSet = async ({
@@ -22,15 +19,9 @@ export const patchTicketTimeSet = async ({
   ticketTime: string;
   ticketEndTime: string;
 }): Promise<ResponseData<ConcertDetail | null>> => {
-  const cookieStore = await cookies();
-
   try {
     const res = await ClientApi(`/api/v1/admin/concerts/ticketTimeSet`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieStore.toString(),
-      },
       body: JSON.stringify({
         concertId,
         ticketTime,
@@ -65,22 +56,16 @@ export const patchTicketTimeSet = async ({
  */
 export const getNoTicketTimeLists = async ({
   page = 0,
-  size,
+  size = 12,
 }: {
   page: number;
   size: number;
 }): Promise<ConcertData[] | null> => {
-  const cookieStore = await cookies();
   try {
     const res = await ClientApi(
       `/api/v1/admin/concerts/noTicketTimeList?page=${page}&size=${size}`,
       {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: cookieStore.toString(),
-        },
-        cache: "no-store",
       }
     );
 

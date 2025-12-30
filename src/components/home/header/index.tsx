@@ -2,9 +2,9 @@ import { LogInIcon, User2Icon, UserPlus2Icon } from "lucide-react";
 import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
 import LogoutButton from "@/components/home/LogoutButton";
 import Logo from "./Logo";
-import SearchButton from "./SearchButton";
 import IconLink from "./IconLink";
 import Navigation from "./Navigation";
+import SearchModal from "../SearchModal";
 
 export default async function Header() {
   const isLoggedIn = await getAuthStatus();
@@ -23,7 +23,7 @@ export default async function Header() {
           {/* 로고 & 검색 */}
           <div className="flex flex-1 items-center justify-between gap-4 lg:justify-start lg:gap-10">
             <Logo />
-            <SearchButton />
+            <SearchModal />
           </div>
           {/* 로그인 액션 */}
           {isLoggedIn && (

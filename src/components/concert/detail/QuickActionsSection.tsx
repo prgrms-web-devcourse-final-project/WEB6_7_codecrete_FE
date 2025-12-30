@@ -40,7 +40,7 @@ import {
 import { createPlanner } from "@/lib/api/planner";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
-import { postLikeConcert } from "@/lib/api/concerts";
+import { postLikeConcert } from "@/lib/api/concert.client";
 
 export default function QuickActionsSection({
   concertId,

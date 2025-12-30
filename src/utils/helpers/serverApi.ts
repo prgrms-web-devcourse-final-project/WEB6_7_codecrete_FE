@@ -1,3 +1,5 @@
+"use server";
+
 import { cookies } from "next/headers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -9,7 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
  * @param {RequestInit} init fetch 옵션
  * @returns {Promise<Response>} fetch 응답
  */
-export async function ServerApi(path: string, init: RequestInit = {}) {
+export default async function ServerApi(path: string, init: RequestInit = {}) {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore
     .getAll()

@@ -6,15 +6,12 @@ import QuickActionsSection from "./QuickActionsSection";
 import {
   getConcertDetail,
   getConcertVenueInfo,
-  getTicketOfficesByConcertId,
   getIsLikedConcert,
-} from "@/lib/api/concerts";
+  getTicketOfficesByConcertId,
+} from "@/lib/api/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
-import { cookies } from "next/headers";
 
 export default async function ConcertDetail({ concertId }: { concertId: string }) {
-  const cookieStore = await cookies();
-
   const [concertDetail, concertVenue, concertTicketing, isAuthenticated] = await Promise.all([
     getConcertDetail({ concertId }),
     getConcertVenueInfo({ concertId }),
@@ -28,7 +25,7 @@ export default async function ConcertDetail({ concertId }: { concertId: string }
   if (isAuthenticated) {
     [userData, isLikedConcert] = await Promise.all([
       getMe().then((res) => res.data),
-      getIsLikedConcert(concertId, cookieStore.toString()),
+      getIsLikedConcert(concertId),
     ]);
   }
 

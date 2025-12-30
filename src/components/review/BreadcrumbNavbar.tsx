@@ -6,6 +6,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Fragment } from "react";
 
@@ -68,7 +69,7 @@ type BreadcrumbNavProps = {
 
 export default function BreadcrumbNavbar({ items }: BreadcrumbNavProps) {
   return (
-    <nav className={"border-border border-b px-15 py-4"}>
+    <nav className={cn("border-border border-b px-5 py-3 lg:px-15 lg:py-4")}>
       <Breadcrumb className={"mx-auto max-w-400"}>
         <BreadcrumbList>
           {items.map((item, index) => {

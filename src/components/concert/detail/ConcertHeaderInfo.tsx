@@ -17,7 +17,7 @@ export default function ConcertHeaderInfo({ type, label, title, subtitle }: Conc
       <div className="space-y-1">
         <h3 className="text-text-sub text-xs font-medium">{label}</h3>
         <strong className="text-base">{title}</strong>
-        <p className="text-text-sub text-xs">{subtitle}</p>
+        <p className="text-text-sub text-xs break-keep">{subtitle}</p>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use server";
 
 import { ArtistDetail, ArtistDetailResponse, LikeArtistResponse } from "@/types/artists";
-import { ServerApi } from "@/utils/helpers/serverApi";
+import ServerApi from "@/utils/helpers/serverApi";
 import { revalidatePath } from "next/cache";
 
 // 아티스트 팔로우

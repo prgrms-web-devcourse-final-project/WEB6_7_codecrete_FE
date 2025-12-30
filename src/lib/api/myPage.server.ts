@@ -1,11 +1,8 @@
-"use server";
-
 import { ResponseData } from "@/types/api";
 import { Concert } from "@/types/home";
-import ClientApi from "@/utils/helpers/clientApi";
 import { PAGE_SIZE } from "@/utils/helpers/constants";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
-import { cookies } from "next/headers";
+import ServerApi from "@/utils/helpers/serverApi";
 
 // TODO : 임시로 타입 정의 나중에 삭제 필요
 type Artist = {
@@ -31,14 +28,8 @@ export const getLikedConcertList = async ({
   size?: number;
 }): Promise<ResponseData<Concert[] | null>> => {
   try {
-    const cookieStore = await cookies();
-    const res = await ClientApi(`/api/v1/concerts/likedConcertList?page=${page}&size=${size}`, {
+    const res = await ServerApi(`/api/v1/concerts/likedConcertList?page=${page}&size=${size}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieStore.toString(),
-        cache: "no-store",
-      },
     });
     if (!res.ok) {
       throw new Error("찜한 공연 목록을 불러오는데 실패했습니다.");
@@ -58,14 +49,8 @@ export const getLikedConcertList = async ({
  */
 export const getLikedConcertCount = async (): Promise<ResponseData<number | null>> => {
   try {
-    const cookieStore = await cookies();
-    const res = await ClientApi(`/api/v1/concerts/likedConcertCount`, {
+    const res = await ServerApi(`/api/v1/concerts/likedConcertCount`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieStore.toString(),
-      },
-      cache: "no-store",
     });
     if (!res.ok) {
       throw new Error("찜한 공연 수를 불러오는데 실패했습니다.");
@@ -80,14 +65,8 @@ export const getLikedConcertCount = async (): Promise<ResponseData<number | null
 
 export const getLikedArtistList = async (): Promise<ResponseData<Artist[] | null>> => {
   try {
-    const cookieStore = await cookies();
-    const res = await ClientApi(`/api/v1/artists/likes`, {
+    const res = await ServerApi(`/api/v1/artists/likes`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieStore.toString(),
-      },
-      cache: "no-store",
     });
     if (!res.ok) {
       throw new Error("찜한 아티스트 목록을 불러오는데 실패했습니다.");

@@ -1,6 +1,10 @@
 import MyPageLikedArtistList from "@/components/my-page/MyPageLikedArtistList";
 import MyPageLikedConcertList from "@/components/my-page/MyPageLikedConcertList";
-import { getLikedArtistList, getLikedConcertCount, getLikedConcertList } from "@/lib/api/myPage";
+import {
+  getLikedArtistList,
+  getLikedConcertCount,
+  getLikedConcertList,
+} from "@/lib/api/myPage.server";
 
 export default async function Page() {
   // 찜한 아티스트 목록 API

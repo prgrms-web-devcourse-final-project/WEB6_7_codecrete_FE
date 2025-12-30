@@ -5,19 +5,20 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { twMerge } from "tailwind-merge";
 import { Badge } from "@/components/ui/badge";
 import ConcertHeaderInfo from "./ConcertHeaderInfo";
-import { formatDateRange, formatPrice } from "@/utils/helpers/formatters";
+import {
+  formatConcertPrice,
+  formatDateRange,
+  formatDateTimeRange,
+} from "@/utils/helpers/formatters";
 import ConcertLikeButton from "./ConcertLikeButton";
 import {
   getConcertDetail,
-  getTicketOfficesByConcertId,
   getIsLikedConcert,
-} from "@/lib/api/concerts";
+  getTicketOfficesByConcertId,
+} from "@/lib/api/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
-import { cookies } from "next/headers";
 
 export default async function ConcertHeader({ concertId }: { concertId: string }) {
-  const cookieStore = await cookies();
-
   const [concertDetail, concertTicketing, isAuthenticated] = await Promise.all([
     getConcertDetail({ concertId }),
     getTicketOfficesByConcertId({ concertId }),
@@ -30,7 +31,7 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
   if (isAuthenticated) {
     [userData, isLikedConcert] = await Promise.all([
       getMe().then((res) => res.data),
-      getIsLikedConcert(concertId, cookieStore.toString()),
+      getIsLikedConcert(concertId),
     ]);
   }
 
@@ -71,6 +72,7 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
             </div>
             <ConcertLikeButton
               concertId={concertDetail.concertId}
+              isAuthenticated={isAuthenticated}
               isLiked={isLikedConcert?.isLike}
             />
           </div>
@@ -84,7 +86,7 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
             <ConcertHeaderInfo
               type="price"
               label="티켓 가격"
-              title={formatPrice(concertDetail.minPrice, concertDetail.maxPrice)}
+              title={formatConcertPrice(concertDetail.minPrice, concertDetail.maxPrice)}
             />
             {/* TODO : 관리자일 경우 예매일정 직접 입력하는 버튼 추가 */}
             <ConcertHeaderInfo
@@ -92,7 +94,7 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
               label="예매 일정"
               title={
                 concertDetail?.ticketTime && concertDetail.ticketEndTime
-                  ? formatDateRange(concertDetail?.ticketTime, concertDetail?.ticketEndTime)
+                  ? formatDateTimeRange(concertDetail?.ticketTime, concertDetail?.ticketEndTime)
                   : "정보없음"
               }
             />

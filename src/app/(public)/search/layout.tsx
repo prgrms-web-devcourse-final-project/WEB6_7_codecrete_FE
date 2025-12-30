@@ -1,7 +1,10 @@
+import SearchIntroSkeleton from "@/components/loading/search/SearchIntroSkeleton";
+import SearchNavigationSkeleton from "@/components/loading/search/SearchNavigationSkeleton";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import BreadcrumbLabel from "@/components/search/BreadcrumbLabel";
 import SearchIntro from "@/components/search/SearchIntro";
 import SearchNavigation from "@/components/search/SearchNavigation";
+import { Suspense } from "react";
 
 export default function SearchLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,8 +16,12 @@ export default function SearchLayout({ children }: { children: React.ReactNode }
           { label: <BreadcrumbLabel /> },
         ]}
       />
-      <SearchIntro />
-      <SearchNavigation />
+      <Suspense fallback={<SearchIntroSkeleton />}>
+        <SearchIntro />
+      </Suspense>
+      <Suspense fallback={<SearchNavigationSkeleton />}>
+        <SearchNavigation />
+      </Suspense>
       {children}
     </>
   );

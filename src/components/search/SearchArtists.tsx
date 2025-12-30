@@ -1,5 +1,5 @@
-import ArtistListMain from "@/components/artist/list/ArtistListMain";
+// import ArtistListMain from "@/components/artist/list/ArtistListMain";
 
 export default function SearchArtists() {
-  return <ArtistListMain />;
+  return <p>임시 텍스트</p>;
 }
