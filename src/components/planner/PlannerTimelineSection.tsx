@@ -4,12 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MapIcon } from "lucide-react";
 import PlannerQuickTips from "./PlannerQuickTips";
-import PlannerTimelineItem from "./PlannerTimelineItem";
 import PlannerMapView from "./PlannerMapView";
 import PlannerInviteFriends from "./PlannerInviteFriends";
 import PlannerNearbyRestaurants from "./PlannerNearbyRestaurants";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { mockSchedules } from "@/data/schedule";
+// import PlannerTimelineItem from "./PlannerTimelineItem";
 
 // 사이드바 내용을 재사용하기 위해 컴포넌트로 분리
 function SidebarContent() {
@@ -42,15 +41,7 @@ export default function PlannerTimelineSection() {
 
             {/* 타임라인 아이템들 */}
             <div className="before:bg-bg-sub relative space-y-6 before:absolute before:top-0 before:left-4 before:h-full before:w-0.5 lg:space-y-8 lg:before:left-8">
-              <div className="relative space-y-6 lg:space-y-8">
-                {mockSchedules.map((schedule, idx) => (
-                  <PlannerTimelineItem
-                    key={schedule.schedule_id}
-                    schedule={schedule}
-                    onLast={mockSchedules.length === idx + 1}
-                  />
-                ))}
-              </div>
+              <div className="relative space-y-6 lg:space-y-8">{/* <PlannerTimelineItem /> */}</div>
             </div>
           </div>
 
