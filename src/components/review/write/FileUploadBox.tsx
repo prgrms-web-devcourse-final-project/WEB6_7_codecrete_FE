@@ -32,7 +32,6 @@ export function FileUploadBox({ value, onFileChange }: FileUploadBoxProps) {
       <input
         id="file-upload"
         type="file"
-        multiple
         accept="image/png,image/jpeg"
         className="hidden"
         onChange={(e) => {

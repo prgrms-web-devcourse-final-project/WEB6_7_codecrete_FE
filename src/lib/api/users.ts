@@ -15,7 +15,7 @@ export const getUsersSettings = async () => {
     const data = await res.json();
     return data.data;
   } catch (error) {
-    console.error("Error fetching users setting:", error);
+    console.error("Error retrieving user settings", error);
     return null;
   }
 };
@@ -38,7 +38,7 @@ export const changeUsersSettings = async (data: {
 
     return await res.json();
   } catch (error) {
-    console.error("Error fetching users setting change:", error);
+    console.error("Error updating user settings:", error);
     return null;
   }
 };
@@ -55,7 +55,7 @@ export const changeProfileImage = async (data: { profileFile: File | null }) => 
       method: "PATCH",
       cache: "no-store",
       body: formData,
-      // 이미지는 보통 FormData에 담아 보내야 함
+      // 프로필 이미지를 multipart/form-data 형식으로 전송하기 위해 FormData 사용 (필드명: "file")
     });
     if (!res.ok) {
       console.error("API Error:", res.status, res.statusText);
@@ -64,7 +64,7 @@ export const changeProfileImage = async (data: { profileFile: File | null }) => 
 
     return await res.json();
   } catch (error) {
-    console.error("Error fetching users profile image change:", error);
+    console.error("Error updating profile image:", error);
     return null;
   }
 };
@@ -76,7 +76,6 @@ export const changeNickname = async (data: { nickname: string }) => {
       method: "PATCH",
       cache: "no-store",
       body: JSON.stringify(data),
-      // 문자열이 아닌 객체 형태로 보내야 함
     });
     if (!res.ok) {
       console.error("API Error:", res.status, res.statusText);
@@ -85,7 +84,7 @@ export const changeNickname = async (data: { nickname: string }) => {
 
     return await res.json();
   } catch (error) {
-    console.error("Error fetching users nickname change:", error);
+    console.error("Error updating nickname:", error);
     return null;
   }
 };
@@ -105,7 +104,7 @@ export const changeBirth = async (data: { birth?: string }) => {
 
     return await res.json();
   } catch (error) {
-    console.error("Error fetching users birth date change:", error);
+    console.error("Error updating birthdate:", error);
     return null;
   }
 };
@@ -125,7 +124,7 @@ export const changePassword = async (data: { currentPassword: string; newPasswor
 
     return await res.json();
   } catch (error) {
-    console.error("Error fetching users password change:", error);
+    console.error("Error updating password:", error);
     return null;
   }
 };

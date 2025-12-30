@@ -58,9 +58,11 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   const [date, setDate] = useState<Date | null>(
     userData.birthdate ? new Date(userData.birthdate) : null
   ); // 생일
-  const [emailAlert, setEmailAlert] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const initialUsersSettings = useRef<{ emailAlert: boolean; darkMode: boolean } | null>(null);
+  const initialUsersSettings = useRef<{ emailNotifications: boolean; darkMode: boolean } | null>(
+    null
+  );
   // 값 비교를 위한 초기값 저장
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // 모달 닫기 확인 모달
@@ -80,11 +82,11 @@ export default function MyPageSetting({ userData }: { userData: User }) {
       const loadData = async () => {
         const res = await getUsersSettings();
         if (res) {
-          setEmailAlert(res.emailNotifications);
+          setEmailNotifications(res.emailNotifications);
           setDarkMode(res.darkMode);
           // TODO : 네트워크 느리면 느리게 뜰 수 있는 문제점
           initialUsersSettings.current = {
-            emailAlert: res.emailNotifications,
+            emailNotifications: res.emailNotifications,
             darkMode: res.darkMode,
           };
         }
@@ -104,27 +106,40 @@ export default function MyPageSetting({ userData }: { userData: User }) {
     if (file) {
       setProfileFile(file);
 
+      if (previewImg) {
+        URL.revokeObjectURL(previewImg);
+      }
+
       const url = URL.createObjectURL(file);
       setPreviewImg(url);
     }
   };
+  // 이미지 파일 클린업
+  useEffect(() => {
+    return () => {
+      if (previewImg) {
+        URL.revokeObjectURL(previewImg);
+      }
+    };
+  }, [previewImg]);
 
   // 모달 닫을 때 변한 값이 있을 때 막기
   const handleClose = (open: boolean) => {
     // 닫기 검문 조건
-    const emailChanged = userData.email !== email;
+    // const emailChanged = userData.email !== email;
     const nickNameChanged = userData.nickname !== nickname;
     const birthDateChanged =
       (userData.birthdate ? new Date(userData.birthdate).getTime() : 0) !==
       (date ? date.getTime() : 0);
     const ProfileImageChanged = previewImg !== "" && userData.profileImageUrl !== previewImg;
-    const emailAlertChanged = initialUsersSettings.current?.emailAlert !== emailAlert;
+    const emailAlertChanged =
+      initialUsersSettings.current?.emailNotifications !== emailNotifications;
     const darkModeChanged = initialUsersSettings.current?.darkMode !== darkMode;
     const currentPasswordChanged = "" !== currentPassword;
     const passwordChanged = "" !== password;
     const passwordConfirmChanged = "" !== passwordConfirm;
     const isChanged =
-      emailChanged ||
+      // emailChanged ||
       nickNameChanged ||
       birthDateChanged ||
       ProfileImageChanged ||
@@ -151,9 +166,10 @@ export default function MyPageSetting({ userData }: { userData: User }) {
     setEmail(userData.email);
     setDate(userData.birthdate ? new Date(userData.birthdate) : null);
     if (initialUsersSettings.current) {
-      const { emailAlert: originalEmail, darkMode: originalDark } = initialUsersSettings.current;
+      const { emailNotifications: originalEmail, darkMode: originalDark } =
+        initialUsersSettings.current;
 
-      setEmailAlert(originalEmail);
+      setEmailNotifications(originalEmail);
       setDarkMode(originalDark);
 
       setTheme(originalDark ? "dark" : "light");
@@ -167,7 +183,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   // 비밀번호 조합 조건
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
   const isPasswordValid = passwordRegex.test(password);
-  const isCurrentPasswordValid = passwordRegex.test(currentPassword);
+  const isCurrentPasswordFormatValid = passwordRegex.test(currentPassword);
   // 비밀번호 === 비밀번호 확인
   const isPasswordMatch = password === passwordConfirm;
 
@@ -178,16 +194,19 @@ export default function MyPageSetting({ userData }: { userData: User }) {
       toast.error("닉네임을 입력해주세요.");
       return;
     }
+    /*
     if (!email.trim()) {
       toast.error("이메일을 입력해주세요.");
       return;
     }
+    */
 
     const birth = date
       ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
       : undefined;
 
     // 비밀번호 유효성 검사 (2)
+    // TODO : 비밀번호 변경 횟수 제한 기능
     const isCurrentPasswordInputted = currentPassword.length > 0;
     const isPasswordInputted = password.length > 0;
     const isConfirmInputted = passwordConfirm.length > 0;
@@ -219,7 +238,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
         changeNickname({ nickname: nickname }),
         changeProfileImage({ profileFile: profileFile }),
         changeUsersSettings({
-          emailNotifications: emailAlert,
+          emailNotifications: emailNotifications,
           darkMode: darkMode,
         }),
         changeBirth({ birth: birth }),
@@ -237,7 +256,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
       if (results.every((res) => res !== null)) {
         toast.success("프로필 설정이 성공적으로 저장되었습니다.");
 
-        initialUsersSettings.current = { emailAlert, darkMode };
+        initialUsersSettings.current = { emailNotifications, darkMode };
         setShowEditDialog(false);
 
         router.refresh();
@@ -305,9 +324,11 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                 </Button>
                 {currentPassword.length > 0 && (
                   <p
-                    className={`text-xs ${isCurrentPasswordValid ? "text-text-sub" : "text-red-500"}`}
+                    className={`text-xs ${isCurrentPasswordFormatValid ? "text-text-sub" : "text-red-500"}`}
                   >
-                    {isCurrentPasswordValid ? "" : "영문, 숫자 8자 이상 입력하세요. 명령입니다."}
+                    {isCurrentPasswordFormatValid
+                      ? ""
+                      : "영문, 숫자, 특수문자 포함 8자 이상 입력하세요."}
                   </p>
                 )}
               </div>
@@ -333,7 +354,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                 </Button>
                 {password.length > 0 && (
                   <p className={`text-xs ${isPasswordValid ? "text-text-sub" : "text-red-500"}`}>
-                    {isPasswordValid ? "" : "영문, 숫자 8자 이상 입력하세요. 명령입니다."}
+                    {isPasswordValid ? "" : "영문, 숫자, 특수문자 포함 8자 이상 입력하세요."}
                   </p>
                 )}
               </div>
@@ -424,8 +445,8 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                   id="emailAlert"
                   className="order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2.5 data-[state=checked]:[&_span]:rtl:-translate-x-2.5"
                   aria-describedby="이메일 수신 스위치"
-                  checked={emailAlert}
-                  onCheckedChange={(checked) => setEmailAlert(checked)}
+                  checked={emailNotifications}
+                  onCheckedChange={(checked) => setEmailNotifications(checked)}
                 />
                 <div className="flex grow gap-3">
                   <div className="grid grow gap-2">
