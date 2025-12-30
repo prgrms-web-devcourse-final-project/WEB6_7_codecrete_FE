@@ -3,14 +3,20 @@ export const isSameDay = (date1: Date, date2: Date) => {
   // 한국 시간(KST)으로 오늘 날짜 가져오기
   const todayKST = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
 
-  return (
+  // date1과 date2가 같은 날인지 확인
+  const isSameDate =
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate() &&
+    date1.getDate() === date2.getDate();
+
+  // date1이 오늘인지 확인
+  const isToday =
     date1.getFullYear() === todayKST.getFullYear() &&
     date1.getMonth() === todayKST.getMonth() &&
-    date1.getDate() === todayKST.getDate()
-  );
+    date1.getDate() === todayKST.getDate();
+
+  // 같은 날이고 오늘이면 true
+  return isSameDate && isToday;
 };
 
 // 로컬 Date를 ISO 8601 문자열로 변환 (타임존 무시)

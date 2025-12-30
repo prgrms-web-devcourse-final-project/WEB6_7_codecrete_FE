@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { AutoCompleteConcerts } from "@/types/search";
 import { getSearchConcertsAutoComplete } from "@/lib/api/search/search.client";
-import { CalendarDaysIcon, MapPinIcon, XIcon } from "lucide-react";
+import { CalendarDaysIcon, Loader2Icon, MapPinIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.client";
 import { ConcertDetail } from "@/types/concerts";
@@ -317,7 +317,14 @@ export default function PlannerCreate() {
               onClick={handleCreateNewPlan}
               disabled={!plannerTitle.trim() || !plannerDate || isPending}
             >
-              {isPending ? "생성 중..." : "만들기"}
+              {isPending ? (
+                <>
+                  <Loader2Icon className="mr-2 size-4 animate-spin" />
+                  생성 중...
+                </>
+              ) : (
+                "생성"
+              )}
             </Button>
           </DialogFooter>
         )}

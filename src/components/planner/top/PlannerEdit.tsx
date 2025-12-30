@@ -15,7 +15,7 @@ import { updatePlanDetail } from "@/lib/api/planner/planner.client";
 import { ConcertDetail } from "@/types/concerts";
 import { PlanDetail } from "@/types/planner";
 import { getConcertStartDate, isSameDay, dateToISOString } from "@/utils/helpers/handleDate";
-import { PencilIcon } from "lucide-react";
+import { Loader2Icon, PencilIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -31,7 +31,7 @@ export default function PlannerEdit({
   const [isPending, startTransition] = useTransition();
 
   // 플래너 수정 다이얼로그 상태
-  const [editDialogOpen, setEditDialogOpen] = useState(true);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   // 플래너 제목 및 날짜 상태
   const [plannerTitle, setPlannerTitle] = useState<string>(planDetail.title);
@@ -73,8 +73,8 @@ export default function PlannerEdit({
         }
       });
     } catch (error) {
-      console.error("플래너 생성 오류:", error);
-      toast.error("플래너 생성에 실패했습니다.");
+      console.error("플래너 수정 오류:", error);
+      toast.error("플래너 수정에 실패했습니다.");
     }
   };
 
@@ -124,7 +124,14 @@ export default function PlannerEdit({
               onClick={handleEditPlanner}
               disabled={!plannerTitle.trim() || !plannerDate || isPending}
             >
-              {isPending ? "생성 중..." : "수정"}
+              {isPending ? (
+                <>
+                  <Loader2Icon className="mr-2 size-4 animate-spin" />
+                  수정 중...
+                </>
+              ) : (
+                "수정"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -45,7 +45,7 @@ export default function TopButton() {
       )}
       onClick={handleScrollToTop}
     >
-      <ArrowUpIcon className="size:5 lg:size-7" />
+      <ArrowUpIcon className="size-5 lg:size-7" />
     </Button>
   );
 }
