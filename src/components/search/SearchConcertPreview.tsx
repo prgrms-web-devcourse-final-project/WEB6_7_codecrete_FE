@@ -3,9 +3,15 @@ import SearchConcertCard from "@/components/search/SearchConcertCard";
 import { getSearchConcertsServer } from "@/lib/api/search.server";
 import { SpotlightIcon } from "lucide-react";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "../ui/empty";
+import { getAuthStatus } from "@/lib/auth/auth.server";
 
 export default async function SearchConcertPreview({ keyword }: { keyword: string }) {
-  const concerts = await getSearchConcertsServer({ keyword: keyword, size: 8 });
+  const isAuthenticated = await getAuthStatus();
+  const concerts = await getSearchConcertsServer({
+    keyword,
+    isAuthenticated,
+    size: 8,
+  });
 
   if (concerts.length === 0) {
     return (

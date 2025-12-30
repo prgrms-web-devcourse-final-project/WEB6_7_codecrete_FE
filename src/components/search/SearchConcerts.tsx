@@ -11,9 +11,11 @@ import { getSearchConcerts } from "@/lib/api/search.client";
 export default function SearchConcerts({
   initialConcerts,
   keyword,
+  isAuthenticated,
 }: {
   initialConcerts: ConcertDataWithLiked[];
   keyword: string;
+  isAuthenticated: boolean;
 }) {
   const [searchedConcerts, setSearchedConcerts] = useState<ConcertDataWithLiked[]>(initialConcerts);
   const [hasMore, setHasMore] = useState(true);
@@ -27,7 +29,8 @@ export default function SearchConcerts({
 
     try {
       const addConcerts = await getSearchConcerts({
-        keyword: keyword,
+        keyword,
+        isAuthenticated,
         page: pageRef.current,
       });
 
@@ -45,7 +48,7 @@ export default function SearchConcerts({
     } finally {
       setLoading(false);
     }
-  }, [keyword]);
+  }, [keyword, isAuthenticated]);
 
   useEffect(() => {
     if (!oTarget.current) return;

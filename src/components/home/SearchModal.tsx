@@ -4,13 +4,13 @@ import { ArrowRightIcon, SearchIcon } from "lucide-react";
 import { useEffect, useState, useTransition, useOptimistic } from "react";
 import { AutoCompleteConcerts } from "@/types/search";
 import { useRouter } from "next/navigation";
-import { getSearchConcertsAutoComplete } from "@/lib/api/search.server";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
+import { getSearchConcertsAutoComplete } from "@/lib/api/search.client";
 
 export default function SearchModal() {
   const router = useRouter();
