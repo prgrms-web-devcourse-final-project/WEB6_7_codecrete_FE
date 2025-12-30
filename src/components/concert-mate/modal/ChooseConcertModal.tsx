@@ -10,6 +10,7 @@ type ChooseConcertModalProps = {
 export default function ChooseConcertModal({ onClose }: ChooseConcertModalProps) {
   return (
     // 게시판 글작성 공연 선택 모달
+    // TODO : shadcn Dialog 사용
     <div
       role="presentation"
       className="bg-opacity-50 fixed inset-0 z-50 flex h-full w-full cursor-default items-center justify-center backdrop-blur-sm"

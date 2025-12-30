@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { QRCodeCanvas } from "qrcode.react";
 
@@ -5,15 +6,19 @@ export default function QrCode({
   address,
   size = 108,
   bgColor = null,
+  className,
 }: {
   address: string;
   size?: number;
   bgColor?: string | null;
+  className?: string;
 }) {
   const theme = useTheme();
 
   return (
-    <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white">
+    <div
+      className={cn("flex h-20 w-20 items-center justify-center rounded-xl bg-white", className)}
+    >
       <div className="relative">
         <QRCodeCanvas
           value={address}

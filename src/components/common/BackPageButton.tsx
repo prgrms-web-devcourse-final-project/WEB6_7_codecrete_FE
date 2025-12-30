@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
 import { ButtonProps } from "@/types/planner";
 
 export default function BackPageButton({ children, ...rest }: ButtonProps) {
@@ -13,8 +12,8 @@ export default function BackPageButton({ children, ...rest }: ButtonProps) {
   };
 
   return (
-    <Button onClick={handlePageBack} {...rest}>
+    <button onClick={handlePageBack} {...rest}>
       {children}
-    </Button>
+    </button>
   );
 }

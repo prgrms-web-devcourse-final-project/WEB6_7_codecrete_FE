@@ -25,7 +25,7 @@ export default function MateListTagNav() {
             size="default"
             className={`px-6 py-3 ${
               activeTab === tab.id
-                ? "bg-point-main border-border cursor-pointer"
+                ? "bg-point-main cursor-pointer border"
                 : "bg-point-sub cursor-pointer"
             }`}
           >

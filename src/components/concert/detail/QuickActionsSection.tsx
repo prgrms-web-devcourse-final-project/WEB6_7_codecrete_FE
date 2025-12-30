@@ -37,10 +37,11 @@ import {
   AlertDialogFooter,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-import { createPlanner } from "@/lib/api/planner";
+import { createNewPlan } from "@/lib/api/planner/planner.client";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
-import { postLikeConcert } from "@/lib/api/concerts";
+import { postLikeConcert } from "@/lib/api/concerts/concerts.client";
+import { getConcertStartDate, isSameDay, dateToISOString } from "@/utils/helpers/handleDate";
 
 export default function QuickActionsSection({
   concertId,
@@ -108,8 +109,11 @@ export default function QuickActionsSection({
   };
 
   // 플래너 생성 핸들러
-  const handleCreatePlanner = async () => {
-    if (!concertId) return;
+  const handleCreateNewPlan = async () => {
+    if (!concertId) {
+      toast.error("선택된 공연이 없습니다.");
+      return;
+    }
     if (!plannerTitle) {
       toast.error("플래너 제목을 입력해주세요.");
       return;
@@ -119,10 +123,17 @@ export default function QuickActionsSection({
       return;
     }
 
-    const data = await createPlanner({
-      concertId,
-      title: plannerTitle,
-      planDate: plannerDate.toISOString().slice(0, 10),
+    // 공연 당일 확인
+    const concertStart = getConcertStartDate(concertStartDate!);
+    if (isSameDay(plannerDate, concertStart)) {
+      toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
+      return;
+    }
+
+    const data = await createNewPlan({
+      concertId: concertId,
+      title: plannerTitle.trim(),
+      planDate: dateToISOString(plannerDate),
     });
 
     if (!data) {
@@ -132,6 +143,7 @@ export default function QuickActionsSection({
 
     toast.success("플래너가 생성되었습니다.");
     setPlannerDialogOpen(false);
+
     router.push(`/planner/${data.data.id}`);
   };
 
@@ -309,7 +321,7 @@ export default function QuickActionsSection({
             <Button variant="outline" onClick={handleClosePlannerModal}>
               취소
             </Button>
-            <Button onClick={handleCreatePlanner}>만들기</Button>
+            <Button onClick={handleCreateNewPlan}>만들기</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

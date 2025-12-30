@@ -10,25 +10,29 @@ type NextFetchOptions = RequestInit & {
 };
 
 /**
- * 공통 API 호출 함수
+ * 클라이언트 공통 API 호출 함수
  *
  * @param {string} path API 경로
  * @param {NextFetchOptions} init fetch 옵션
  * @returns {Promise<Response>} fetch 응답
  */
 export default async function ClientApi(path: string, init?: NextFetchOptions) {
-  try {
-    const response = await fetch(`${API_URL}${path}`, {
-      ...init,
-      headers: {
-        "Content-Type": "application/json",
-        ...(init?.headers || {}),
-      },
-      credentials: "include",
-    });
+  // FormData가 아닐 때만 기본값으로 JSON 설정
+  const isFormData = init?.body instanceof FormData;
 
-    return response;
-  } catch (error) {
-    throw new Error("서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.", error as Error);
+  const headers: Record<string, string> = {
+    ...((init?.headers as Record<string, string>) || {}),
+  };
+
+  if (!isFormData && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
   }
+
+  const res = await fetch(`${API_URL}${path}`, {
+    ...init,
+    headers,
+    credentials: "include",
+  });
+
+  return res;
 }

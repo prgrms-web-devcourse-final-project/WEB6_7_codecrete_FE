@@ -19,11 +19,12 @@ import { ConcertDetail, TicketOffice } from "@/types/concerts";
 import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { createPlanner } from "@/lib/api/planner";
+import { createNewPlan } from "@/lib/api/planner/planner.client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ko } from "date-fns/locale";
-import { patchTicketTimeSet } from "@/lib/api/admin";
+import { patchTicketTimeSet } from "@/lib/api/admin/admin.client";
+import { getConcertStartDate, isSameDay, dateToISOString } from "@/utils/helpers/handleDate";
 
 export default function ConcertHeaderBtn({
   concertDetail,
@@ -78,8 +79,11 @@ export default function ConcertHeaderBtn({
   };
 
   // 플래너 생성 핸들러
-  const handleCreatePlanner = async () => {
-    if (!concertDetail?.concertId) return;
+  const handleCreateNewPlan = async () => {
+    if (!concertDetail?.concertId) {
+      toast.error("선택된 공연이 없습니다.");
+      return;
+    }
     if (!plannerTitle) {
       toast.error("플래너 제목을 입력해주세요.");
       return;
@@ -89,10 +93,17 @@ export default function ConcertHeaderBtn({
       return;
     }
 
-    const data = await createPlanner({
+    // 공연 당일 확인
+    const concertStart = getConcertStartDate(concertDetail.startDate);
+    if (isSameDay(plannerDate, concertStart)) {
+      toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
+      return;
+    }
+
+    const data = await createNewPlan({
       concertId: concertDetail.concertId,
-      title: plannerTitle,
-      planDate: plannerDate.toISOString().slice(0, 10),
+      title: plannerTitle.trim(),
+      planDate: dateToISOString(plannerDate),
     });
 
     if (!data) {
@@ -120,11 +131,11 @@ export default function ConcertHeaderBtn({
     // 날짜와 시간을 합쳐서 완전한 DateTime 생성
     const startDateTime = new Date(startTicketDate);
     const [startHour, startMinute, startSecond] = startTime.split(":").map(Number);
-    startDateTime.setHours(startHour, startMinute, startSecond);
+    startDateTime.setHours(startHour, startMinute, startSecond || 0);
 
     const endDateTime = new Date(endTicketDate);
     const [endHour, endMinute, endSecond] = endTime.split(":").map(Number);
-    endDateTime.setHours(endHour, endMinute, endSecond);
+    endDateTime.setHours(endHour, endMinute, endSecond || 0);
 
     if (startDateTime >= endDateTime) {
       toast.error("티켓팅 시작 일시는 종료 일시보다 앞서야 합니다.");
@@ -132,10 +143,22 @@ export default function ConcertHeaderBtn({
     }
 
     try {
+      // 한국 시간을 그대로 유지하면서 ISO 형식으로 변환
+      const formatToKSTISOString = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+      };
+
       const result = await patchTicketTimeSet({
         concertId: concertDetail.concertId,
-        ticketTime: startDateTime.toISOString(),
-        ticketEndTime: endDateTime.toISOString(),
+        ticketTime: formatToKSTISOString(startDateTime),
+        ticketEndTime: formatToKSTISOString(endDateTime),
       });
 
       if (result.resultCode === "ERROR") {
@@ -149,7 +172,6 @@ export default function ConcertHeaderBtn({
       // 페이지 데이터 새로고침
       router.refresh();
     } catch (error) {
-      // 에러 로깅 및 사용자 피드백
       console.error("Failed to patch ticketing time:", error);
       toast.error("티켓팅 일정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
@@ -270,7 +292,7 @@ export default function ConcertHeaderBtn({
             <Button variant="outline" onClick={handleClosePlannerModal}>
               취소
             </Button>
-            <Button onClick={handleCreatePlanner}>만들기</Button>
+            <Button onClick={handleCreateNewPlan}>만들기</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

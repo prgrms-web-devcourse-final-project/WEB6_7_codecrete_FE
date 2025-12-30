@@ -44,19 +44,19 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { twMerge } from "tailwind-merge";
-import { ScheduleProps, ScheduleType, TransportType } from "@/types/planner";
+import { ScheduleDetail, ScheduleType, TransportType } from "@/types/planner";
 import { Separator } from "@/components/ui/separator";
 
-const getIcon = (type: ScheduleType, onLast: boolean, transport_type?: TransportType) => {
+const getIcon = (type: ScheduleType, onLast: boolean, transportType?: TransportType) => {
   switch (type) {
     case "TRANSPORT":
-      if (transport_type === "WALK") {
+      if (transportType === "WALK") {
         return <FootprintsIcon className="stroke-text-sub" />;
       }
-      if (transport_type === "PUBLIC_TRANSPORT") {
+      if (transportType === "PUBLIC_TRANSPORT") {
         return <TrainIcon className="stroke-text-sub" />;
       }
-      if (transport_type === "CAR") {
+      if (transportType === "CAR") {
         return <CarFrontIcon className="stroke-text-sub" />;
       }
     case "MEAL":
@@ -73,7 +73,7 @@ export default function PlannerTimelineItem({
   schedule,
   onLast,
 }: {
-  schedule: ScheduleProps;
+  schedule: ScheduleDetail;
   onLast: boolean;
 }) {
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -87,8 +87,8 @@ export default function PlannerTimelineItem({
     setShowDeleteDialog(true);
   };
 
-  const renderIcon = (type: ScheduleType, onLast: boolean, transport_type?: TransportType) => {
-    return getIcon(type, onLast, transport_type);
+  const renderIcon = (type: ScheduleType, onLast: boolean, transportType?: TransportType) => {
+    return getIcon(type, onLast, transportType);
   };
 
   return (
@@ -97,25 +97,25 @@ export default function PlannerTimelineItem({
         <div
           className={twMerge(
             "border-bg-main bg-bg-sub flex size-16 items-center justify-center rounded-full border-4",
-            schedule.schedule_type === "CONCERT" &&
+            schedule.scheduleType === "CONCERT" &&
               "bg-point-main border-white shadow-md shadow-zinc-900/20",
-            schedule.schedule_type === "MEAL" && "bg-bg-main border-point-main"
+            schedule.scheduleType === "MEAL" && "bg-bg-main border-point-main"
           )}
         >
-          {renderIcon(schedule.schedule_type, onLast, schedule.transport_type)}
+          {renderIcon(schedule.scheduleType, onLast, schedule.transportType)}
         </div>
         <div
           className={twMerge(
             "border-border bg-bg-sub flex-1 space-y-4 rounded-xl border p-6",
-            schedule.schedule_type === "CONCERT" && "bg-point-main",
-            schedule.schedule_type === "MEAL" && "border-border-point bg-bg-main border-2"
+            schedule.scheduleType === "CONCERT" && "bg-point-main",
+            schedule.scheduleType === "MEAL" && "border-border-point bg-bg-main border-2"
           )}
         >
           <div className="flex items-center justify-between">
             <h4
               className={twMerge(
                 "text-lg font-bold",
-                schedule.schedule_type === "CONCERT" ? "text-text-point-main" : "text-text-main"
+                schedule.scheduleType === "CONCERT" ? "text-text-point-main" : "text-text-main"
               )}
             >
               {schedule.title}
@@ -124,12 +124,12 @@ export default function PlannerTimelineItem({
               <span
                 className={twMerge(
                   "font-medium whitespace-nowrap",
-                  schedule.schedule_type === "CONCERT" ? "text-bg-main" : "text-text-sub"
+                  schedule.scheduleType === "CONCERT" ? "text-bg-main" : "text-text-sub"
                 )}
               >
-                {schedule.start_at}
+                {schedule.startAt}
               </span>
-              {schedule.schedule_type !== "CONCERT" && (
+              {schedule.scheduleType !== "CONCERT" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" aria-label="메뉴 열기" className="size-8">
@@ -147,22 +147,22 @@ export default function PlannerTimelineItem({
           <div
             className={twMerge(
               "text-text-sub text-sm",
-              schedule.schedule_type === "CONCERT" && "text-text-point-sub"
+              schedule.scheduleType === "CONCERT" && "text-text-point-sub"
             )}
           >
             <p>{schedule.details}</p>
           </div>
-          {schedule.schedule_type !== "CONCERT" && schedule.schedule_type !== "MEAL" && !onLast && (
+          {schedule.scheduleType !== "CONCERT" && schedule.scheduleType !== "MEAL" && !onLast && (
             <>
               <Separator />
               <div className="text-text-sub grid grid-cols-2 gap-3 text-sm">
-                {schedule.schedule_type === "TRANSPORT" && (
+                {schedule.scheduleType === "TRANSPORT" && (
                   <>
-                    {schedule.transport_type !== "WALK" && (
+                    {schedule.transportType !== "WALK" && (
                       <div className="space-y-1">
                         <h5 className="text-xs font-medium">예상 금액</h5>
                         <p className="text-text-main text-sm font-semibold">
-                          {schedule.estimated_cost}원
+                          {schedule.estimatedCost}원
                         </p>
                       </div>
                     )}
@@ -170,7 +170,7 @@ export default function PlannerTimelineItem({
                       <h5 className="text-xs font-medium">예상 시간</h5>
                       <p className="text-text-main text-sm font-semibold">{schedule.duration}분</p>
                     </div>
-                    {schedule.transport_type === "PUBLIC_TRANSPORT" && (
+                    {schedule.transportType === "PUBLIC_TRANSPORT" && (
                       <div className="space-y-1">
                         <h5 className="text-xs font-medium">이동 경로</h5>
                         <p className="text-text-main text-sm font-semibold">{schedule.location}</p>

@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
-
 import ConcertCard from "@/components/concert/ConcertCard";
 import ListSortClient from "@/components/concert/list/ListSortClient";
-import { ConcertData } from "@/components/concert/ConcertType";
-import { getNoTicketTimeLists } from "@/lib/api/admin";
+import { getNoTicketTimeLists } from "@/lib/api/admin/admin.client";
+import { ConcertData } from "@/types/concerts";
 
 export default function AdminConcertListContent({ initialList }: { initialList: ConcertData[] }) {
   const [concertsList, setConcertsList] = useState<ConcertData[]>(initialList);

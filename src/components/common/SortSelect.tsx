@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SortSelectProps } from "@/components/concert/ConcertType";
+import { SortSelectProps } from "@/types/concerts";
 
 export function SortSelect({
   onValueChange,

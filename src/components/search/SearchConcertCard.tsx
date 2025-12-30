@@ -1,60 +1,74 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { twMerge } from "tailwind-merge";
-import { Calendar, Clock, Heart, MapPin, Ticket } from "lucide-react";
+import { CalendarIcon, MapPinIcon, Ticket, TicketsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { PLACEHOLDER_IMAGE } from "../home/upcoming-slider/constants";
+import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/formatters";
+import ConcertLikeButton from "../concert/detail/ConcertLikeButton";
+import { AspectRatio } from "../ui/aspect-ratio";
+import { ConcertDataWithLiked } from "@/types/concerts";
 
-export default function SearchConcertCard() {
+export default function SearchConcertCard({
+  concert,
+  isAuthenticated,
+}: {
+  concert: ConcertDataWithLiked;
+  isAuthenticated: boolean;
+}) {
+  const concertId = concert.id.toString();
+
   return (
-    <Card className="flex flex-row gap-6">
-      <div className="relative shrink-0 pl-6">
-        <Image
-          src="/ConcertPoster.png"
-          alt="Concert Poster"
-          width={192}
-          height={192}
-          className="aspect-square rounded-lg"
-        />
-        <Badge
-          className={twMerge(
-            `bg-point-main text-text-point-main absolute bottom-3 left-8 mr-2 text-sm`
-          )}
-        >
-          Rock
-        </Badge>
+    <Card className="flex flex-row gap-6 p-6">
+      <div className="relative w-35 shrink-0">
+        <AspectRatio ratio={320 / 426.5}>
+          <Image
+            src={concert.posterUrl ?? PLACEHOLDER_IMAGE}
+            alt={concert.name}
+            className="rounded-2xl object-cover"
+            fill
+            placeholder="blur"
+            blurDataURL={PLACEHOLDER_IMAGE}
+            sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+          />
+        </AspectRatio>
       </div>
-      <CardContent className="flex flex-1 justify-between">
-        <div className="flex flex-col justify-center gap-6">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl">2025 Christmas Concert</h2>
-            <div className="flex gap-3">
-              <div className={twMerge(`text-text-sub flex items-center gap-1 text-sm`)}>
-                <Calendar className="h-4 w-4" />
-                2025년 12월 24일
-              </div>
-              <div className={twMerge(`text-text-sub flex items-center gap-1 text-sm`)}>
-                <Clock className="h-4 w-4" />
-                19:30
-              </div>
-            </div>
-            <div className={twMerge(`text-text-sub flex items-center gap-1 text-sm`)}>
-              <MapPin className="h-4 w-4" />
-              KSPO DOME(올림픽체조경기장)
-            </div>
-            <div className={twMerge(`text-text-sub flex items-center gap-1 text-sm`)}>
-              <Ticket className="h-4 w-4" />
-              99,000 ~ 121,000원
-            </div>
+      <CardContent className="flex flex-1 justify-between p-0">
+        <div className="flex flex-col justify-between gap-2">
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold">{concert.name}</h3>
+            <ul className="text-text-sub space-y-1 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li>svg]:size-4">
+              <li>
+                <CalendarIcon />
+                {formatDateRangeKorean(concert.startDate, concert.endDate)}
+              </li>
+              {concert.ticketTime && concert.ticketEndTime && (
+                <li>
+                  <TicketsIcon />
+                  {formatDateRangeKorean(concert.ticketTime, concert.ticketEndTime)}
+                </li>
+              )}
+              <li>
+                <MapPinIcon />
+                {concert.placeName}
+              </li>
+              {concert.minPrice && concert.maxPrice && (
+                <li>
+                  <Ticket />
+                  {formatConcertPrice(concert.minPrice, concert.maxPrice)}
+                </li>
+              )}
+            </ul>
           </div>
-          <Link href="/concerts/1">
+          <Link href={`/concerts/${concert.id}`}>
             <Button>자세히보기</Button>
           </Link>
         </div>
-        <Button variant="outline" size="icon" className="border-border hover:bg-border">
-          <Heart />
-        </Button>
+        <ConcertLikeButton
+          concertId={concertId}
+          isAuthenticated={isAuthenticated}
+          isLiked={concert.isLiked}
+        />
       </CardContent>
     </Card>
   );

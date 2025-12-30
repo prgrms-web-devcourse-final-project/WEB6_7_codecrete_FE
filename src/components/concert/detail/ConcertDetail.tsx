@@ -1,25 +1,32 @@
 import ConcertDetailVenue from "@/components/concert/detail/ConcertDetailVenue";
 import ConcertDetailReview from "@/components/concert/detail/ConcertDetailReview";
 import ConcertDetailInfo from "@/components/concert/detail/ConcertDetailInfo";
-import { type ConcertVenueInfo, type ConcertDetail, TicketOffice } from "@/types/concerts";
+import { type ConcertDetail } from "@/types/concerts";
 import QuickActionsSection from "./QuickActionsSection";
-import { User } from "@/types/user";
+import {
+  getConcertDetail,
+  getConcertVenueInfo,
+  getIsLikedConcert,
+  getTicketOfficesByConcertId,
+} from "@/lib/api/concerts/concerts.server";
+import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
 
-export default function ConcertDetail({
-  concertDetail,
-  concertVenueData,
-  concertTicketingData,
-  userData,
-  isLiked,
-}: {
-  concertDetail: ConcertDetail | null;
-  concertVenueData: ConcertVenueInfo | null;
-  concertTicketingData: TicketOffice[] | null;
-  userData: User | null;
-  isLiked?: boolean;
-}) {
-  if (!concertDetail && !concertVenueData && !concertTicketingData) {
-    return null;
+export default async function ConcertDetail({ concertId }: { concertId: string }) {
+  const [concertDetail, concertVenue, concertTicketing, isAuthenticated] = await Promise.all([
+    getConcertDetail({ concertId }),
+    getConcertVenueInfo({ concertId }),
+    getTicketOfficesByConcertId({ concertId }),
+    getAuthStatus(),
+  ]);
+
+  let userData = null;
+  let isLikedConcert = null;
+
+  if (isAuthenticated) {
+    [userData, isLikedConcert] = await Promise.all([
+      getMe().then((res) => res.data),
+      getIsLikedConcert(concertId),
+    ]);
   }
 
   return (
@@ -30,7 +37,7 @@ export default function ConcertDetail({
             concertImageUrls={concertDetail?.concertImageUrls}
             alt={concertDetail?.name}
           />
-          <ConcertDetailVenue concertVenue={concertVenueData} />
+          <ConcertDetailVenue concertVenue={concertVenue.data} />
           <ConcertDetailReview />
         </div>
 
@@ -40,11 +47,11 @@ export default function ConcertDetail({
             <div className="flex flex-col gap-3">
               <QuickActionsSection
                 concertId={concertDetail?.concertId}
-                concertTicketingData={concertTicketingData}
+                concertTicketingData={concertTicketing}
                 concertStartDate={concertDetail?.startDate}
                 concertEndDate={concertDetail?.endDate}
                 userData={userData}
-                isLiked={isLiked}
+                isLiked={isLikedConcert?.isLike}
               />
             </div>
           </div>

@@ -1,32 +1,58 @@
 import { Button } from "@/components/ui/button";
+import { ConcertDetail } from "../concerts";
 
 export type ButtonProps = React.ComponentProps<"button"> & React.ComponentProps<typeof Button>;
+
+export type PlanParticipants = {
+  id: number;
+  userId: number;
+  inviteStatus: "JOINED" | "PENDING" | "DECLINED";
+  role: "OWNER" | "MEMBER";
+};
+
+export type PlanDetail = {
+  id: number;
+  concertId: number;
+  createdBy: number;
+  title: string;
+  planDate: string;
+  createdDate: string;
+  modifiedDate: string;
+  participants: PlanParticipants[];
+  schedules: ScheduleDetail[];
+  totalDuration: number;
+};
 
 export type ScheduleType = "TRANSPORT" | "MEAL" | "WAITING" | "ACTIVITY" | "OTHER" | "CONCERT";
 
 export type TransportType = "WALK" | "PUBLIC_TRANSPORT" | "CAR" | null;
 
-export type ScheduleProps = {
-  schedule_id: number;
-  plan_id: number;
-  schedule_type: ScheduleType;
+export type ScheduleDetail = {
+  id: number;
+  scheduleType: ScheduleType;
   title: string;
-  start_at: string;
+  startAt: string;
   duration: number;
   location: string;
-  location_lat: number;
-  location_lon: number;
-  estimated_cost: number;
+  locationLat: number;
+  locationLon: number;
+  estimatedCost: number;
   details: string;
-  sequence_order: number;
-  start_place_lat?: number | null;
-  start_place_lon?: number | null;
-  end_place_lat?: number | null;
-  end_place_lon?: number | null;
-  distance?: number | null;
-  transport_type?: TransportType;
-  created_date: string;
-  modified_date: string;
+  startPlaceLat: number | null;
+  startPlaceLon: number | null;
+  endPlaceLat: number | null;
+  endPlaceLon: number | null;
+  distance: number | null;
+  transportType: TransportType;
+  isMainEvent: boolean;
+  concertId: number;
+  concertName: string;
+  concertPosterUrl: string;
+  concertPlaceName: string;
+  concertMinPrice: number;
+  concertMaxPrice: number;
+  createdDate: string;
+  modifiedDate: string;
 };
 
 export type ScheduleLocationProps = {
@@ -44,4 +70,18 @@ export type ScheduleFormData = {
   location: string;
   notes: string;
   coords?: { lat?: string; lng?: string };
+};
+
+export type PlannerListWithDetails = {
+  concertId: number;
+  createdBy: number;
+  createdDate: string;
+  id: number;
+  modifiedDate: string;
+  planDate: string;
+  scheduleCount: number;
+  title: string;
+  totalDuration: number;
+  concertDetail: ConcertDetail;
+  planDetail: PlanDetail;
 };
