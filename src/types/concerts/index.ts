@@ -76,6 +76,7 @@ export type QuickActionsProps = {
   text: string;
   Icon2?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 };
+
 // 찜한 공연인지 여부
 export interface LikeConcert {
   isLike: boolean;

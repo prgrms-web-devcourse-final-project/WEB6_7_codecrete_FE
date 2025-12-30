@@ -1,4 +1,4 @@
-import { ConcertData } from "../ConcertType";
+import { ConcertData } from "@/types/concerts";
 import AdminConcertListContent from "./AdminConcertListContent";
 
 export default async function AdminConcertListWrapper({

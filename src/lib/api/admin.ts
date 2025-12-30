@@ -1,8 +1,7 @@
 "use server";
 
-import { ConcertData } from "@/components/concert/ConcertType";
 import { ResponseData } from "@/types/api";
-import { ConcertDetail } from "@/types/concerts";
+import { ConcertData, ConcertDetail } from "@/types/concerts";
 import ClientApi from "@/utils/helpers/clientApi";
 import { cookies } from "next/headers";
 
