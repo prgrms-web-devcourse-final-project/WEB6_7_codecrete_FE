@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import ListSortClient from "@/components/concert/list/ListSortClient";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { totalConcertCount } from "@/lib/api/concerts.server";
+import { totalConcertCount } from "@/lib/api/concerts/concerts.server";
 import { ConcertData } from "@/types/concerts";
 
 export default function ConcertListContent({

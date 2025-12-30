@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { deleteLikeConcert, postLikeConcert } from "@/lib/api/concert.client";
+import { deleteLikeConcert, postLikeConcert } from "@/lib/api/concerts/concerts.client";
 import { HeartIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

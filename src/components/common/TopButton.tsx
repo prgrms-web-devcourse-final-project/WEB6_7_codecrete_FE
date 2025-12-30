@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { twMerge } from "tailwind-merge";
 import { ArrowUpIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function TopButton() {
   const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,12 +38,14 @@ export default function TopButton() {
     <Button
       size="icon"
       className={twMerge(
-        "fixed right-10 bottom-10 z-90 size-15! rounded-full transition-opacity duration-300",
-        isVisible ? "opacity-100" : "pointer-events-none opacity-0"
+        "fixed right-6 bottom-6 z-90 size-12! rounded-full transition-opacity duration-300",
+        pathname.startsWith("/planner") && "bottom-35",
+        isVisible ? "opacity-100" : "pointer-events-none opacity-0",
+        "lg:right-10 lg:bottom-10 lg:size-15!"
       )}
       onClick={handleScrollToTop}
     >
-      <ArrowUpIcon className="size-7" />
+      <ArrowUpIcon className="size-5 lg:size-7" />
     </Button>
   );
 }

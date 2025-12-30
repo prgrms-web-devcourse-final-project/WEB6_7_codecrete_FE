@@ -10,7 +10,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
-import { getSearchConcertsAutoComplete } from "@/lib/api/search.client";
+import { getSearchConcertsAutoComplete } from "@/lib/api/search/search.client";
 
 export default function SearchModal() {
   const router = useRouter();

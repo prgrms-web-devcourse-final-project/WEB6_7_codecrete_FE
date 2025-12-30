@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
 import ConcertCard from "@/components/concert/ConcertCard";
 import ListSortClient from "@/components/concert/list/ListSortClient";
-import { getNoTicketTimeLists } from "@/lib/api/admin.client";
+import { getNoTicketTimeLists } from "@/lib/api/admin/admin.client";
 import { ConcertData } from "@/types/concerts";
 
 export default function AdminConcertListContent({ initialList }: { initialList: ConcertData[] }) {

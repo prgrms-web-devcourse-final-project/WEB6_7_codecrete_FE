@@ -4,7 +4,7 @@ import {
   getLikedArtistList,
   getLikedConcertCount,
   getLikedConcertList,
-} from "@/lib/api/myPage.server";
+} from "@/lib/api/myPage/myPage.server";
 
 export default async function Page() {
   // 찜한 아티스트 목록 API

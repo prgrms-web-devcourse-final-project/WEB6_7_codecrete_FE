@@ -27,7 +27,7 @@ import {
   changeProfileImage,
   changeUsersSettings,
   getUsersSettings,
-} from "@/lib/api/users";
+} from "@/lib/api/user/user.client";
 import {
   AlertDialog,
   AlertDialogContent,

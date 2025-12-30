@@ -15,7 +15,7 @@ import {
   getConcertDetail,
   getIsLikedConcert,
   getTicketOfficesByConcertId,
-} from "@/lib/api/concerts.server";
+} from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
 
 export default async function ConcertHeader({ concertId }: { concertId: string }) {

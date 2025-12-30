@@ -1,5 +1,4 @@
 import ClientApi from "@/utils/helpers/clientApi";
-// TODO : 해당 파일 위치 변경
 
 // 이메일 알림 및 다크모드 설정 정보 가져오기
 export const getUsersSettings = async () => {

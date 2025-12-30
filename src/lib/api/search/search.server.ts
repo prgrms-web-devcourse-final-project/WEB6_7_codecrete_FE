@@ -1,5 +1,5 @@
 import ServerApi from "@/utils/helpers/serverApi";
-import { getIsLikedConcert } from "./concerts.server";
+import { getIsLikedConcert } from "../concerts/concerts.server";
 import { ConcertDataWithLiked } from "@/types/concerts";
 
 /**
@@ -11,7 +11,7 @@ import { ConcertDataWithLiked } from "@/types/concerts";
  * @param {number} size 페이지당 항목 수 (기본값: 12)
  * @returns {Promise<ConcertData[]>} 공연 목록
  */
-export const getSearchConcertsServer = async ({
+export const getSearchConcerts = async ({
   keyword,
   isAuthenticated,
   page = 0,

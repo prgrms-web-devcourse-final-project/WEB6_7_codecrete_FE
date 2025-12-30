@@ -3,7 +3,7 @@
 import { Concert } from "@/types/home";
 import ConcertCard from "../concert/ConcertCard";
 import { useEffect, useState } from "react";
-import { getLikedConcertList } from "@/lib/api/myPage.client";
+import { getLikedConcertList } from "@/lib/api/myPage/myPage.client";
 import { toast } from "sonner";
 import {
   Pagination,

@@ -5,7 +5,7 @@ import { SpotlightIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import SearchConcertCard from "./SearchConcertCard";
-import { getSearchConcerts } from "@/lib/api/search.client";
+import { getSearchConcerts } from "@/lib/api/search/search.client";
 import { ConcertDataWithLiked } from "@/types/concerts";
 
 export default function SearchConcerts({

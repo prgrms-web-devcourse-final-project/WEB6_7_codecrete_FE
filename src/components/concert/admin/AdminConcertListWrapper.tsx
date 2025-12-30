@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getNoTicketTimeLists } from "@/lib/api/admin.client";
+import { getNoTicketTimeLists } from "@/lib/api/admin/admin.client";
 import AdminConcertListContent from "./AdminConcertListContent";
 import { ConcertData } from "@/types/concerts";
 
