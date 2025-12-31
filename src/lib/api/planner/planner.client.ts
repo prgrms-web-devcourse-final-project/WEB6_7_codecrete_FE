@@ -70,3 +70,19 @@ export const updatePlanDetail = async ({
     throw error;
   }
 };
+
+// 플래너 계획 삭제
+export const deletePlan = async ({ planId }: { planId: string }): Promise<void> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/delete/${planId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status}`);
+    }
+  } catch (error) {
+    console.error("Error deleting planner:", error);
+    throw error;
+  }
+};
