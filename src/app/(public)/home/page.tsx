@@ -9,7 +9,7 @@ import { getAuthStatus } from "@/lib/auth/auth.server";
 import { Suspense } from "react";
 
 export default async function Page() {
-  const isLogined = await getAuthStatus();
+  const isAuthenticated = await getAuthStatus();
   const concertData = await getUpcomingConcerts();
   const artistData = await getFeaturedArtists({ page: 0, size: 20 });
 
@@ -19,7 +19,7 @@ export default async function Page() {
       <Suspense fallback={<UpcomingSkeleton />}>
         <UpcomingSlider concerts={concertData.data} />
       </Suspense>
-      <FeaturedSlider artists={artistData.data} isLogined={isLogined} />
+      <FeaturedSlider artists={artistData.data} isAuthenticated={isAuthenticated} />
       <PlannerBanner />
     </>
   );

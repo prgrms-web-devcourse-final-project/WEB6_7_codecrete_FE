@@ -12,10 +12,10 @@ import { deleteLikeArtist, postLikeArtist } from "@/lib/artists/artists.client";
 
 export default function ArtistCard({
   artist,
-  isLogined,
+  isAuthenticated,
 }: {
   artist: ArtistListContent;
-  isLogined: boolean;
+  isAuthenticated: boolean;
 }) {
   const [currentFollows, setCurrentFollows] = useState<number>(artist.likeCount);
   const [currentLiked, setCurrentLiked] = useState<boolean>(artist.isLiked ?? false);
@@ -24,7 +24,7 @@ export default function ArtistCard({
     e.preventDefault();
     e.stopPropagation();
 
-    if (!isLogined) {
+    if (!isAuthenticated) {
       toast.error("로그인 후 이용해주세요.");
       return;
     }

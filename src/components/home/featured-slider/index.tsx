@@ -10,10 +10,10 @@ import { ArtistListData } from "@/types/artists";
 
 export default function FeaturedSlider({
   artists,
-  isLogined,
+  isAuthenticated,
 }: {
   artists: ArtistListData | null;
-  isLogined: boolean;
+  isAuthenticated: boolean;
 }) {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
@@ -58,7 +58,7 @@ export default function FeaturedSlider({
         >
           {displayArtists.map((artist) => (
             <SwiperSlide key={artist.id}>
-              <ArtistCard artist={artist} isLogined={isLogined} />
+              <ArtistCard artist={artist} isAuthenticated={isAuthenticated} />
             </SwiperSlide>
           ))}
         </Swiper>
