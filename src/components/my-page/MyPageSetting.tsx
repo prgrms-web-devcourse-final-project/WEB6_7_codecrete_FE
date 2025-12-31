@@ -37,6 +37,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+// TODO : 컴포넌트화
 export default function MyPageSetting({ userData }: { userData: User }) {
   // TODO : 계정 복구 기능 추가
   const router = useRouter();
@@ -58,6 +59,7 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   const [date, setDate] = useState<Date | null>(
     userData.birthdate ? new Date(userData.birthdate) : null
   ); // 생일
+  // TODO : 다크모드 가장 첫 시도 시에는 적용되지 않음 문제 해결
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const initialUsersSettings = useRef<{ emailNotifications: boolean; darkMode: boolean } | null>(
@@ -289,7 +291,17 @@ export default function MyPageSetting({ userData }: { userData: User }) {
           <FieldGroup className="max-h-[60vh] overflow-y-auto p-4">
             <Field>
               <Label htmlFor="file">프로필 이미지</Label>
-              <FileUploadBox value={previewImg} onFileChange={handleImgChange} />
+              <FileUploadBox
+                value={previewImg}
+                onFileChange={handleImgChange}
+                onClick={(e) => {
+                  if (previewImg) {
+                    e.preventDefault();
+                    setPreviewImg("");
+                    setProfileFile(null);
+                  }
+                }}
+              />
             </Field>
             <Field>
               <Label htmlFor="nickname">닉네임 *</Label>
