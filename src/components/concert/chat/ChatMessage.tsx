@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { twMerge } from "tailwind-merge";
+import { ChatMessageProps } from "@/types/chat";
 
 export default function ChatMessage({
   profileImage = "https://github.com/shadcn.png",
@@ -7,13 +8,7 @@ export default function ChatMessage({
   message,
   time,
   isMe = false,
-}: {
-  profileImage: string;
-  username: string;
-  message: string;
-  time: string;
-  isMe: boolean;
-}) {
+}: ChatMessageProps) {
   return (
     <div className={twMerge("flex gap-3", isMe ? "flex-row-reverse" : "justify-start")}>
       <Avatar className={"h-10 w-10"}>

@@ -9,18 +9,29 @@
 // - 채팅이 없는 경우 보여줄 텍스트 만들기
 // - 같은 사용자가 연속적으로 채팅할 경우 이름은 안뜨고 채팅만 뜨도록 구현하기
 
-"use client";
-
 import { Pin, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getChatMessages } from "@/lib/api/chat/chat.client";
-import { ChatMessageData } from "@/types/chat";
+import { useChatStore } from "@/stores/useChatStore";
+import { Client } from "@stomp/stompjs";
+import { toast } from "sonner";
+import { User } from "@/types/user";
+import ChatMessage from "@/components/concert/chat/ChatMessage";
 
-export default function ChatRoom({ concertId }: { concertId: string }) {
-  const [messages, setMessages] = useState<ChatMessageData[]>([]);
+export default function ChatRoom({
+  concertId,
+  stompClient,
+  user,
+}: {
+  concertId: string;
+  stompClient: Client | null;
+  user: User | null;
+}) {
+  const { messages, setMessages } = useChatStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -38,7 +49,31 @@ export default function ChatRoom({ concertId }: { concertId: string }) {
     return () => {
       mounted = false;
     };
-  }, [concertId]);
+  }, [concertId, setMessages]);
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!inputValue.trim()) {
+      return;
+    }
+
+    if (!stompClient || !stompClient.connected) {
+      toast.error("서버와의 연결이 끊어졌습니다. 새로고침 해주세요.");
+      return;
+    }
+
+    // Swagger 문서의 규격에 맞춰 전송
+    stompClient.publish({
+      destination: "/app/chat/send", // 전송 목적지
+      body: JSON.stringify({
+        concertId: Number(concertId), // 숫자로 변환 필요 여부 확인
+        content: inputValue,
+      }),
+    });
+
+    setInputValue(""); // 전송 후 입력창 비우기
+  };
 
   return (
     <section className="bg-bg-main flex flex-1 flex-col border-r">
@@ -74,17 +109,38 @@ export default function ChatRoom({ concertId }: { concertId: string }) {
         {/*<div className={"flex justify-center"}>*/}
         {/*  <span className={"text-text-sub"}>User_8472님이 입장했습니다</span>*/}
         {/*</div>*/}
-        {/*TODO: 자신이 보낸 메시지인지 판단 추가, 메시지가 없는 경우 알림 추가*/}
-        {messages.map((msg) => (
-          <p key={msg.messageId}>{msg.messageId}</p>
-        ))}
+        {/*TODO: 자신이 보낸 메시지인지 판단 추가(isMe), 메시지가 없는 경우 알림 추가*/}
+        {messages.map((msg, idx) => {
+          // 1. 내 정보와 메시지 발신자 ID 비교 (isMe 판단)
+          const isMe = user?.id === msg.senderId;
+
+          // 2. 서버의 sentDate(ISO string)를 "오후 5:46" 형식으로 변환
+          const formattedTime = new Date(msg.sentDate).toLocaleTimeString("ko-KR", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          });
+
+          return (
+            <ChatMessage
+              key={`${msg.messageId}-${idx}`}
+              profileImage={msg.profileImage} // 서버 데이터에 프로필 이미지가 있는 경우
+              username={msg.senderName}
+              message={msg.content}
+              time={formattedTime}
+              isMe={isMe}
+            />
+          );
+        })}
       </div>
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className={"bg-bg-sub flex items-center gap-3 px-6 py-4"}
-      >
-        <Input className={"bg-bg-main px-6 py-5"} placeholder={"채팅을 입력하세요."} />
-        <Button className={"flex h-full gap-2"} size={"lg"} type={"submit"}>
+      <form onSubmit={handleSend} className={"bg-bg-sub flex items-center gap-3 px-6 py-4"}>
+        <Input
+          className={"bg-bg-main px-6 py-5"}
+          placeholder={"채팅을 입력하세요."}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <Button className={"flex h-full gap-2"} size={"lg"} type={"submit"} disabled={!stompClient}>
           <Send className={"fill-current"} />
           전송
         </Button>
