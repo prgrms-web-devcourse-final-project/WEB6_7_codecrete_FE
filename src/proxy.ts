@@ -83,7 +83,11 @@ async function handleGuestOnlyRoute(
 /* -------------------------------------------------------------------------- */
 
 function isAuthRequiredPath(pathname: string) {
-  return AUTH_REQUIRED_PATHS.some((p) => pathname.startsWith(p));
+  const isStaticPath = AUTH_REQUIRED_PATHS.some((p) => pathname.startsWith(p));
+  // /concerts/로 시작하고 /chat으로 끝나는 패턴 추가
+  const isChatPath = pathname.startsWith("/concerts/") && pathname.endsWith("/chat");
+
+  return isStaticPath || isChatPath;
 }
 
 function isGuestOnlyPath(pathname: string) {
