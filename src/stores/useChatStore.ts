@@ -12,16 +12,16 @@ interface ChatState {
 export const useChatStore = create<ChatState>()(
   devtools(
     immer((set) => ({
-      messages: [], // 오타 수정 (message -> messages)
+      messages: [],
 
       setMessages: (msgs) =>
         set((state) => {
-          state.messages = msgs; // immer 덕분에 직접 할당 가능
+          state.messages = [...msgs].sort((a, b) => a.messageId.localeCompare(b.messageId));
         }),
 
       addMessage: (msg) =>
         set((state) => {
-          state.messages.push(msg); // immer 덕분에 push 사용 가능
+          state.messages.push(msg);
         }),
     }))
   )
