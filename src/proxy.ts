@@ -105,12 +105,12 @@ function redirectToLogin(request: NextRequest) {
 }
 
 function clearAuthCookies(res: NextResponse) {
-  res.cookies.set("access_token", "", { maxAge: 0, path: "/" });
-  res.cookies.set("refresh_token", "", { maxAge: 0, path: "/" });
+  res.cookies.set("ACCESS_TOKEN", "", { maxAge: 0, path: "/" });
+  res.cookies.set("REFRESH_TOKEN", "", { maxAge: 0, path: "/" });
 }
 
 function setAccessCookie(res: NextResponse, token: string) {
-  res.cookies.set("access_token", token, {
+  res.cookies.set("ACCESS_TOKEN", token, {
     httpOnly: true,
     sameSite: "lax", // 동일한 도메인에만 쿠키를 저장할 것인지를 정하는 것
     path: "/",
