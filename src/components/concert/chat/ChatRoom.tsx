@@ -7,12 +7,11 @@
 //   서로 다른 타입으로 분리하여 렌더링 구조 개선
 // - 과거 채팅 로딩 시 무한 스크롤 또는 페이지네이션 방식으로 확장
 // - 채팅이 없는 경우 보여줄 텍스트 만들기
-// - 같은 사용자가 연속적으로 채팅할 경우 이름은 안뜨고 채팅만 뜨도록 구현하기
 
 import { Pin, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getChatMessages } from "@/lib/api/chat/chat.client";
 import { useChatStore } from "@/stores/useChatStore";
 import { Client } from "@stomp/stompjs";
@@ -32,6 +31,36 @@ export default function ChatRoom({
   const { messages, setMessages } = useChatStore();
   const [isLoading, setIsLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isLoading) return; // 로딩 중일 때는 실행하지 않음
+
+    const container = containerRef.current;
+    if (container) {
+      // 브라우저가 DOM 요소들의 높이를 계산할 시간을 아주 잠깐 줍니다.
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+      });
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 150;
+
+    if (isAtBottom || messages.length <= 1) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages, isLoading]);
 
   useEffect(() => {
     let mounted = true;
@@ -88,6 +117,7 @@ export default function ChatRoom({
         </div>
       </div>
       <div
+        ref={containerRef}
         className={
           "scrollbar-hide bg-bg-main flex flex-1 flex-col gap-6 overflow-y-scroll border-b p-8"
         }
