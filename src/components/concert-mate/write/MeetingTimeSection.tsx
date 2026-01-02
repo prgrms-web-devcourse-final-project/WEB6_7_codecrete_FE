@@ -1,3 +1,5 @@
+"use client";
+
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { MateDatePicker } from "@/components/concert-mate/write/MateDatePicker";
 
