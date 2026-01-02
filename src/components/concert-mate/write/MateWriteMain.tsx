@@ -16,7 +16,9 @@ import SelectedConcert from "@/components/concert-mate/write/SelectedConcert";
 import { FormProvider, useForm } from "react-hook-form";
 import { MatePostWrite } from "@/types/community/concert-mate";
 import { useState } from "react";
-// import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { createMatePost } from "@/lib/api/community/concert-mate/mate.client";
 
 export default function MateWriteMain() {
   const methods = useForm<MatePostWrite>({
@@ -33,7 +35,7 @@ export default function MateWriteMain() {
       activityTags: [],
     },
   });
-  // const router = useRouter();
+  const router = useRouter();
 
   // 데이터가 서버로 날아가고 있는지 여부 (boolean)
   const {
@@ -46,7 +48,32 @@ export default function MateWriteMain() {
   };
 
   // 등록 버튼
-  const onSubmitMate = () => {};
+  const onSubmitMate = async (data: MatePostWrite) => {
+    const finalData = {
+      ...data,
+      maxParticipants: Number(data.maxParticipants),
+      ageRangeMin: Number(data.ageRangeMin),
+      ageRangeMax: Number(data.ageRangeMax),
+    };
+
+    try {
+      const isSuccess = await createMatePost(finalData);
+      // console.log("서버로 보낼 최종 데이터:", finalData);
+
+      if (isSuccess) {
+        toast.success("구인글이 성공적으로 등록되었습니다!");
+        router.push("/concert-mate");
+        router.refresh();
+      } else {
+        toast.error("등록에 실패했습니다. 입력 내용을 확인해주세요.");
+      }
+    } catch (error) {
+      console.error("제출 중 에러 발생:", error);
+
+      toast.error("서버와 통신 중 오류가 발생했습니다.");
+    }
+    // TODO : 필수 데이터를 안 써도 통과 시킴 : 에러 처리 안 한 애들도 막힘
+  };
 
   // 취소 버튼
   const onCancelMate = () => {};
