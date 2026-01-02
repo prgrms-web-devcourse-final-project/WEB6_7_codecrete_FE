@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { TicketVendor } from "@/types/chat";
 import ChatTimeCard from "@/components/concert/chat/ChatTimeCard";
 import ConcertInfoCard from "@/components/concert/chat/ConcertInfoCard";
 import ChatRulesCard from "@/components/concert/chat/ChatRulesCard";
@@ -16,11 +14,9 @@ export default function ChatAside({
   ticketOffices: TicketOffice[] | null;
   stompClient: Client | null;
 }) {
-  const [vendor, setVendor] = useState<TicketVendor>("nol");
-
   return (
     <aside className="bg-bg-sub flex h-full max-w-130 flex-col gap-6 overflow-y-scroll p-10">
-      <ChatTimeCard vendor={vendor} setVendor={setVendor} />
+      <ChatTimeCard />
       <ConcertInfoCard concert={concert} ticketOffices={ticketOffices} />
       <ChatRulesCard />
       <ActiveParticipantsCard concertId={concert?.concertId} stompClient={stompClient} />
