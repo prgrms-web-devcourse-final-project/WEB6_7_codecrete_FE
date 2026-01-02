@@ -1,46 +1,23 @@
 "use client";
 
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { SliderHeader } from "../SliderHeader";
 import "swiper/css";
-import { toast } from "sonner";
 import ArtistCard from "./ArtistCard";
+import { ArtistListData } from "@/types/artists";
 
-// 임시 데이터 타입
-interface Artist {
-  id: number;
-  name: string;
-  genre: string;
-  imageUrl: string;
-  followers: string;
-}
-
-interface FeaturedSliderProps {
-  artists?: Artist[] | null;
-}
-
-export default function FeaturedSlider({ artists }: FeaturedSliderProps) {
+export default function FeaturedSlider({
+  artists,
+  isAuthenticated,
+}: {
+  artists: ArtistListData | null;
+  isAuthenticated: boolean;
+}) {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
-  // 임시 데이터
-  const mockArtists: Artist[] = Array.from({ length: 10 }).map((_, index) => ({
-    id: index,
-    name: "먼데이키즈",
-    genre: "발라드 가수",
-    imageUrl:
-      "https://kopis.or.kr/_next/image?url=%2Fupload%2FpfmPoster%2FPF_PF281383_251211_125646.jpg&w=384&q=75",
-    followers: "24.5K",
-  }));
-
-  const displayArtists = artists || mockArtists;
-
-  const handleFollow = (e: MouseEvent<HTMLButtonElement>, artistId: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toast.success(`아티스트 ${artistId} 팔로우 되었습니다!`);
-  };
+  const displayArtists = artists?.content;
 
   if (!displayArtists?.length) return null;
 
@@ -81,7 +58,7 @@ export default function FeaturedSlider({ artists }: FeaturedSliderProps) {
         >
           {displayArtists.map((artist) => (
             <SwiperSlide key={artist.id}>
-              <ArtistCard artist={artist} onFollow={(e) => handleFollow(e, artist.id)} />
+              <ArtistCard artist={artist} isAuthenticated={isAuthenticated} />
             </SwiperSlide>
           ))}
         </Swiper>
