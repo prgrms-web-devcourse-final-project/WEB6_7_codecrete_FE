@@ -3,16 +3,21 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
+import { getConcertDetail } from "@/lib/api/concerts/concerts.client";
+import { getSearchConcertsAutoComplete } from "@/lib/api/search/search.client";
 import { cn } from "@/lib/utils";
+import { MatePostWrite } from "@/types/community/concert-mate";
 import { ConcertDetail } from "@/types/concerts";
 import { AutoCompleteConcerts } from "@/types/search";
 import { formatDateRange } from "@/utils/helpers/formatters";
 import { CalendarDaysIcon, MapPinIcon, XIcon } from "lucide-react";
-import { useOptimistic, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
+import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function SelectedConcert() {
+  const { setValue } = useFormContext<MatePostWrite>();
+
   const [isPending, startTransition] = useTransition();
   // 선택된 콘서트 상태
   const [selectedConcert, setSelectedConcert] = useState<AutoCompleteConcerts | null>(null);
@@ -49,6 +54,7 @@ export default function SelectedConcert() {
   // 콘서트 선택 시 API 호출
   const handleSelectConcert = async (concert: AutoCompleteConcerts) => {
     setSelectedConcert(concert);
+    setValue("concertId", concert.id);
     setSearch(""); // 검색어 초기화
     setConcertsResult([]); // 검색 결과 초기화
 
@@ -67,6 +73,7 @@ export default function SelectedConcert() {
       console.error("콘서트 상세 정보 로드 오류:", error);
       toast.error("콘서트 정보를 불러올 수 없습니다.");
       setSelectedConcert(null);
+      setValue("concertId", 0);
     } finally {
       setIsLoadingConcertDetail(false);
     }
@@ -76,7 +83,38 @@ export default function SelectedConcert() {
   const handleDeselectConcert = () => {
     setSelectedConcert(null);
     setConcertDetail(null);
+    setValue("concertId", 0);
   };
+
+  useEffect(() => {
+    // 검색어가 2글자 미만이면 초기화
+    if (search.trim().length < 2) {
+      startTransition(() => {
+        setConcertsResult([]);
+      });
+      return;
+    }
+
+    const delayTimer = setTimeout(() => {
+      startTransition(async () => {
+        try {
+          setOptimisticResults([]);
+
+          const data = await getSearchConcertsAutoComplete({
+            keyword: search,
+            start: 0,
+            end: 30,
+          });
+          setConcertsResult(data);
+        } catch (error) {
+          console.error("검색 오류:", error);
+          setConcertsResult([]);
+        }
+      });
+    }, 300);
+
+    return () => clearTimeout(delayTimer);
+  }, [search, setOptimisticResults]);
 
   return (
     <Field className="px-6">

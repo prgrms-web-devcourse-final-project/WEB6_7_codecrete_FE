@@ -20,14 +20,14 @@ export default function MateWriteMain() {
   const methods = useForm<MatePostWrite>({
     defaultValues: {
       concertId: 0,
-      title: "", //v
-      content: "", //v
-      maxParticipants: undefined, //v
-      genderPreference: "", //v
-      ageRangeMin: undefined, //v
-      ageRangeMax: undefined, //v
-      meetingAt: "", // "meetingAt": "2025-01-05T18:30:00",
-      meetingPlace: "", //v
+      title: "",
+      content: "",
+      maxParticipants: undefined,
+      genderPreference: "",
+      ageRangeMin: undefined,
+      ageRangeMax: undefined,
+      meetingAt: "",
+      meetingPlace: "",
       activityTags: [],
     },
   });
@@ -41,7 +41,6 @@ export default function MateWriteMain() {
             {/* 콘서트 선택 또는 검색*/}
             {/* TODO : 컴포넌트화 (PlannerCreate.tsx)*/}
             <SelectedConcert />
-            {/* <SelectedConcertCard /> */}
             {/* 정보 입력 */}
             <MateTitleSection />
             <PreferenceSelectSection />
