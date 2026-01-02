@@ -1,15 +1,11 @@
 // TODO:
 // - 사용자의 입장/퇴장 이벤트를 시스템 메시지로 구분하여 렌더링
 //   (ex. "OOO님이 입장했습니다", "OOO님이 퇴장했습니다")
-// - 일반 채팅 메시지 / 시스템 메시지 / 날짜 구분 메시지를
-//   서로 다른 타입으로 분리하여 렌더링 구조 개선
-// - 과거 채팅 로딩 시 무한 스크롤 또는 페이지네이션 방식으로 확장
-// - 채팅이 없는 경우 보여줄 텍스트 만들기
 
-import { Pin, Send } from "lucide-react";
+import { Loader2, Pin, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getChatMessages } from "@/lib/api/chat/chat.client";
 import { useChatStore } from "@/stores/useChatStore";
 import { Client } from "@stomp/stompjs";
@@ -17,6 +13,7 @@ import { toast } from "sonner";
 import { User } from "@/types/user";
 import ChatMessage from "@/components/concert/chat/ChatMessage";
 import InfoBadge from "@/components/concert/chat/InfoBadge";
+import { useInView } from "react-intersection-observer";
 
 export default function ChatRoom({
   concertId,
@@ -29,9 +26,57 @@ export default function ChatRoom({
 }) {
   const { messages, setMessages } = useChatStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingPast, setIsFetchingPast] = useState(false); // 과거 데이터 로딩 상태
+  const [hasMore, setHasMore] = useState(true); // 추가 데이터 여부
   const [inputValue, setInputValue] = useState("");
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { ref: topTriggerRef, inView } = useInView({ threshold: 0 });
+
+  const fetchPastMessages = useCallback(async () => {
+    if (isFetchingPast || !hasMore || messages.length === 0) return;
+
+    setIsFetchingPast(true);
+    const container = containerRef.current;
+
+    // 데이터 추가 전의 전체 높이 저장
+    const prevScrollHeight = container?.scrollHeight || 0;
+
+    try {
+      // 현재 리스트의 가장 첫 번째(가장 오래된) 메시지 ID를 커서로 사용
+      const oldestMsgId = messages[0].messageId;
+      const newData = await getChatMessages(concertId, oldestMsgId);
+
+      if (newData.length < 20) {
+        setHasMore(false); // 가져온 데이터가 요청 사이즈(20)보다 적으면 끝에 도달
+      }
+
+      if (newData.length > 0) {
+        // 기존 메시지 앞에 새 데이터를 병합
+        setMessages([...newData, ...messages]);
+
+        // 3. 스크롤 위치 보정 (핵심 로직)
+        // DOM이 업데이트된 직후 높이 차이만큼 scrollTop을 조절합니다.
+        requestAnimationFrame(() => {
+          if (container) {
+            const newScrollHeight = container.scrollHeight;
+            container.scrollTop = newScrollHeight - prevScrollHeight;
+          }
+        });
+      }
+    } catch {
+      toast.error("과거 메시지를 불러오지 못했습니다.");
+    } finally {
+      setIsFetchingPast(false);
+    }
+  }, [isFetchingPast, hasMore, messages, concertId, setMessages]);
+
+  useEffect(() => {
+    if (inView && !isLoading) {
+      fetchPastMessages();
+    }
+  }, [inView, isLoading, fetchPastMessages]);
 
   useEffect(() => {
     if (isLoading) return; // 로딩 중일 때는 실행하지 않음
@@ -44,6 +89,26 @@ export default function ChatRoom({
       });
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchInitialMessages = async () => {
+      try {
+        const data = await getChatMessages(concertId);
+        if (mounted) {
+          setMessages(data);
+          setHasMore(data.length >= 20);
+          setIsLoading(false);
+        }
+      } catch {
+        toast.error("메시지 로드 실패");
+      }
+    };
+    fetchInitialMessages();
+    return () => {
+      mounted = false;
+    };
+  }, [concertId, setMessages]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -60,24 +125,6 @@ export default function ChatRoom({
       });
     }
   }, [messages, isLoading]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchMessages = async () => {
-      const data = await getChatMessages(concertId);
-      if (mounted) {
-        setMessages(data);
-        setIsLoading(false);
-      }
-    };
-
-    fetchMessages();
-
-    return () => {
-      mounted = false;
-    };
-  }, [concertId, setMessages]);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,6 +168,23 @@ export default function ChatRoom({
           "scrollbar-hide bg-bg-main flex flex-1 flex-col gap-6 overflow-y-scroll border-b p-8"
         }
       >
+        {/* 4. 무한 스크롤 감지 센서 */}
+        <div ref={topTriggerRef} className="h-1 w-full" />
+
+        {isFetchingPast && (
+          <div className="flex justify-center py-2">
+            <Loader2 className="text-text-sub h-4 w-4 animate-spin" />
+          </div>
+        )}
+
+        {/* 5. 채팅이 없는 경우 (Empty State) */}
+        {!isLoading && messages.length === 0 && (
+          <div className="flex flex-1 flex-col items-center justify-center py-20 text-center opacity-60">
+            <p className="text-text-main font-bold">아직 나눈 대화가 없어요.</p>
+            <p className="text-text-sub mt-1 text-xs">첫 번째 메시지를 보내보세요!</p>
+          </div>
+        )}
+
         {/*TODO: 나중에 스켈레톤으로 변경 */}
         {isLoading && (
           <div className={"flex items-center justify-center"}>
