@@ -15,6 +15,8 @@ import { twMerge } from "tailwind-merge";
 import SelectedConcert from "@/components/concert-mate/write/SelectedConcert";
 import { FormProvider, useForm } from "react-hook-form";
 import { MatePostWrite } from "@/types/community/concert-mate";
+import { useState } from "react";
+// import { useRouter } from "next/navigation";
 
 export default function MateWriteMain() {
   const methods = useForm<MatePostWrite>({
@@ -31,6 +33,23 @@ export default function MateWriteMain() {
       activityTags: [],
     },
   });
+  // const router = useRouter();
+
+  // 데이터가 서버로 날아가고 있는지 여부 (boolean)
+  const {
+    formState: { isSubmitting },
+  } = methods;
+
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const onCheckedChange = (isConfirmed: boolean) => {
+    setIsConfirmed(isConfirmed);
+  };
+
+  // 등록 버튼
+  const onSubmitMate = () => {};
+
+  // 취소 버튼
+  const onCancelMate = () => {};
 
   return (
     <FormProvider {...methods}>
@@ -52,8 +71,13 @@ export default function MateWriteMain() {
             <ActivityTagSection />
             <Separator className="px-6" />
             {/* 약관 동의 및 등록 */}
-            <ReviewConfirmSection />
-            <ReviewFooterActions />
+            <ReviewConfirmSection checked={isConfirmed} onChange={onCheckedChange} />
+            <ReviewFooterActions
+              onSubmit={methods.handleSubmit(onSubmitMate)}
+              onCancel={onCancelMate}
+              isPending={isSubmitting}
+              isDisabled={!isConfirmed}
+            />
           </Card>
         </form>
       </section>
