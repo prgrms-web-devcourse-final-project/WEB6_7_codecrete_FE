@@ -1,28 +1,25 @@
 "use client";
-import { LoaderCircleIcon, MapPinIcon, MapPinnedIcon } from "lucide-react";
+import { LoaderCircleIcon, MapIcon, MapPinIcon, MapPinnedIcon } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-
-interface Place {
-  id?: string;
-  place_name: string;
-  address_name: string;
-  x?: string; // 경도
-  y?: string; // 위도
-}
+import { SearchPlace } from "@/types/planner";
 
 interface SearchPlacesProps {
   placeholder?: string;
-  onSelect?: (place: Place) => void;
+  onSelect?: (place: SearchPlace) => void;
+  isStart?: boolean;
+  defaultValue?: string;
 }
 
 export default function SearchPlaces({
   placeholder = "장소 또는 주소를 검색하세요",
   onSelect,
+  isStart,
+  defaultValue,
 }: SearchPlacesProps) {
-  const [term, setTerm] = useState("");
-  const [results, setResults] = useState<Place[]>([]);
+  const [term, setTerm] = useState(defaultValue || "");
+  const [results, setResults] = useState<SearchPlace[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const id = useId();
 
@@ -36,10 +33,10 @@ export default function SearchPlaces({
       }
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/search-places?query=${encodeURIComponent(debouncedTerm)}`);
+        const res = await fetch(`/api/location?query=${encodeURIComponent(debouncedTerm)}`);
         if (!res.ok) throw new Error("검색 요청 실패");
         const data = await res.json();
-        setResults((data?.documents ?? []) as Place[]);
+        setResults(data?.documents ?? []);
       } catch (error) {
         if (error instanceof Error) {
           toast.error(error.message);
@@ -55,7 +52,7 @@ export default function SearchPlaces({
   }, [debouncedTerm]);
 
   return (
-    <div className="space-y-3">
+    <div className="flex h-full flex-col gap-3">
       <div className="relative">
         <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 peer-disabled:opacity-50">
           <MapPinIcon className="stroke-text-sub size-4" />
@@ -76,8 +73,19 @@ export default function SearchPlaces({
           </div>
         )}
       </div>
+      {isStart && results.length === 0 && (
+        <div className="flex flex-1 grow flex-col items-center justify-center gap-4 py-10">
+          <div className="bg-bg-sub rounded-full p-5">
+            <MapIcon className="size-10" />
+          </div>
+          <div className="space-y-1 text-center">
+            <p className="text-lg font-medium">검색어를 입력해주세요.</p>
+            <p className="text-text-sub text-sm">출발하고 싶은 장소를 검색해보세요.</p>
+          </div>
+        </div>
+      )}
       {results.length > 0 && (
-        <div className="max-h-28 space-y-3 overflow-y-auto">
+        <div className="space-y-3 overflow-y-auto">
           <ul className="space-y-2">
             {results.map((place) => (
               <li

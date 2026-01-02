@@ -23,36 +23,36 @@ export type PlanDetail = {
   totalDuration: number;
 };
 
-export type ScheduleType = "TRANSPORT" | "MEAL" | "WAITING" | "ACTIVITY" | "OTHER" | "CONCERT";
+export type ScheduleType = "TRANSPORT" | "MEAL" | "WAITING" | "ACTIVITY" | "OTHER";
 
 export type TransportType = "WALK" | "PUBLIC_TRANSPORT" | "CAR" | null;
 
 export type ScheduleDetail = {
-  id: number;
+  id?: number; // planId가 아닌 scheduleId
   scheduleType: ScheduleType;
   title: string;
   startAt: string;
   duration: number;
   location: string;
-  locationLat: number;
-  locationLon: number;
   estimatedCost: number;
   details: string;
-  startPlaceLat: number | null;
-  startPlaceLon: number | null;
-  endPlaceLat: number | null;
-  endPlaceLon: number | null;
-  distance: number | null;
-  transportType: TransportType;
-  isMainEvent: boolean;
-  concertId: number;
-  concertName: string;
-  concertPosterUrl: string;
-  concertPlaceName: string;
-  concertMinPrice: number;
-  concertMaxPrice: number;
-  createdDate: string;
-  modifiedDate: string;
+  locationLat?: number;
+  locationLon?: number;
+  startPlaceLat?: number | null;
+  startPlaceLon?: number | null;
+  endPlaceLat?: number | null;
+  endPlaceLon?: number | null;
+  distance?: number | null;
+  transportType?: TransportType;
+  isMainEvent?: boolean;
+  concertId?: number;
+  concertName?: string;
+  concertPosterUrl?: string;
+  concertPlaceName?: string;
+  concertMinPrice?: number;
+  concertMaxPrice?: number;
+  createdDate?: string;
+  modifiedDate?: string;
 };
 
 export type ScheduleLocationProps = {
@@ -84,4 +84,26 @@ export type PlannerListWithDetails = {
   totalDuration: number;
   concertDetail: ConcertDetail;
   planDetail: PlanDetail;
+};
+
+export type UserPlace = {
+  lat: number;
+  lon: number;
+  address: string;
+  placeName?: string;
+};
+
+export type SearchPlace = {
+  address_name: string;
+  category_group_code: string;
+  category_group_name: string;
+  category_name: string;
+  distance: string;
+  id: string;
+  phone: string;
+  place_name: string;
+  place_url: string;
+  road_address_name: string;
+  x: number;
+  y: number;
 };

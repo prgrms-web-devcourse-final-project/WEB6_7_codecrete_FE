@@ -32,7 +32,7 @@ interface AddScheduleDialogProps {
 
 export default function AddScheduleDialog({ open, onOpenChange }: AddScheduleDialogProps) {
   const [value, setValue] = useState("");
-  const [coords, setCoords] = useState<{ lat?: string; lng?: string } | null>(null);
+  const [coords, setCoords] = useState<{ lat?: number; lng?: number } | null>(null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

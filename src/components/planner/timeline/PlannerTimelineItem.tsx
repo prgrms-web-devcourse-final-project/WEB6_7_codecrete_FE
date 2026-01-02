@@ -1,285 +1,138 @@
 "use client";
 
+import { useState } from "react";
+import { MoreHorizontalIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  CarFrontIcon,
-  MoreHorizontalIcon,
-  PlayIcon,
-  UtensilsIcon,
-  Music,
-  FootprintsIcon,
-  TrainIcon,
-  SparklesIcon,
-  CalendarCheck,
-} from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { twMerge } from "tailwind-merge";
-import { ScheduleDetail, ScheduleType, TransportType } from "@/types/planner";
-import { Separator } from "@/components/ui/separator";
-import SearchPlaces from "../sidebar/SearchPlaces";
+import { cn } from "@/lib/utils";
+import { ScheduleDetail } from "@/types/planner";
 
-const getIcon = (type: ScheduleType, onLast: boolean, transportType?: TransportType) => {
-  switch (type) {
-    case "TRANSPORT":
-      if (transportType === "WALK") {
-        return <FootprintsIcon className="stroke-text-sub" />;
-      }
-      if (transportType === "PUBLIC_TRANSPORT") {
-        return <TrainIcon className="stroke-text-sub" />;
-      }
-      if (transportType === "CAR") {
-        return <CarFrontIcon className="stroke-text-sub" />;
-      }
-    case "MEAL":
-      return <UtensilsIcon className="stroke-text-main" />;
-    case "CONCERT":
-      return <Music className="stroke-text-point-main" />;
-    default:
-      if (onLast) return <CalendarCheck className="stroke-text-sub" />;
-      return <SparklesIcon className="fill-text-sub stroke-text-sub" />;
-  }
-};
+// 분리한 하위 컴포넌트들 임포트
+import TimelineIcon from "./TimelineIcon";
+import TimelineInfoGrid from "./TimelineInfoGrid";
+import EditScheduleDialog from "../dialogs/EditScheduleDialog";
+import DeleteScheduleDialog from "../dialogs/DeleteScheduleDialog";
 
-export default function PlannerTimelineItem({
-  schedule,
-  onLast,
-}: {
+interface PlannerTimelineItemProps {
   schedule: ScheduleDetail;
-  onLast: boolean;
-}) {
+  role?: string;
+  // 실제 사용시에는 onUpdate, onDelete 등의 props가 필요할 것입니다.
+  planId: number;
+}
+
+export default function PlannerTimelineItem({ schedule, role, planId }: PlannerTimelineItemProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleEditDialog = () => {
-    setShowEditDialog(true);
-  };
+  // 메인 이벤트(공연)거나 식사일 때는 하단 그리드(비용/경로 등)를 숨김
+  const showDetailGrid = !schedule.isMainEvent && schedule.scheduleType !== "MEAL";
 
-  const handleDeleteDialog = () => {
-    setShowDeleteDialog(true);
-  };
-
-  const renderIcon = (type: ScheduleType, onLast: boolean, transportType?: TransportType) => {
-    return getIcon(type, onLast, transportType);
+  const handleDeleteConfirm = () => {
+    // TODO: 삭제 API 호출 로직
+    setShowDeleteDialog(false);
   };
 
   return (
     <>
       <article className="flex gap-6">
+        {/* 좌측: 아이콘 영역 */}
+        <TimelineIcon
+          type={schedule.scheduleType}
+          transportType={schedule?.transportType}
+          isMainEvent={schedule.isMainEvent ?? false}
+          concertId={schedule.concertId}
+        />
+
+        {/* 우측: 컨텐츠 영역 */}
         <div
-          className={twMerge(
-            "border-bg-main bg-bg-sub flex size-16 items-center justify-center rounded-full border-4",
-            schedule.scheduleType === "CONCERT" &&
-              "bg-point-main border-white shadow-md shadow-zinc-900/20",
-            schedule.scheduleType === "MEAL" && "bg-bg-main border-point-main"
-          )}
-        >
-          {renderIcon(schedule.scheduleType, onLast, schedule.transportType)}
-        </div>
-        <div
-          className={twMerge(
-            "border-border bg-bg-sub flex-1 space-y-4 rounded-xl border p-6",
-            schedule.scheduleType === "CONCERT" && "bg-point-main",
+          className={cn(
+            "border-border bg-bg-sub text-text-main flex-1 space-y-4 rounded-xl border p-6",
+            // 메인 이벤트 강조
+            schedule.isMainEvent && "bg-point-main text-text-point-main",
+            // 식사 일정 강조
             schedule.scheduleType === "MEAL" && "border-border-point bg-bg-main border-2"
           )}
         >
+          {/* 헤더: 제목, 시간, 메뉴버튼 */}
           <div className="flex items-center justify-between">
-            <h4
-              className={twMerge(
-                "text-lg font-bold",
-                schedule.scheduleType === "CONCERT" ? "text-text-point-main" : "text-text-main"
-              )}
-            >
-              {schedule.title}
-            </h4>
+            <h4 className="text-lg font-bold">{schedule.title}</h4>
             <div className="flex items-center gap-2">
               <span
-                className={twMerge(
+                className={cn(
                   "font-medium whitespace-nowrap",
-                  schedule.scheduleType === "CONCERT" ? "text-bg-main" : "text-text-sub"
+                  schedule.isMainEvent ? "text-bg-main" : "text-text-sub"
                 )}
               >
                 {schedule.startAt}
               </span>
-              {schedule.scheduleType !== "CONCERT" && (
+
+              {/* 드롭다운 메뉴 */}
+              {(role === "OWNER" || role === "EDITOR") && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" aria-label="메뉴 열기" className="size-8">
-                      <MoreHorizontalIcon />
+                    <Button variant="ghost" aria-label="메뉴 열기" className="size-8 p-0">
+                      <MoreHorizontalIcon className="size-5" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onSelect={handleEditDialog}>수정</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={handleDeleteDialog}>삭제</DropdownMenuItem>
+                  <DropdownMenuContent align="end">
+                    {/* 메인 이벤트 시간 등록/수정용 (공연 시작시간이 등록 안됨) */}
+                    <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
+                      {schedule.isMainEvent ? "공연 시간 설정" : "수정"}
+                    </DropdownMenuItem>
+
+                    {/* 메인 이벤트가 아닐 때만 삭제 허용 */}
+                    {!schedule.isMainEvent && (
+                      <DropdownMenuItem
+                        onSelect={() => setShowDeleteDialog(true)}
+                        className="text-red-600 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950"
+                      >
+                        삭제
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
             </div>
           </div>
-          <div
-            className={twMerge(
-              "text-text-sub text-sm",
-              schedule.scheduleType === "CONCERT" && "text-text-point-sub"
-            )}
-          >
-            <p>{schedule.details}</p>
-          </div>
-          {schedule.scheduleType !== "CONCERT" && schedule.scheduleType !== "MEAL" && !onLast && (
+
+          {/* 본문: 상세 설명 */}
+          {schedule.details && (
+            <div
+              className={cn("text-text-sub text-sm", schedule.isMainEvent && "text-text-point-sub")}
+            >
+              <p className="whitespace-pre-wrap">{schedule.details}</p>
+            </div>
+          )}
+
+          {/* 하단: 이동수단 상세 정보 (구분선 포함) */}
+          {showDetailGrid && (
             <>
-              <Separator />
-              <div className="text-text-sub grid grid-cols-2 gap-3 text-sm">
-                {schedule.scheduleType === "TRANSPORT" && (
-                  <>
-                    {schedule.transportType !== "WALK" && (
-                      <div className="space-y-1">
-                        <h5 className="text-xs font-medium">예상 금액</h5>
-                        <p className="text-text-main text-sm font-semibold">
-                          {schedule.estimatedCost}원
-                        </p>
-                      </div>
-                    )}
-                    <div className="space-y-1">
-                      <h5 className="text-xs font-medium">예상 시간</h5>
-                      <p className="text-text-main text-sm font-semibold">{schedule.duration}분</p>
-                    </div>
-                    {schedule.transportType === "PUBLIC_TRANSPORT" && (
-                      <div className="space-y-1">
-                        <h5 className="text-xs font-medium">이동 경로</h5>
-                        <p className="text-text-main text-sm font-semibold">{schedule.location}</p>
-                      </div>
-                    )}
-                    <div className="space-y-1">
-                      <h5 className="text-xs font-medium">이동 거리</h5>
-                      <p className="text-text-main text-sm font-semibold">{schedule.distance}m</p>
-                    </div>
-                  </>
-                )}
-              </div>
+              <Separator className="bg-border my-3" />
+              <TimelineInfoGrid schedule={schedule} />
             </>
           )}
         </div>
       </article>
 
-      <Dialog
+      {/* 다이얼로그 컴포넌트들 */}
+      <EditScheduleDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
-        aria-description="일정 항목 수정"
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>일정 항목 수정</DialogTitle>
-          </DialogHeader>
-          <FieldGroup className="max-h-[60vh] overflow-y-auto p-4">
-            <Field>
-              <FieldLabel htmlFor="scheduleType">일정 타입</FieldLabel>
-              <ToggleGroup
-                type="single"
-                variant="outline"
-                spacing={2}
-                className="*:border-border *:fill-text-sub *:text-text-sub *:data-[state=on]:bg-point-main *:data-[state=on]:[svg]:fill-point-sub *:data-[state=on]:text-point-sub"
-              >
-                <ToggleGroupItem value="ACTIVITY" aria-label="활동">
-                  <PlayIcon />
-                  활동
-                </ToggleGroupItem>
-                <ToggleGroupItem value="TRANSPORT" aria-label="이동수단">
-                  <CarFrontIcon />
-                  이동수단
-                </ToggleGroupItem>
-                <ToggleGroupItem value="MEAL" aria-label="식사">
-                  <UtensilsIcon />
-                  식사
-                </ToggleGroupItem>
-                <ToggleGroupItem value="CONCERT" aria-label="이벤트">
-                  <Music />
-                  이벤트
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </Field>
-            <Field>
-              <Label htmlFor="scheduleTitle">제목</Label>
-              <Input id="scheduleTitle" placeholder="예시: 홍대입구역에서 출발" />
-            </Field>
-            <div className="flex gap-4">
-              <Field className="flex-1">
-                <Label htmlFor="scheduleStartTime">시작 시간</Label>
-                <Input
-                  type="time"
-                  id="scheduleStartTime"
-                  className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:appearance-none"
-                />
-              </Field>
-              <Field className="flex-1">
-                <Label htmlFor="scheduleDuration">소요 시간</Label>
-                <Input type="text" id="scheduleDuration" placeholder="예: 30분" />
-              </Field>
-            </div>
-            <Field>
-              <Label htmlFor="scheduleLocation">장소</Label>
-              <SearchPlaces placeholder="장소 또는 주소를 검색하세요" />
-            </Field>
-            <Field>
-              <Label htmlFor="scheduleNotes">메모</Label>
-              <Textarea
-                id="scheduleNotes"
-                placeholder="일정에 대한 메모를 작성하세요."
-                className="h-20 resize-none"
-              />
-            </Field>
-          </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">취소</Button>
-            </DialogClose>
-            <Button type="submit">등록</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        schedule={schedule}
+        planId={planId}
+      />
 
-      <AlertDialog
+      <DeleteScheduleDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        aria-description="일정 항목 삭제"
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>정말 이 일정 항목을 삭제하시겠습니까?</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogDescription>이 작업은 되돌릴 수 없습니다.</AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction>삭제</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        onConfirm={handleDeleteConfirm}
+      />
     </>
   );
 }

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ documents: [] }, { status: 200 });
   }
 
-  const API_KEY = process.env.KAKAO_REST_API_KEY;
+  const API_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY;
   if (!API_KEY) {
     return NextResponse.json({ error: "Missing KAKAO_REST_API_KEY" }, { status: 500 });
   }
@@ -17,9 +17,8 @@ export async function GET(request: Request) {
     `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(query)}`,
     {
       headers: {
-        Authorization: `KakaoAK ${API_KEY}`,
+        Authorization: API_KEY!,
       },
-      // Disable Next's default caching for dynamic search
       cache: "no-store",
     }
   );

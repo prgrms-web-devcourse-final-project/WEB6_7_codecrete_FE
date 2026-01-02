@@ -45,7 +45,7 @@ export default function Error({
     <div className="from-background via-background to-point-main/5 flex min-h-screen items-center justify-center bg-linear-to-br px-4 py-12">
       <div className="w-full max-w-lg">
         <div className="relative z-10">
-          {/* 1. 아이콘 영역 */}
+          {/* 아이콘 영역 */}
           <div className="mb-8 flex justify-center">
             <div className="relative">
               <div
@@ -58,7 +58,7 @@ export default function Error({
             </div>
           </div>
 
-          {/* 2. 제목 및 메시지 */}
+          {/* 제목 및 메시지 */}
           <h1 className="text-foreground mb-4 text-center text-3xl font-bold">{content.title}</h1>
 
           <div className="mb-8 text-center text-base">
@@ -66,7 +66,7 @@ export default function Error({
             <p className="text-text-sub/70 text-sm">{content.subMessage}</p>
           </div>
 
-          {/* 3. 안내 박스 */}
+          {/* 안내 박스 */}
           <div className="bg-point-main/5 border-point-main/30 mb-8 flex gap-3 rounded-lg border p-4">
             <div className="mt-0.5 shrink-0">
               {isForbidden ? (
@@ -81,35 +81,22 @@ export default function Error({
             </div>
           </div>
 
-          {/* 4. 액션 버튼 */}
+          {/* 액션 버튼 */}
           <div className="mb-8 flex flex-col gap-3">
             {/* 공통: 뒤로 가기 */}
-            <Button
-              onClick={() => router.back()}
-              variant="outline"
-              size="lg"
-              className="border-border hover:border-point-main/50 w-full"
-            >
+            <Button onClick={() => router.back()} variant="outline" size="lg">
               <ArrowLeftIcon className="mr-2 h-4 w-4" />
               이전 페이지로
             </Button>
 
             {/* 분기: 비공개면 '홈', 에러면 '재시도' */}
             {isForbidden ? (
-              <Button
-                onClick={() => router.push("/")}
-                size="lg"
-                className="bg-point-main hover:bg-point-main/90 w-full text-white"
-              >
+              <Button onClick={() => router.push("/")} size="lg">
                 <HomeIcon className="mr-2 h-4 w-4" />
                 홈으로 돌아가기
               </Button>
             ) : (
-              <Button
-                onClick={() => reset()}
-                size="lg"
-                className="bg-point-main hover:bg-point-main/90 w-full text-white"
-              >
+              <Button onClick={() => reset()} size="lg">
                 <RefreshCcw className="mr-2 h-4 w-4" />
                 다시 시도하기
               </Button>
