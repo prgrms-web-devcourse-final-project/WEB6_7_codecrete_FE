@@ -3,14 +3,56 @@
 import { ArrowLeft, Calendar } from "lucide-react";
 import InfoBadge from "@/components/concert/chat/InfoBadge";
 import { ConcertDetail } from "@/types/concerts";
+import { Client } from "@stomp/stompjs";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function ChatHeader({ concert }: { concert: ConcertDetail | null }) {
+export default function ChatHeader({
+  concert,
+  stompClient,
+}: {
+  concert: ConcertDetail | null;
+  stompClient: Client | null;
+}) {
+  const router = useRouter();
+  const [userCount, setUserCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (!stompClient?.connected || !concert?.concertId) return;
+
+    const subscription = stompClient.subscribe(
+      `/topic/chat/${concert.concertId}/count`,
+      (message) => {
+        setUserCount(Number(message.body));
+      }
+    );
+
+    stompClient.publish({
+      destination: "/app/chat/status",
+      body: JSON.stringify({
+        concertId: Number(concert.concertId),
+      }),
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [stompClient, stompClient?.connected, concert?.concertId]);
+
+  const handleBack = () => {
+    router.push(`/concerts/${concert?.concertId}`);
+  };
+
   return (
     <header className={`bg-bg-main flex gap-8`}>
       <div className={"flex w-full justify-between px-8 py-4"}>
         {/*헤더 좌측*/}
         <div className={"flex items-center gap-7"}>
-          <button className={"cursor-pointer"} type={"button"} aria-label={"뒤로가기"}>
+          <button
+            className={"cursor-pointer"}
+            type={"button"}
+            onClick={handleBack}
+            aria-label={"뒤로가기"}
+          >
             <ArrowLeft />
           </button>
           <div className={"flex flex-col"}>
@@ -27,8 +69,8 @@ export default function ChatHeader({ concert }: { concert: ConcertDetail | null 
           </InfoBadge>
           {/*인원*/}
           <InfoBadge>
-            <span className="bg-text-sub/80 h-2 w-2 rounded-full" />
-            <span className="leading-5 font-medium">328</span>
+            <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+            <span className="leading-5 font-medium">{userCount}</span>
           </InfoBadge>
         </div>
       </div>

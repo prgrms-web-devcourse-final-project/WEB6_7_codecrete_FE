@@ -30,12 +30,15 @@ export default function ChatClient({
     // 1. STOMP 클라이언트 설정
     const client = new Client({
       brokerURL: process.env.NEXT_PUBLIC_WS_URL, // 서버 웹소켓 엔드포인트
+      connectHeaders: {
+        concertId: String(concertId),
+        // Authorization: `Bearer ${token}` (있다면)
+      },
       reconnectDelay: 5000,
       connectionTimeout: 10000,
 
       onConnect: () => {
         // 2. 메시지 수신을 위한 구독
-
         setActiveClient(client);
 
         client.subscribe(`/topic/chat/${concertId}`, (message) => {
@@ -73,7 +76,7 @@ export default function ChatClient({
 
   return (
     <>
-      <ChatHeader concert={concert} />
+      <ChatHeader concert={concert} stompClient={activeClient} />
       <div className="border-border bg-bg-main flex h-[calc(100dvh-92px)] overflow-hidden border-t">
         <ChatRoom concertId={concertId} stompClient={activeClient} user={user} />
         <ChatAside concert={concert} ticketOffices={ticketOffices} />
