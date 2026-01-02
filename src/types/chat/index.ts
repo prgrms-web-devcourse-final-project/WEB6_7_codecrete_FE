@@ -1,13 +1,15 @@
 export type TicketVendor = "NOL" | "YES24" | "MELON" | "TICKETLINK";
 
-export type ChatResponse = {
+export type ApiResponse<T> = {
   status: number;
   resultCode: string;
   msg: string;
-  data: ChatMessageData[];
+  data: T;
 };
 
-// TODO: 나중에 profileImage 추가되면 수정
+export type TicketVendorResponse = ApiResponse<TicketVendorData>;
+export type ChatResponse = ApiResponse<ChatMessageData[]>;
+
 export type ChatMessageData = {
   messageId: string;
   concertId: number;
@@ -26,4 +28,9 @@ export type ChatMessageProps = {
   isMe: boolean;
   isContinuation: boolean;
   showTime: boolean;
+};
+
+export type TicketVendorData = {
+  provider: TicketVendor;
+  offsetMillis: number;
 };
