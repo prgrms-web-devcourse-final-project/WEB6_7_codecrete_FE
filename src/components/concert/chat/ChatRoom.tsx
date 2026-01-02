@@ -41,17 +41,34 @@ export default function ChatRoom({
   const [inputValue, setInputValue] = useState("");
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInitialScrolled = useRef(false);
   // 마지막 메시지 ID를 추적하여 '새 메시지' 유입만 판별 (튕김 방지)
-  const lastMessageIdRef = useRef<string | null>(null);
+  const isAtBottomRef = useRef(true);
 
   const { ref: topTriggerRef, inView } = useInView({ threshold: 0 });
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      const distance = container.scrollHeight - container.scrollTop - container.clientHeight;
+
+      isAtBottomRef.current = distance < 150;
+    };
+
+    container.addEventListener("scroll", onScroll);
+    onScroll(); // 초기값
+
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   /**
    * 1. 과거 메시지 페칭 (역방향 무한 스크롤)
    */
   const fetchPastMessages = useCallback(async () => {
-    if (isFetchingPast || !hasMore || messages.length === 0 || !isInitialScrolled.current) return;
+    if (isFetchingPast || !hasMore || messages.length === 0) return;
 
     setIsFetchingPast(true);
     const container = containerRef.current;
@@ -118,37 +135,17 @@ export default function ChatRoom({
    * 3. 통합 스크롤 관리 로직
    */
   useEffect(() => {
-    if (isLoading || messages.length === 0) return;
+    if (isLoading || messages.length === 0 || isFetchingPast) return;
+
     const container = containerRef.current;
     if (!container) return;
 
-    const currentLastMsg = messages[messages.length - 1];
-
-    // 초기 로딩 시: 즉시 최하단 이동
-    if (!isInitialScrolled.current) {
+    if (isAtBottomRef.current) {
       requestAnimationFrame(() => {
         container.scrollTop = container.scrollHeight;
-        isInitialScrolled.current = true;
-        lastMessageIdRef.current = currentLastMsg.messageId;
       });
-      return;
     }
-
-    // 새 메시지가 "아래"에 추가되었을 때만 처리 (위로 붙는 과거 데이터 무시)
-    if (currentLastMsg.messageId !== lastMessageIdRef.current) {
-      const isAtBottom =
-        container.scrollHeight - container.scrollTop <= container.clientHeight + 150;
-      const isMyMessage = currentLastMsg.senderId === user?.id;
-
-      if (isAtBottom || isMyMessage) {
-        container.scrollTo({
-          top: container.scrollHeight,
-          behavior: "smooth",
-        });
-      }
-      lastMessageIdRef.current = currentLastMsg.messageId;
-    }
-  }, [messages, isLoading, user?.id]);
+  }, [messages, isLoading, isFetchingPast]);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,7 +203,7 @@ export default function ChatRoom({
             const currentTime = formatTime(msg.sentDate);
 
             return (
-              <React.Fragment key={msg.messageId}>
+              <div key={msg.messageId} className="flex flex-col gap-2">
                 {isNewDay && (
                   <div className="my-4 flex justify-center">
                     <InfoBadge>
@@ -232,7 +229,7 @@ export default function ChatRoom({
                     formatTime(messages[idx + 1].sentDate) !== currentTime
                   }
                 />
-              </React.Fragment>
+              </div>
             );
           })
         )}
