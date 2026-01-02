@@ -16,7 +16,19 @@ import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function SelectedConcert() {
-  const { setValue } = useFormContext<MatePostWrite>();
+  const {
+    setValue,
+    // 필수 항목 에러 처리를 위해 추가
+    register,
+    formState: { errors },
+  } = useFormContext<MatePostWrite>();
+
+  useEffect(() => {
+    register("concertId", {
+      required: "공연을 선택해주세요.",
+      validate: (value) => value !== 0 || "공연을 선택해주세요.",
+    });
+  }, [register]);
 
   const [isPending, startTransition] = useTransition();
   // 선택된 콘서트 상태
@@ -209,6 +221,9 @@ export default function SelectedConcert() {
             </div>
           )}
         </div>
+      )}
+      {errors.concertId && (
+        <p className="mt-2 text-xs font-medium text-red-500">{errors.concertId.message}</p>
       )}
     </Field>
   );
