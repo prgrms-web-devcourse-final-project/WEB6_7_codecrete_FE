@@ -1,4 +1,4 @@
-import { ArtistListContent, ArtistListResponse } from "@/types/artists";
+import { ArtistListContent, ArtistListResponse, IsLikedArtistsResponse } from "@/types/artists";
 import ClientApi from "@/utils/helpers/clientApi";
 
 // 아티스트 목록 불러오기
@@ -75,6 +75,24 @@ export async function deleteLikeArtist(artistId: number): Promise<boolean> {
       method: "DELETE",
     });
     return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+// 아티스트 좋아요 여부 반환
+
+export async function isLikedArtist(artistId: number): Promise<boolean> {
+  try {
+    const res = await ClientApi(`/api/v1/artists/likes/${artistId}`);
+
+    if (!res.ok) {
+      return false;
+    }
+
+    const json = (await res.json()) as IsLikedArtistsResponse;
+
+    return json.data?.isLiked ?? false;
   } catch {
     return false;
   }

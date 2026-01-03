@@ -66,3 +66,9 @@ export type ArtistListSortSelectProps = {
   }[];
   defaultValue: string;
 };
+
+export type IsLikedArtistData = {
+  isLiked: boolean;
+};
+
+export type IsLikedArtistsResponse = ApiResponse<IsLikedArtistData | null>;
