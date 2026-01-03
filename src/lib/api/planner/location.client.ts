@@ -1,5 +1,5 @@
 import { ResponseData } from "@/types/api";
-import { UserPlace } from "@/types/planner";
+import { NearbyPlaces, UserPlace } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 /**
@@ -129,6 +129,49 @@ export const getAddressFromCoordsKakao = async (lat: number, lon: number): Promi
     return data.data || "주소 정보 없음";
   } catch (error) {
     console.error("getAddressFromCoordsKakao Error:", error);
+    throw error;
+  }
+};
+
+/**
+ * 주변 음식점을 조회합니다.
+ * @param {number} lat - 위도
+ * @param {number} lon - 경도
+ * @returns {Promise<any[]>} 주변 음식점 목록
+ */
+export const getNearbyRestaurants = async (lat: number, lon: number): Promise<NearbyPlaces[]> => {
+  try {
+    const res = await ClientApi(`/api/v1/location/kakao/restaurant?lat=${lat}&lon=${lon}`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      throw new Error(`Server Error: ${res.status}`);
+    }
+    const data = await res.json();
+    return data || [];
+  } catch (error) {
+    console.error("getNearbyRestaurants Error:", error);
+    throw error;
+  }
+};
+/**
+ * 주변 카페를 조회합니다.
+ * @param {number} lat - 위도
+ * @param {number} lon - 경도
+ * @returns {Promise<any[]>} 주변 카페 목록
+ */
+export const getNearbyCafes = async (lat: number, lon: number): Promise<NearbyPlaces[]> => {
+  try {
+    const res = await ClientApi(`/api/v1/location/kakao/cafes?lat=${lat}&lon=${lon}`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      throw new Error(`Server Error: ${res.status}`);
+    }
+    const data = await res.json();
+    return data || [];
+  } catch (error) {
+    console.error("getNearbyCafes Error:", error);
     throw error;
   }
 };

@@ -69,7 +69,7 @@ export type ScheduleFormData = {
   duration: string;
   location: string;
   notes: string;
-  coords?: { lat?: string; lng?: string };
+  coords?: { lat?: string; lon?: string };
 };
 
 export type PlannerListWithDetails = {
@@ -107,6 +107,19 @@ export type SearchPlace = {
   x: number;
   y: number;
 };
+
+/** TMAP 경로탐색 결과의 pathType 숫자 매핑
+ * 1-지하철, 2-버스, 3-버스+지하철
+ * 4-고속/시외버스, 5-기차, 6-항공, 7-해운 */
+export enum TMapPathType {
+  SUBWAY = 1,
+  BUS = 2,
+  BUS_SUBWAY = 3,
+  EXPRESS_BUS = 4,
+  TRAIN = 5,
+  AIRPLANE = 6,
+  SHIP = 7,
+}
 
 export type TMapSummary = {
   metaData: {
@@ -172,3 +185,16 @@ export type KakaoCarRouteGuide = {
   /** 도로 인덱스 (-1은 목적지) */
   road_index: number;
 };
+
+// 주변 장소 검색 API 응답 타입 (음식점 기준)
+export type NearbyPlaces = {
+  place_name: string;
+  x: number;
+  y: number;
+  road_address_name: string;
+  address_name: string;
+  place_url: string;
+};
+
+// 콘서트 장소 좌표 타입
+export type ConcertCoords = { lat?: number; lon?: number };

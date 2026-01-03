@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,31 +10,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { ScheduleDetail } from "@/types/planner";
+import { ConcertCoords, ScheduleDetail } from "@/types/planner";
 
 // 분리한 하위 컴포넌트들 임포트
 import TimelineIcon from "./TimelineIcon";
 import TimelineInfoGrid from "./TimelineInfoGrid";
 import EditScheduleDialog from "../dialogs/EditScheduleDialog";
 import DeleteScheduleDialog from "../dialogs/DeleteScheduleDialog";
+import { formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
+import { deletePlanSchedule } from "@/lib/api/planner/schedule.client";
+import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 interface PlannerTimelineItemProps {
+  planId: string;
   schedule: ScheduleDetail;
   role?: string;
   // 실제 사용시에는 onUpdate, onDelete 등의 props가 필요할 것입니다.
-  planId: number;
+  concertCoords: ConcertCoords;
 }
 
-export default function PlannerTimelineItem({ schedule, role, planId }: PlannerTimelineItemProps) {
+export default function PlannerTimelineItem({
+  schedule,
+  role,
+  planId,
+  concertCoords,
+}: PlannerTimelineItemProps) {
+  const router = useRouter();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // 메인 이벤트(공연)거나 식사일 때는 하단 그리드(비용/경로 등)를 숨김
-  const showDetailGrid = !schedule.isMainEvent && schedule.scheduleType !== "MEAL";
-
-  const handleDeleteConfirm = () => {
-    // TODO: 삭제 API 호출 로직
-    setShowDeleteDialog(false);
+  const handleDeleteConfirm = async () => {
+    if (!planId || !schedule.id) return;
+    try {
+      await deletePlanSchedule({ planId, scheduleId: schedule.id });
+      setShowDeleteDialog(false);
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to delete schedule", error);
+    }
   };
 
   return (
@@ -52,11 +65,11 @@ export default function PlannerTimelineItem({ schedule, role, planId }: PlannerT
         {/* 우측: 컨텐츠 영역 */}
         <div
           className={cn(
-            "border-border bg-bg-sub text-text-main flex-1 space-y-4 rounded-xl border p-6",
+            "border-border bg-bg-sub text-text-main flex-1 space-y-2 rounded-xl border p-6 lg:space-y-4",
             // 메인 이벤트 강조
             schedule.isMainEvent && "bg-point-main text-text-point-main",
             // 식사 일정 강조
-            schedule.scheduleType === "MEAL" && "border-border-point bg-bg-main border-2"
+            schedule.scheduleType === "MEAL" && "border-border-point bg-bg-main border-4 p-5"
           )}
         >
           {/* 헤더: 제목, 시간, 메뉴버튼 */}
@@ -69,7 +82,7 @@ export default function PlannerTimelineItem({ schedule, role, planId }: PlannerT
                   schedule.isMainEvent ? "text-bg-main" : "text-text-sub"
                 )}
               >
-                {schedule.startAt}
+                {formatTimeToKoreanAMPM(schedule.startAt)}
               </span>
 
               {/* 드롭다운 메뉴 */}
@@ -110,22 +123,20 @@ export default function PlannerTimelineItem({ schedule, role, planId }: PlannerT
             </div>
           )}
 
-          {/* 하단: 이동수단 상세 정보 (구분선 포함) */}
-          {showDetailGrid && (
-            <>
-              <Separator className="bg-border my-3" />
-              <TimelineInfoGrid schedule={schedule} />
-            </>
-          )}
+          {!schedule.isMainEvent && <Separator className="bg-muted" />}
+          {/* 하단 상세 정보 */}
+          <TimelineInfoGrid schedule={schedule} />
         </div>
       </article>
 
       {/* 다이얼로그 컴포넌트들 */}
       <EditScheduleDialog
+        key={schedule.id}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         schedule={schedule}
         planId={planId}
+        defaultCoords={concertCoords}
       />
 
       <DeleteScheduleDialog

@@ -6,8 +6,15 @@ import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon, SaveIcon } from "luci
 import AddScheduleDialog from "../dialogs/AddScheduleDialog";
 import InviteMemberDialog from "../dialogs/InviteMemberDialog";
 import LinkShareDialog from "../dialogs/LinkShareDialog";
+import { ConcertCoords } from "@/types/planner";
 
-export default function PlannerTopActions() {
+export default function PlannerTopActions({
+  planId,
+  concertCoords,
+}: {
+  planId: string;
+  concertCoords?: ConcertCoords;
+}) {
   const [showAdd, setShowAdd] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -38,7 +45,7 @@ export default function PlannerTopActions() {
             </div>
 
             {/* 오른쪽 그룹: 공유, 저장 */}
-            <div className="bg-bg-main border-border fixed right-0 bottom-0 left-0 z-50 flex gap-3 border-t px-5 py-4 lg:static lg:gap-4 lg:border-none lg:p-0">
+            <div className="bg-bg-main border-border fixed right-0 bottom-0 left-0 z-50 flex gap-3 border-t px-5 py-4 lg:static lg:z-0 lg:gap-4 lg:border-none lg:p-0">
               <Button onClick={() => setShowShare(true)} variant="default" className="flex-1">
                 <Share2Icon className="h-4 w-4" />
                 <span className="text-sm">공유하기</span>
@@ -53,7 +60,12 @@ export default function PlannerTopActions() {
       </section>
 
       {/* 분리된 다이얼로그들 */}
-      <AddScheduleDialog open={showAdd} onOpenChange={setShowAdd} />
+      <AddScheduleDialog
+        planId={planId}
+        open={showAdd}
+        onOpenChange={setShowAdd}
+        defaultCoords={concertCoords}
+      />
       <InviteMemberDialog open={showInvite} onOpenChange={setShowInvite} />
       <LinkShareDialog open={showShare} onOpenChange={setShowShare} />
     </>

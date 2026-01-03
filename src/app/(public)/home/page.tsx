@@ -17,7 +17,6 @@ export default async function Page() {
   return (
     <>
       <HeroSlider />
-      <UpcomingSkeleton />
       <Suspense fallback={<UpcomingSkeleton />}>
         <UpcomingSlider concerts={concertData.data} />
       </Suspense>

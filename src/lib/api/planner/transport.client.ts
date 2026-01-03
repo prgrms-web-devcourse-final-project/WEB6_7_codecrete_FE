@@ -1,4 +1,4 @@
-import { KakaoCarRouteGuide, KakaoMapSummary } from "@/types/planner";
+import { KakaoCarRouteGuide, KakaoMapSummary, TMapSummary } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 export const getTransitRouteSummaryByTmap = async ({
@@ -11,7 +11,7 @@ export const getTransitRouteSummaryByTmap = async ({
   startY: number;
   endX: number;
   endY: number;
-}) => {
+}): Promise<TMapSummary> => {
   const res = await ClientApi(
     `/api/v1/location/tmap/summary?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
     {
@@ -21,7 +21,8 @@ export const getTransitRouteSummaryByTmap = async ({
   if (!res.ok) {
     throw new Error("Tmap 요약 경로 정보를 불러오는데 실패했습니다.");
   }
-  return res.json();
+  const data = await res.json();
+  return data;
 };
 
 export const getTransitRouteByTmap = async ({
@@ -44,7 +45,8 @@ export const getTransitRouteByTmap = async ({
   if (!res.ok) {
     throw new Error("Tmap 대중교통 경로 정보를 불러오는데 실패했습니다.");
   }
-  return res.json();
+  const data = await res.json();
+  return data;
 };
 
 export const getCarRouteByKakaoMap = async ({
@@ -67,7 +69,8 @@ export const getCarRouteByKakaoMap = async ({
   if (!res.ok) {
     throw new Error("카카오 맵 자동차 경로 정보를 불러오는데 실패했습니다.");
   }
-  return res.json();
+  const data = await res.json();
+  return data;
 };
 
 export const getCarRouteSummaryByKakaoMap = async ({
@@ -90,5 +93,6 @@ export const getCarRouteSummaryByKakaoMap = async ({
   if (!res.ok) {
     throw new Error("카카오 맵 자동차 요약 경로 정보를 불러오는데 실패했습니다.");
   }
-  return res.json();
+  const data = await res.json();
+  return data;
 };

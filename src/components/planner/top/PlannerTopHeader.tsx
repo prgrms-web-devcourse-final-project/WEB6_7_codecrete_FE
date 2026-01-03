@@ -12,8 +12,7 @@ export default async function PlannerTopHeader({
   planDetail: PlanDetail;
   role: string;
 }) {
-  const concertId = planDetail.concertId.toString();
-  const concertDetail = await getConcertDetail({ concertId });
+  const concertDetail = await getConcertDetail({ concertId: planDetail.concertId.toString() });
 
   return (
     <header

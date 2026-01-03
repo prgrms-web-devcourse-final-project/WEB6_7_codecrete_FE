@@ -116,7 +116,7 @@ export default function StartLocationCard({
     <div className="relative flex gap-2 lg:gap-6">
       {/* 왼쪽 아이콘 */}
       <div className="z-10 flex-none">
-        <div className="border-bg-main bg-bg-sub flex size-10 items-center justify-center rounded-full border-2 shadow-sm lg:size-16 lg:border-4">
+        <div className="border-bg-main bg-bg-sub flex size-10 items-center justify-center rounded-full border-2 lg:size-16 lg:border-4">
           {location ? (
             <Navigation className="text-primary size-4 lg:size-6" />
           ) : (
@@ -126,7 +126,7 @@ export default function StartLocationCard({
       </div>
 
       {/* 오른쪽 컨텐츠 카드 */}
-      <div className="border-border bg-bg-sub flex-1 rounded-xl border p-4 shadow-sm lg:p-6">
+      <div className="border-border bg-bg-sub flex-1 rounded-xl border p-4 lg:p-6">
         {location && (
           <div className="flex flex-col gap-4">
             <div className="flex justify-between">
