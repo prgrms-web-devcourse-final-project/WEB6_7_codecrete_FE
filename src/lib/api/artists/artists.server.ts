@@ -119,3 +119,23 @@ export async function getFeaturedArtists({
     return createEmptyResponse("아티스트 목록을 가져오는데 실패했습니다");
   }
 }
+
+// 아티스트 검색 리스트 불러오기
+// TODO: page, size 아직 구현 안되어서 나중에 작업 필요
+export async function getSearchArtists({ keyword }: { keyword: string }) {
+  const artistName = keyword.trim();
+  try {
+    const res = await ServerApi(`/api/v1/artists/search`, {
+      method: "POST",
+      body: JSON.stringify({ artistName: artistName }),
+    });
+    if (!res.ok) {
+      throw new Error("API 요청 실패");
+    }
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Error searching artists:", err);
+    return createEmptyResponse("아티스트 검색에 실패했습니다");
+  }
+}

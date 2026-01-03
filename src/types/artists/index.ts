@@ -66,3 +66,13 @@ export type ArtistListSortSelectProps = {
   }[];
   defaultValue: string;
 };
+
+// 아티스트 검색 데이터
+export type ArtistSearchResult = {
+  // id 아직 없음
+  artistName: string;
+  nameKo: string | null;
+  artistGroup: string | null;
+  likeCount: number;
+  // TODO : 있어야 하는 데이터 id, imageUrl
+};
