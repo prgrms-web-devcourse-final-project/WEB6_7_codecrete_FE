@@ -9,6 +9,7 @@ import { ArtistListContent } from "@/types/artists";
 import { toast } from "sonner";
 import { MouseEvent, useState } from "react";
 import { deleteLikeArtist, postLikeArtist } from "@/lib/api/artists/artists.client";
+import { Badge } from "@/components/ui/badge";
 
 export default function ArtistCard({
   artist,
@@ -56,7 +57,11 @@ export default function ArtistCard({
           <h3 className="text-text-main text-base font-bold md:text-lg">
             {artist.nameKo ?? artist.artistName}
           </h3>
-          <p className="text-text-sub text-xs font-semibold md:text-sm">{artist.genres}</p>
+          <div className="min-h-5">
+            {artist.genres.length > 0 && (
+              <Badge className="h-5">{artist.genres[0].toUpperCase()}</Badge>
+            )}
+          </div>
         </div>
 
         {/* 팔로워 수 */}
