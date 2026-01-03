@@ -65,7 +65,7 @@ export default function PlannerTimelineItem({
         {/* 우측: 컨텐츠 영역 */}
         <div
           className={cn(
-            "border-border bg-bg-sub text-text-main flex-1 space-y-2 rounded-xl border p-6 lg:space-y-4",
+            "border-border bg-bg-sub text-text-main flex-1 space-y-2 rounded-xl border p-4 lg:space-y-4 lg:p-6",
             // 메인 이벤트 강조
             schedule.isMainEvent && "bg-point-main text-text-point-main",
             // 식사 일정 강조
@@ -73,8 +73,8 @@ export default function PlannerTimelineItem({
           )}
         >
           {/* 헤더: 제목, 시간, 메뉴버튼 */}
-          <div className="flex items-center justify-between">
-            <h4 className="text-lg font-bold">{schedule.title}</h4>
+          <div className="flex items-start justify-between gap-2">
+            <h4 className="text-base font-bold lg:text-lg">{schedule.title}</h4>
             <div className="flex items-center gap-2">
               <span
                 className={cn(

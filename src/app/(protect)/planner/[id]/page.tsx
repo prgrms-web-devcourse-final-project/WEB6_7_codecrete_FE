@@ -40,6 +40,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           lon: concertSchedules.locationLon,
         }}
         planId={id}
+        schedules={planDetail.schedules}
       />
       <PlannerBodySection
         planId={id}

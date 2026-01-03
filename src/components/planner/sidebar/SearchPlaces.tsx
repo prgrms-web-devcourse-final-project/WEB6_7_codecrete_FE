@@ -8,8 +8,8 @@ import {
   MapPinnedIcon,
   UtensilsIcon,
   XIcon,
-} from "lucide-react"; // XIcon 추가
-import { useEffect, useId, useState } from "react";
+} from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"; // shadcn Button 추가
 import { toast } from "sonner";
@@ -42,6 +42,7 @@ export default function SearchPlaces({
   const [isLoading, setIsLoading] = useState(false);
   const [isRecommendation, setIsRecommendation] = useState(false);
   const id = useId();
+  const nearbyCacheRef = useRef<Record<string, NearbyPlaces[]>>({});
 
   const debouncedTerm = useDebounce(term, 500);
 
@@ -64,19 +65,41 @@ export default function SearchPlaces({
           setResults(data?.documents ?? []);
         } else if (defaultCoords) {
           setIsRecommendation(true);
+
+          // 주변 장소 추천 로직 : 콘서트 좌표 있으면 근처 맛집/카페 추천
           if (!defaultCoords || !defaultCoords.lat || !defaultCoords.lon) {
             setResults([]);
             setIsLoading(false);
             return;
           }
+
+          // 무의미한 재호출을 막기 위해서 캐시 저장
+          const cacheKey = `${scheduleType || "MEAL"}-${defaultCoords.lat}-${defaultCoords.lon}`;
+          const cached = nearbyCacheRef.current[cacheKey];
+
+          // 캐시된 데이터가 있으면 사용하기
+          if (cached) {
+            setResults(cached);
+            setIsLoading(false);
+            return;
+          }
+
           let data = null;
+
+          // 스케줄 타입에 따라 맛집 또는 카페 추천
           if (scheduleType === "WAITING") {
             data = await getNearbyCafes(defaultCoords.lat, defaultCoords.lon);
           }
           if (scheduleType === "MEAL") {
             data = await getNearbyRestaurants(defaultCoords.lat, defaultCoords.lon);
           }
+
           setResults(data || []);
+
+          // 캐시에 저장
+          if (cacheKey) {
+            nearbyCacheRef.current[cacheKey] = data || [];
+          }
         } else {
           setResults([]);
         }
