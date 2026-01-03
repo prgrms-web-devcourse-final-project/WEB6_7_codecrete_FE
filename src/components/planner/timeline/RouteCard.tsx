@@ -124,7 +124,7 @@ export default function RouteCard({ start, end }: RouteCardProps) {
               </div>
             </div>
           ) : (
-            <p className="py-2 text-center text-xs text-gray-400">경로를 찾을 수 없습니다.</p>
+            <p className="text-text-sub py-2 text-center text-xs">경로를 찾을 수 없습니다.</p>
           )
         ) : loadingTransit ? (
           <div className="flex justify-center py-2">
@@ -163,7 +163,7 @@ export default function RouteCard({ start, end }: RouteCardProps) {
             )}
           </div>
         ) : (
-          <p className="py-2 text-center text-xs text-gray-400">경로를 찾을 수 없습니다.</p>
+          <p className="text-text-sub py-2 text-center text-xs">경로를 찾을 수 없습니다.</p>
         )}
       </div>
     </div>
