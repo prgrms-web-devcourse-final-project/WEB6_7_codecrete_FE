@@ -17,7 +17,7 @@ interface RouteCardProps {
 }
 
 export default function RouteCard({ start, end }: RouteCardProps) {
-  const [transportType, setTransportType] = useState<"car" | "transit">("car");
+  const [transportType, setTransportType] = useState<"car" | "transit">("transit");
   const [carData, setCarData] = useState<KakaoMapSummary | null>(null);
   const [transitData, setTransitData] = useState<TMapSummary | null>(null);
   const [loadingCar, setLoadingCar] = useState(false);
@@ -61,8 +61,8 @@ export default function RouteCard({ start, end }: RouteCardProps) {
   }, [coords, transitData]);
 
   useEffect(() => {
-    fetchCar();
-  }, [fetchCar]);
+    fetchTransit();
+  }, [fetchTransit]);
 
   const handleModeChange = (mode: "car" | "transit") => {
     setTransportType(mode);
@@ -98,11 +98,11 @@ export default function RouteCard({ start, end }: RouteCardProps) {
             onValueChange={(value) => value && handleModeChange(value as "car" | "transit")}
             className="bg-muted"
           >
-            <ToggleGroupItem value="car" aria-label="자동차 경로" size="sm">
-              <Car className="size-4" />
-            </ToggleGroupItem>
             <ToggleGroupItem value="transit" aria-label="대중교통 경로" size="sm">
               <Bus className="size-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="car" aria-label="자동차 경로" size="sm">
+              <Car className="size-4" />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>

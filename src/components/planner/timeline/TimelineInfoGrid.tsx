@@ -1,6 +1,7 @@
 "use client";
-
 import { ScheduleDetail } from "@/types/planner";
+import { DoorOpenIcon, LinkIcon, MapPinIcon } from "lucide-react";
+import Link from "next/link";
 
 interface TimelineInfoGridProps {
   schedule: ScheduleDetail;
@@ -8,8 +9,42 @@ interface TimelineInfoGridProps {
 
 export default function TimelineInfoGrid({ schedule }: TimelineInfoGridProps) {
   // 이동 수단이 아니면 렌더링하지 않음
-  if (schedule.scheduleType !== "TRANSPORT") return null;
-
+  if (schedule.scheduleType === "MEAL") {
+    return (
+      <div className="text-text-sub flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          <MapPinIcon className="size-4" />
+          <p className="text-sm">{schedule.location}</p>
+        </div>
+        <Link
+          href={`https://map.naver.com/v5/search/${encodeURIComponent(schedule.location)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-text-main flex items-center gap-1 text-sm"
+        >
+          <LinkIcon className="size-4" /> 새 창에서 위치 보기
+        </Link>
+      </div>
+    );
+  }
+  if (schedule.isMainEvent) {
+    return (
+      <div className="text-text-sub flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          <DoorOpenIcon className="size-4" />
+          <p>~{schedule.duration}분</p>
+        </div>
+        <Link
+          href={`/concerts/${schedule.concertId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-text-point-sub flex items-center gap-1 text-sm"
+        >
+          <LinkIcon className="size-4" /> 새 창에서 공연 정보 보기
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="text-text-sub grid grid-cols-2 gap-3 text-sm">
       {schedule.transportType !== "WALK" && (

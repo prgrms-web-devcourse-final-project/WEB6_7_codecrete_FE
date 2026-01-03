@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +20,7 @@ import DeleteScheduleDialog from "../dialogs/DeleteScheduleDialog";
 import { formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
 import { deletePlanSchedule } from "@/lib/api/planner/schedule.client";
 import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 interface PlannerTimelineItemProps {
   planId: string;
@@ -65,7 +65,7 @@ export default function PlannerTimelineItem({
         {/* 우측: 컨텐츠 영역 */}
         <div
           className={cn(
-            "border-border bg-bg-sub text-text-main flex-1 space-y-4 rounded-xl border p-6",
+            "border-border bg-bg-sub text-text-main flex-1 space-y-2 rounded-xl border p-6 lg:space-y-4",
             // 메인 이벤트 강조
             schedule.isMainEvent && "bg-point-main text-text-point-main",
             // 식사 일정 강조
@@ -123,18 +123,20 @@ export default function PlannerTimelineItem({
             </div>
           )}
 
-          {/* 하단 상세 정보 (구분선 포함) */}
-          {schedule.scheduleType === "TRANSPORT" && <Separator className="bg-border my-3" />}
-          <TimelineInfoGrid schedule={schedule} concertCoords={concertCoords} />
+          {!schedule.isMainEvent && <Separator className="bg-muted" />}
+          {/* 하단 상세 정보 */}
+          <TimelineInfoGrid schedule={schedule} />
         </div>
       </article>
 
       {/* 다이얼로그 컴포넌트들 */}
       <EditScheduleDialog
+        key={schedule.id}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         schedule={schedule}
         planId={planId}
+        defaultCoords={concertCoords}
       />
 
       <DeleteScheduleDialog

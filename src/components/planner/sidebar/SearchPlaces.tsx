@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CoffeeIcon,
   LoaderCircleIcon,
   MapIcon,
   MapPinIcon,
@@ -12,8 +13,8 @@ import { useEffect, useId, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"; // shadcn Button 추가
 import { toast } from "sonner";
-import { ConcertCoords, NearbyPlaces, SearchPlace } from "@/types/planner";
-import { getNearbyRestaurants } from "@/lib/api/planner/location.client";
+import { ConcertCoords, NearbyPlaces, ScheduleType, SearchPlace } from "@/types/planner";
+import { getNearbyCafes, getNearbyRestaurants } from "@/lib/api/planner/location.client";
 import { calculateDistance } from "@/utils/helpers/geolocation";
 import { formatDistance } from "@/utils/helpers/formatters";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ interface SearchPlacesProps {
   isStart?: boolean;
   defaultValue?: string;
   defaultCoords?: ConcertCoords;
+  scheduleType?: ScheduleType | "CAFE";
 }
 
 export default function SearchPlaces({
@@ -33,6 +35,7 @@ export default function SearchPlaces({
   isStart,
   defaultValue,
   defaultCoords,
+  scheduleType,
 }: SearchPlacesProps) {
   const [term, setTerm] = useState(defaultValue || "");
   const [results, setResults] = useState<SearchPlace[] | NearbyPlaces[]>([]);
@@ -66,7 +69,13 @@ export default function SearchPlaces({
             setIsLoading(false);
             return;
           }
-          const data = await getNearbyRestaurants(defaultCoords.lat, defaultCoords.lon);
+          let data = null;
+          if (scheduleType === "CAFE") {
+            data = await getNearbyCafes(defaultCoords.lat, defaultCoords.lon);
+          }
+          if (scheduleType === "MEAL") {
+            data = await getNearbyRestaurants(defaultCoords.lat, defaultCoords.lon);
+          }
           setResults(data || []);
         } else {
           setResults([]);
@@ -85,7 +94,7 @@ export default function SearchPlaces({
       }
     };
     run();
-  }, [debouncedTerm, defaultCoords]);
+  }, [debouncedTerm, defaultCoords, scheduleType]);
 
   return (
     <div className="flex h-full flex-col gap-3">
@@ -140,10 +149,22 @@ export default function SearchPlaces({
       )}
 
       {/* 추천 리스트 라벨 */}
+      {/* 스케줄 타입이 "MEAL"일 때 */}
       {isRecommendation && results.length > 0 && (
-        <div className="flex items-center gap-1.5 px-1 pt-1 text-xs font-medium text-gray-500">
-          <UtensilsIcon className="size-3" />
-          <span>공연장 주변 맛집</span>
+        <div className="text-text-sub flex items-center gap-1.5 px-1 pt-1 text-xs font-medium">
+          {scheduleType === "MEAL" && (
+            <>
+              <UtensilsIcon className="size-3" />
+              <span>공연장 주변 맛집</span>
+            </>
+          )}
+          {/* 스케줄 타입이 "CAFE"일 때 */}
+          {scheduleType === "CAFE" && (
+            <>
+              <CoffeeIcon className="size-3" />
+              <span>공연장 주변 카페</span>
+            </>
+          )}
         </div>
       )}
 

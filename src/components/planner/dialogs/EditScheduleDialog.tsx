@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useTransition } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,89 +15,113 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { CarFrontIcon, MapPinIcon, PlayIcon, UtensilsIcon } from "lucide-react";
+import {
+  CarFrontIcon,
+  MapPinIcon,
+  PlayIcon,
+  UtensilsIcon,
+  CoffeeIcon,
+  Loader2,
+} from "lucide-react";
 import SearchPlaces from "../sidebar/SearchPlaces";
-import { ScheduleDetail } from "@/types/planner";
+import {
+  ConcertCoords,
+  ScheduleDetail,
+  ScheduleType,
+  SearchPlace,
+  TransportType,
+} from "@/types/planner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { updatePlanSchedule } from "@/lib/api/planner/schedule.client";
 import { toMinutePrecision } from "@/utils/helpers/formatters";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EditScheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   schedule: ScheduleDetail;
   planId: string;
+  defaultCoords: ConcertCoords;
 }
-
-// 표시용: 분(minutes)을 더해서 종료 시간 문자열(HH:mm) 반환
-const addMinutesToTime = (time: string, minutes: number) => {
-  if (!time) return "";
-  const [h, m] = time.split(":").map(Number);
-  const date = new Date(0, 0, 0, h, m + minutes);
-  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(
-    2,
-    "0"
-  )}`;
-};
 
 export default function EditScheduleDialog({
   open,
   onOpenChange,
   schedule,
   planId,
+  defaultCoords,
 }: EditScheduleDialogProps) {
   const router = useRouter();
 
-  const [startTime, setStartTime] = useState(toMinutePrecision(schedule.startAt));
-  const [duration, setDuration] = useState(schedule.duration); // 일정 소요 시간(분)
-  const [details, setDetails] = useState(schedule.details); // 일정 메모
+  const [isPending, startTransition] = useTransition();
+  const [scheduleType, setScheduleType] = useState<ScheduleType | "CAFE">(schedule.scheduleType);
+  const [placeName, setPlaceName] = useState(schedule.location.split(", ")[1] || "");
+  const [placeAddress, setPlaceAddress] = useState(schedule.location.split(", ")[0] || "");
+  const [coords, setCoords] = useState<{ lat?: number; lon?: number } | null>({
+    lat: schedule.locationLat,
+    lon: schedule.locationLon,
+  });
+  const [isPlaceSelected, setIsPlaceSelected] = useState(schedule.location ? true : false);
 
-  // useEffect(() => {
-  //   if (open) {
-  //     setStartTime(schedule.startAt);
-  //     setDuration(schedule.duration);
-  //   }
-  // }, [open, schedule]);
-
-  const computedEndTime = useMemo(() => {
-    // 필요 없다면 이 변수/표시 자체를 제거해도 됩니다.
-    return addMinutesToTime(startTime, duration);
-  }, [startTime, duration]);
-
-  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStartTime(e.target.value);
-  };
-
-  const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const next = Number(e.target.value);
-    setDuration(Number.isFinite(next) ? Math.max(0, next) : 0);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 폼 제출 핸들러
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const normalizedStartAt = startTime ? `${startTime}:00` : "";
+    const formData = new FormData(e.currentTarget);
 
-    const updatedData = {
+    const title = formData.get("scheduleTitle") as string;
+    const startTime = formData.get("scheduleStartTime") as string;
+    const duration = Number(formData.get("scheduleDuration"));
+    const transportType = formData.get("transportType") as TransportType;
+    const notes = formData.get("scheduleNotes") as string;
+    const estimatedCost = 0; // TODO : 비용 입력 필드 추가 시 반영
+
+    const normalizedStartAt = startTime ? `${toMinutePrecision(startTime)}:00` : "";
+
+    const scheduleData = {
       ...schedule,
-      startAt: normalizedStartAt,
+      scheduleType: scheduleType === "CAFE" ? "MEAL" : scheduleType,
+      title,
       duration,
-      details,
+      location: [placeAddress, placeName].filter(Boolean).join(", "),
+      locationLat: coords?.lat,
+      locationLon: coords?.lon,
+      startAt: normalizedStartAt,
+      details: notes,
+      transportType: scheduleType === "TRANSPORT" ? transportType : undefined,
+      estimatedCost,
     };
-    const result = await updatePlanSchedule({
-      planId: String(planId),
-      scheduleId: String(schedule.id),
-      updatedData,
-    });
 
-    if (!result) {
-      toast.error("일정 수정에 실패했습니다.");
-      return;
-    }
-    toast.success("일정이 성공적으로 수정되었습니다.");
-    router.refresh(); // 데이터 갱신
+    startTransition(async () => {
+      try {
+        await updatePlanSchedule({
+          planId,
+          scheduleId: String(schedule.id),
+          updatedData: scheduleData,
+        });
+        toast.success("일정이 성공적으로 수정되었습니다.");
+      } catch (error) {
+        console.error("Error creating schedule:", error);
+        toast.error("일정 수정에 실패했습니다. 다시 시도해주세요.");
+      }
+    });
+    router.replace(`/planner/${planId}`);
     onOpenChange(false);
+  };
+
+  // 장소 선택 핸들러
+  const handlePlaceSelect = (place: SearchPlace) => {
+    setPlaceName(place.place_name || place.address_name);
+    setPlaceAddress(place.road_address_name || place.address_name || "");
+    setCoords({ lat: place.y, lon: place.x });
+    setIsPlaceSelected(true);
   };
 
   return (
@@ -111,6 +135,7 @@ export default function EditScheduleDialog({
 
         <form onSubmit={handleSubmit}>
           <FieldGroup className="max-h-[60vh] gap-6 overflow-y-auto p-4">
+            {/* 메인 이벤트(공연)는 수정 제한 */}
             {schedule.isMainEvent ? (
               <div className="bg-muted/50 rounded-lg border p-4">
                 <h4 className="text-lg font-bold">{schedule.title}</h4>
@@ -121,97 +146,141 @@ export default function EditScheduleDialog({
               </div>
             ) : (
               <>
+                {/* 1. 일정 타입 */}
                 <Field>
                   <FieldLabel>일정 타입</FieldLabel>
                   <ToggleGroup
                     type="single"
                     variant="outline"
-                    defaultValue={schedule.scheduleType}
-                    className="justify-start"
+                    value={scheduleType}
+                    onValueChange={(val: ScheduleType | "CAFE") => val && setScheduleType(val)}
+                    className="flex-wrap justify-start"
                   >
-                    <ToggleGroupItem value="ACTIVITY">
-                      <PlayIcon className="mr-2 size-4" /> 활동
+                    <ToggleGroupItem value="MEAL" aria-label="식사" className="flex gap-2">
+                      <UtensilsIcon className="size-4" /> <span>식사</span>
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="TRANSPORT">
-                      <CarFrontIcon className="mr-2 size-4" /> 이동
+                    <ToggleGroupItem value="CAFE" aria-label="카페" className="flex gap-2">
+                      <CoffeeIcon className="size-4" /> <span>카페</span>
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="MEAL">
-                      <UtensilsIcon className="mr-2 size-4" /> 식사
+                    <ToggleGroupItem value="ACTIVITY" aria-label="활동" className="flex gap-2">
+                      <PlayIcon className="size-4" /> <span>활동</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="TRANSPORT" aria-label="이동" className="flex gap-2">
+                      <CarFrontIcon className="size-4" /> <span>이동</span>
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </Field>
 
+                {/* 2. 장소 검색 (수정 모드) */}
                 <Field>
-                  <Label htmlFor="edit-title">제목</Label>
-                  <Input id="edit-title" defaultValue={schedule.title} />
+                  <Label>장소</Label>
+
+                  {!isPlaceSelected && scheduleType !== "TRANSPORT" ? (
+                    <SearchPlaces
+                      placeholder="식당, 카페, 관광지 검색..."
+                      onSelect={handlePlaceSelect}
+                      scheduleType={scheduleType}
+                      defaultValue={schedule.location}
+                      defaultCoords={defaultCoords}
+                    />
+                  ) : (
+                    <div className="border-input dark:bg-input/30 flex items-center justify-between rounded-md border p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm font-semibold">{placeName}</span>
+                          <span className="text-xs text-gray-500">{placeAddress}</span>
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setIsPlaceSelected(false);
+                          setPlaceName("");
+                          setPlaceAddress("");
+                          setCoords(null);
+                        }}
+                        className="h-8 text-xs"
+                      >
+                        다시 검색
+                      </Button>
+                    </div>
+                  )}
+                </Field>
+
+                {/* 3. 제목 */}
+                <Field>
+                  <Label htmlFor="scheduleTitle">일정 이름</Label>
+                  <Input
+                    id="scheduleTitle"
+                    name="scheduleTitle"
+                    placeholder={placeName || "예: 점심 식사, 굿즈 구매"}
+                    defaultValue={schedule.title}
+                  />
                 </Field>
               </>
             )}
 
-            {/* 시간 설정: 시작시간 + 소요시간만 입력 */}
-            <div className="bg-muted/30 space-y-3 rounded-lg border p-4">
-              <Label className="block font-bold">시간 설정</Label>
-
-              <div className="flex items-end gap-3">
-                <div className="flex-1 space-y-1.5">
-                  <Label htmlFor="startTime" className="text-muted-foreground text-xs">
-                    시작
-                  </Label>
-                  <Input
-                    type="time"
-                    id="startTime"
-                    step="60"
-                    value={startTime}
-                    onChange={handleStartTimeChange}
-                  />
-                </div>
-
-                <div className="flex-1 space-y-1.5">
-                  <Label htmlFor="duration" className="text-muted-foreground text-xs">
-                    소요 시간(분)
-                  </Label>
-                  <Input
-                    type="text"
-                    id="duration"
-                    value={duration}
-                    onChange={handleDurationChange}
-                  />
-                </div>
-              </div>
-
-              {/* 선택: 종료 예상 시간 표시(입력은 안 받음) */}
-              {computedEndTime && (
-                <p className="text-muted-foreground text-sm">종료 예상 시간: {computedEndTime}</p>
-              )}
+            {/* 4. 시간 설정 */}
+            <div className="flex gap-4">
+              <Field className="flex-1">
+                <Label htmlFor="scheduleStartTime">시작 시간</Label>
+                <Input
+                  type="time"
+                  id="scheduleStartTime"
+                  name="scheduleStartTime"
+                  step="60"
+                  defaultValue={toMinutePrecision(schedule.startAt) || "12:00"}
+                />
+              </Field>
+              <Field className="flex-1">
+                <Label htmlFor="scheduleDuration">예상 소요시간 (분)</Label>
+                <Select name="scheduleDuration" defaultValue="60">
+                  <SelectTrigger>
+                    <SelectValue placeholder="소요 시간" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30분</SelectItem>
+                    <SelectItem value="60">1시간</SelectItem>
+                    <SelectItem value="90">1시간 30분</SelectItem>
+                    <SelectItem value="120">2시간</SelectItem>
+                    <SelectItem value="150">2시간 30분</SelectItem>
+                    <SelectItem value="180">3시간</SelectItem>
+                    <SelectItem value="210">3시간 30분</SelectItem>
+                    <SelectItem value="240">4시간</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
             </div>
 
-            {!schedule.isMainEvent && (
-              <Field>
-                <Label>장소</Label>
-                <SearchPlaces defaultValue={schedule.location} />
-              </Field>
-            )}
-
+            {/* 5. 메모 */}
             <Field>
-              <Label>메모</Label>
+              <Label htmlFor="scheduleNotes">메모 (선택)</Label>
               <Textarea
-                className="h-24 resize-none"
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
-                placeholder={
-                  schedule.isMainEvent
-                    ? "공연 관람 팁이나 준비물을 기록하세요."
-                    : "일정 메모를 입력하세요."
-                }
+                id="scheduleNotes"
+                name="scheduleNotes"
+                placeholder="메뉴, 예약 정보 등을 적어두세요."
+                className="h-20 resize-none"
+                defaultValue={schedule.details}
               />
             </Field>
           </FieldGroup>
 
           <DialogFooter className="mt-6">
             <DialogClose asChild>
-              <Button variant="outline">취소</Button>
+              <Button variant="outline" type="button">
+                취소
+              </Button>
             </DialogClose>
-            <Button type="submit">{schedule.isMainEvent ? "시간 적용" : "수정 완료"}</Button>
+            <Button type="submit">
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  수정 중...
+                </>
+              ) : (
+                "일정 수정"
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
