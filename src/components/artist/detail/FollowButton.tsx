@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { toggleArtistLike } from "@/lib/api/artists/artists.server";
@@ -21,6 +21,10 @@ export default function FollowButton({
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    setIsLiked(initialLiked);
+  }, [initialLiked]);
+
   const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (isLoading) return;
 
@@ -29,7 +33,6 @@ export default function FollowButton({
 
     setIsLoading(true);
     try {
-      // TODO: isLiked 상태에 따라 API 호출 분기 (likeArtist / unlikeArtist)
       // TODO: API 실패 시 optimistic UI 롤백 처리 (isLiked / 부모 likeCount 동기화)
       // TODO: 연속 클릭 방지 강화 (AbortController 또는 요청 중복 취소)
       await toggleArtistLike(artistId, isLiked);

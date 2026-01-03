@@ -4,7 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import { ArtistDetail } from "@/types/artists";
 import Image from "next/image";
 import FollowButton from "@/components/artist/detail/FollowButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { isLikedArtist } from "@/lib/api/artists/artists.client";
 
 export default function ArtistDetailProfile({
   artist,
@@ -14,6 +15,28 @@ export default function ArtistDetailProfile({
   artistId: number;
 }) {
   const [likeCount, setLikeCount] = useState(artist.likeCount);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchIsLiked = async () => {
+      try {
+        const liked = await isLikedArtist(artistId);
+        if (mounted) {
+          setIsLiked(liked);
+        }
+      } finally {
+      }
+    };
+
+    fetchIsLiked();
+
+    return () => {
+      mounted = false;
+    };
+  }, [artistId]);
+
   return (
     <section className={"bg-bg-sub border-border flex items-center gap-12 border-b px-15 py-16"}>
       <div className={"mx-auto flex w-full max-w-400 gap-12"}>
@@ -40,10 +63,8 @@ export default function ArtistDetailProfile({
             </div>
             <FollowButton
               artistId={artistId}
-              // TODO : 나중에 initialLiked 값엔 서버에서 받아온 팔로우 상태값 전달
               // TODO: 좋아요 API 실패 시 likeCount 롤백 처리
-              // TODO: 다른 화면과 좋아요 상태/카운트 동기화 전략 정리
-              initialLiked={false}
+              initialLiked={isLiked}
               onLikeChange={(nextIsLiked) => {
                 setLikeCount((count) => count + (nextIsLiked ? 1 : -1));
               }}
