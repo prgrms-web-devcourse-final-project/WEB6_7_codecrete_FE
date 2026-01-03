@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArtistListContent } from "@/types/artists";
 import { toast } from "sonner";
 import { MouseEvent, useState } from "react";
-import { deleteLikeArtist, postLikeArtist } from "@/lib/artists/artists.client";
+import { deleteLikeArtist, postLikeArtist } from "@/lib/api/artists/artists.client";
 
 export default function ArtistCard({
   artist,

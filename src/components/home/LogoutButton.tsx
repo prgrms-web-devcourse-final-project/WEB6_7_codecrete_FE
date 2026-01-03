@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { logout } from "@/lib/auth/auth.client";
+import { logout } from "@/lib/api/auth/auth.client";
 import { toast } from "sonner";
 import { LogOutIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";

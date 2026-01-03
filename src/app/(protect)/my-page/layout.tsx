@@ -1,6 +1,6 @@
 import MyPageHeader from "@/components/my-page/MyPageHeader";
 import MyPageNavigation from "@/components/my-page/MyPageNavigation";
-import { getMe } from "@/lib/auth/auth.server";
+import { getMe } from "@/lib/api/auth/auth.server";
 import { User } from "@/types/user";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
-import { toggleArtistLike } from "@/lib/artists/artists.server";
+import { toggleArtistLike } from "@/lib/api/artists/artists.server";
 
 type FollowButtonProps = {
   artistId: number;

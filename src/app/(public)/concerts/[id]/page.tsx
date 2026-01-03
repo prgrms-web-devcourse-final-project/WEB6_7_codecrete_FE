@@ -1,3 +1,19 @@
+/**
+ * TODO: 채팅방 입장 인가 로직 고도화
+ *
+ * 현재:
+ * - 입장 API는 로그인 여부 + 채팅 가능 시간만 검증
+ * - 채팅 참여자 정보를 DB에 저장하지 않음
+ *
+ * 추후 개선 방향:
+ * - 서버에서 채팅방 입장 이력을 DB(chat_participant 등)에 저장
+ * - WebSocket SUBSCRIBE 시 해당 유저의 채팅방 참여 권한을 재검증
+ *
+ * 참고:
+ * - 프론트 전역 상태(joined 등)는 UX 최적화 용도로만 사용하며
+ *   인가 판단의 근거로 사용하지 않음
+ */
+
 import ConcertDetail from "@/components/concert/detail/ConcertDetail";
 import ConcertHeader from "@/components/concert/detail/ConcertHeader";
 import ConcertSimilar from "@/components/concert/detail/ConcertSimilar";

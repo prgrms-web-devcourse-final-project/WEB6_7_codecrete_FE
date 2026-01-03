@@ -7,4 +7,5 @@ export interface User {
   profileImageUrl?: string;
   status: string;
   role: string;
+  socialType: string;
 }
