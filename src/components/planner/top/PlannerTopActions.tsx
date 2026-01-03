@@ -6,8 +6,15 @@ import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon, SaveIcon } from "luci
 import AddScheduleDialog from "../dialogs/AddScheduleDialog";
 import InviteMemberDialog from "../dialogs/InviteMemberDialog";
 import LinkShareDialog from "../dialogs/LinkShareDialog";
+import { ConcertCoords } from "@/types/planner";
 
-export default function PlannerTopActions() {
+export default function PlannerTopActions({
+  planId,
+  concertCoords,
+}: {
+  planId: string;
+  concertCoords?: ConcertCoords;
+}) {
   const [showAdd, setShowAdd] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -53,7 +60,12 @@ export default function PlannerTopActions() {
       </section>
 
       {/* 분리된 다이얼로그들 */}
-      <AddScheduleDialog open={showAdd} onOpenChange={setShowAdd} />
+      <AddScheduleDialog
+        planId={planId}
+        open={showAdd}
+        onOpenChange={setShowAdd}
+        defaultCoords={concertCoords}
+      />
       <InviteMemberDialog open={showInvite} onOpenChange={setShowInvite} />
       <LinkShareDialog open={showShare} onOpenChange={setShowShare} />
     </>

@@ -69,7 +69,7 @@ export type ScheduleFormData = {
   duration: string;
   location: string;
   notes: string;
-  coords?: { lat?: string; lng?: string };
+  coords?: { lat?: string; lon?: string };
 };
 
 export type PlannerListWithDetails = {
@@ -172,3 +172,16 @@ export type KakaoCarRouteGuide = {
   /** 도로 인덱스 (-1은 목적지) */
   road_index: number;
 };
+
+// 주변 장소 검색 API 응답 타입 (음식점 기준)
+export type NearbyPlaces = {
+  place_name: string;
+  x: number;
+  y: number;
+  road_address_name: string;
+  address_name: string;
+  place_url: string;
+};
+
+// 콘서트 장소 좌표 타입
+export type ConcertCoords = { lat?: number; lon?: number };

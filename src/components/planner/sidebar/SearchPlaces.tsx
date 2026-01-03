@@ -159,7 +159,7 @@ export default function SearchPlaces({
                   ? calculateDistance(defaultCoords.lat, defaultCoords.lon, placeLat, placeLon)
                   : 0;
 
-              const itemKey = place.id || `${place.place_name}-${index}`;
+              const itemKey = `${place.place_name}-${index}`;
 
               return (
                 <li

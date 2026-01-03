@@ -1,20 +1,26 @@
-import { PlanDetail } from "@/types/planner";
+import { ConcertCoords, ScheduleDetail } from "@/types/planner";
 import PlannerTimelineItem from "./PlannerTimelineItem";
 import StartLocationCard from "./StartLocationCard";
 import { getMyLocation } from "@/lib/api/planner/location.server";
 import RouteCard from "./RouteCard";
 
 export default async function PlannerTimelineSection({
-  planDetail,
+  planId,
+  schedules,
+  concertCoords,
   role,
+  totalDuration,
 }: {
-  planDetail: PlanDetail;
+  planId: string;
+  schedules: ScheduleDetail[];
+  concertCoords: ConcertCoords;
   role: string;
+  totalDuration: number;
 }) {
+  const firstSchedule = schedules[0];
+
   const isEditable = role === "OWNER" || role === "EDITOR";
   const myLocation = await getMyLocation();
-
-  const firstSchedule = planDetail.schedules[0];
 
   // 경로 표시 조건: 내 위치(출발지)가 있고, 첫 번째 일정이 있고, 그 일정에 좌표가 있을 때
   const showRoute =
@@ -28,9 +34,7 @@ export default async function PlannerTimelineSection({
           <h3 className="text-text-main text-xl font-bold lg:text-2xl">타임라인</h3>
           <div className="flex items-center gap-2">
             <span className="text-text-sub text-sm">총 소요시간:</span>
-            <strong className="text-text-main text-base lg:text-lg">
-              {planDetail.totalDuration}분
-            </strong>
+            <strong className="text-text-main text-base lg:text-lg">{totalDuration}분</strong>
           </div>
         </div>
 
@@ -52,12 +56,16 @@ export default async function PlannerTimelineSection({
                 }}
               />
             )}
-            {planDetail.schedules.map((schedule) => (
+            {schedules.map((schedule) => (
               <PlannerTimelineItem
                 key={schedule.id}
                 schedule={schedule}
                 role={role}
-                planId={planDetail.id}
+                planId={planId}
+                concertCoords={{
+                  lat: concertCoords.lat,
+                  lon: concertCoords.lon,
+                }}
               />
             ))}
           </div>

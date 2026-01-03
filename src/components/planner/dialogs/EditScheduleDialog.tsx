@@ -27,10 +27,10 @@ interface EditScheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   schedule: ScheduleDetail;
-  planId: number;
+  planId: string;
 }
 
-// (선택) 표시용: 분(minutes)을 더해서 종료 시간 문자열(HH:mm) 반환
+// 표시용: 분(minutes)을 더해서 종료 시간 문자열(HH:mm) 반환
 const addMinutesToTime = (time: string, minutes: number) => {
   if (!time) return "";
   const [h, m] = time.split(":").map(Number);

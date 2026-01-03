@@ -13,6 +13,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return <PlannerError />;
   }
 
+  // planDetail.schedules에서 콘서트 일정만 필터링
+  const concertSchedules = planDetail.schedules.filter((schedule) => schedule.isMainEvent)[0];
+
   // 플랜에 참여자로 등록되어 있지 않을 경우
   const me = await getUsersMe();
   let myRole = "";
@@ -28,8 +31,23 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   return (
     <>
       <PlannerTopHeader planDetail={planDetail} role={myRole} />
-      <PlannerTopActions />
-      <PlannerBodySection planDetail={planDetail} role={myRole} />
+      <PlannerTopActions
+        concertCoords={{
+          lat: concertSchedules.locationLat,
+          lon: concertSchedules.locationLon,
+        }}
+        planId={id}
+      />
+      <PlannerBodySection
+        planId={id}
+        schedules={planDetail.schedules}
+        concertCoords={{
+          lat: concertSchedules.locationLat,
+          lon: concertSchedules.locationLon,
+        }}
+        role={myRole}
+        totalDuration={planDetail.totalDuration}
+      />
     </>
   );
 }
