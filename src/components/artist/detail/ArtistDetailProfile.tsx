@@ -4,38 +4,19 @@ import { Separator } from "@/components/ui/separator";
 import { ArtistDetail } from "@/types/artists";
 import Image from "next/image";
 import FollowButton from "@/components/artist/detail/FollowButton";
-import { useEffect, useState } from "react";
-import { isLikedArtist } from "@/lib/api/artists/artists.client";
+import { useState } from "react";
 
 export default function ArtistDetailProfile({
   artist,
   artistId,
+  initialIsLiked = false,
 }: {
   artist: ArtistDetail;
   artistId: number;
+  initialIsLiked: boolean;
 }) {
   const [likeCount, setLikeCount] = useState(artist.likeCount);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchIsLiked = async () => {
-      try {
-        const liked = await isLikedArtist(artistId);
-        if (mounted) {
-          setIsLiked(liked);
-        }
-      } finally {
-      }
-    };
-
-    fetchIsLiked();
-
-    return () => {
-      mounted = false;
-    };
-  }, [artistId]);
+  const [isLiked, setIsLiked] = useState<boolean>(initialIsLiked);
 
   return (
     <section className={"bg-bg-sub border-border flex items-center gap-12 border-b px-15 py-16"}>
@@ -67,6 +48,7 @@ export default function ArtistDetailProfile({
               initialLiked={isLiked}
               onLikeChange={(nextIsLiked) => {
                 setLikeCount((count) => count + (nextIsLiked ? 1 : -1));
+                setIsLiked(nextIsLiked);
               }}
             />
           </div>

@@ -3,11 +3,18 @@ import ArtistDetailOverview from "@/components/artist/detail/ArtistDetailOvervie
 import ArtistDetailUpcoming from "@/components/artist/detail/ArtistDetailUpcoming";
 import ArtistDetailPast from "@/components/artist/detail/ArtistDetailPast";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
-import { getArtistDetail } from "@/lib/api/artists/artists.server";
+import { getArtistDetail, getArtistLikeStatus } from "@/lib/api/artists/artists.server";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const artist = await getArtistDetail(Number(id));
+  const artistId = Number(id);
+
+  const [artist, initialIsLiked] = await Promise.all([
+    getArtistDetail(artistId),
+    getArtistLikeStatus(artistId),
+  ]);
+
+  if (!artist) return null;
 
   return (
     <>
@@ -18,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           { label: artist.artistName },
         ]}
       />
-      <ArtistDetailProfile artist={artist} artistId={Number(id)} />
+      <ArtistDetailProfile artist={artist} artistId={Number(id)} initialIsLiked={initialIsLiked} />
       <ArtistDetailOverview artist={artist} />
       <ArtistDetailUpcoming />
       <ArtistDetailPast />

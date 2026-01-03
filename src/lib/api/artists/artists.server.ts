@@ -119,3 +119,20 @@ export async function getFeaturedArtists({
     return createEmptyResponse("아티스트 목록을 가져오는데 실패했습니다");
   }
 }
+// 서버에서 아티스트 좋아요 불러오기
+export async function getArtistLikeStatus(artistId: number): Promise<boolean> {
+  try {
+    const res = await ServerApi(`/api/v1/artists/likes/${artistId}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) return false;
+
+    const json = await res.json();
+
+    return json.data?.isLiked ?? false;
+  } catch (e) {
+    console.error("[getArtistLikeStatus] Error:", e);
+    return false;
+  }
+}
