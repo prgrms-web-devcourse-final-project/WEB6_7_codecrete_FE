@@ -17,6 +17,7 @@ import { getNearbyRestaurants } from "@/lib/api/planner/location.client";
 import { calculateDistance } from "@/utils/helpers/geolocation";
 import { formatDistance } from "@/utils/helpers/formatters";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface SearchPlacesProps {
   placeholder?: string;
@@ -95,17 +96,17 @@ export default function SearchPlaces({
           <span className="sr-only">Search</span>
         </div>
 
-        {/* 브라우저 기본 X 버튼 숨기는 클래스 추가 */}
+        {/* 검색 인풋 */}
         <Input
           id={id}
-          type="text" // search 대신 text로 변경해서 기본 X 버튼 제거 (또는 CSS로 처리)
+          type="text"
           placeholder={placeholder}
           value={term}
           onChange={(e) => setTerm(e.target.value)}
-          className="peer px-9 pr-8" // 오른쪽 여백 확보
+          className="peer px-8 focus-visible:ring-0"
         />
 
-        {/* 커스텀 X 버튼 (검색어가 있을 때만 노출) */}
+        {/* 검색어 삭제 */}
         {term && !isLoading && (
           <Button
             variant="ghost"
@@ -184,7 +185,6 @@ export default function SearchPlaces({
                         {place.place_name}
                       </strong>
 
-                      {/* 거리 표시: 주황색 대신 차분한 회색, 혹은 강조하고 싶으면 text-primary */}
                       {defaultCoords && (
                         <span className="text-muted-foreground group-hover:text-primary shrink-0 text-xs font-medium transition-colors">
                           {formatDistance(distance)}
@@ -204,14 +204,4 @@ export default function SearchPlaces({
       )}
     </div>
   );
-}
-
-// Debounce Hook (유지)
-function useDebounce<T>(value: T, delay = 300) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const handler = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-  return debounced;
 }
