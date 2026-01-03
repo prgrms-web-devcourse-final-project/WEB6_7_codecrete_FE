@@ -147,24 +147,6 @@ export const getTicketOfficesByConcertId = async ({
   }
 };
 
-// 공연 리스트 - 전체 공연 수 불러오기
-export const totalConcertCount = async () => {
-  try {
-    const res = await ServerApi(`/api/v1/concerts/totalConcertCount`, {
-      method: "GET",
-    });
-    if (!res.ok) {
-      console.error("API Error:", res.status, res.statusText);
-      return null;
-    }
-    const data = await res.json();
-    return data.data;
-  } catch (error) {
-    console.error("Error fetching total concert count:", error);
-    return null;
-  }
-};
-
 // 찜한 콘서트인지 확인
 export const getIsLikedConcert = async (concertId: string): Promise<LikeConcert | null> => {
   try {
