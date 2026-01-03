@@ -1,15 +1,29 @@
 "use client";
-import { LoaderCircleIcon, MapIcon, MapPinIcon, MapPinnedIcon } from "lucide-react";
+
+import {
+  LoaderCircleIcon,
+  MapIcon,
+  MapPinIcon,
+  MapPinnedIcon,
+  UtensilsIcon,
+  XIcon,
+} from "lucide-react"; // XIcon 추가
 import { useEffect, useId, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button"; // shadcn Button 추가
 import { toast } from "sonner";
-import { SearchPlace } from "@/types/planner";
+import { ConcertCoords, NearbyPlaces, SearchPlace } from "@/types/planner";
+import { getNearbyRestaurants } from "@/lib/api/planner/location.client";
+import { calculateDistance } from "@/utils/helpers/geolocation";
+import { formatDistance } from "@/utils/helpers/formatters";
+import { cn } from "@/lib/utils";
 
 interface SearchPlacesProps {
   placeholder?: string;
   onSelect?: (place: SearchPlace) => void;
   isStart?: boolean;
   defaultValue?: string;
+  defaultCoords?: ConcertCoords;
 }
 
 export default function SearchPlaces({
@@ -17,31 +31,52 @@ export default function SearchPlaces({
   onSelect,
   isStart,
   defaultValue,
+  defaultCoords,
 }: SearchPlacesProps) {
   const [term, setTerm] = useState(defaultValue || "");
-  const [results, setResults] = useState<SearchPlace[]>([]);
+  const [results, setResults] = useState<SearchPlace[] | NearbyPlaces[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecommendation, setIsRecommendation] = useState(false);
   const id = useId();
 
   const debouncedTerm = useDebounce(term, 500);
 
+  // 검색어 지우기 핸들러
+  const handleClear = () => {
+    setTerm("");
+    // 지웠을 때 다시 추천 리스트가 뜨도록 하려면 여기서 초기화하거나,
+    // useEffect가 debouncedTerm 변경을 감지해서 알아서 처리하게 둠
+  };
+
   useEffect(() => {
     const run = async () => {
-      if (!debouncedTerm.trim()) {
-        setResults([]);
-        return;
-      }
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/location?query=${encodeURIComponent(debouncedTerm)}`);
-        if (!res.ok) throw new Error("검색 요청 실패");
-        const data = await res.json();
-        setResults(data?.documents ?? []);
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
+        if (debouncedTerm.trim()) {
+          setIsRecommendation(false);
+          const res = await fetch(`/api/location?query=${encodeURIComponent(debouncedTerm)}`);
+          if (!res.ok) throw new Error("검색 요청 실패");
+          const data = await res.json();
+          setResults(data?.documents ?? []);
+        } else if (defaultCoords) {
+          setIsRecommendation(true);
+          if (!defaultCoords.lat || !defaultCoords.lon) {
+            setResults([]);
+            setIsLoading(false);
+            return;
+          }
+          const data = await getNearbyRestaurants(defaultCoords.lat, defaultCoords.lon);
+          setResults(data || []);
         } else {
-          toast.error("장소 검색에 실패했습니다.");
+          setResults([]);
+        }
+      } catch (error) {
+        if (debouncedTerm.trim()) {
+          if (error instanceof Error) {
+            toast.error(error.message);
+          } else {
+            toast.error("장소 검색에 실패했습니다.");
+          }
         }
         setResults([]);
       } finally {
@@ -49,31 +84,49 @@ export default function SearchPlaces({
       }
     };
     run();
-  }, [debouncedTerm]);
+  }, [debouncedTerm, defaultCoords]);
 
   return (
     <div className="flex h-full flex-col gap-3">
+      {/* 검색창 영역 */}
       <div className="relative">
         <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 peer-disabled:opacity-50">
           <MapPinIcon className="stroke-text-sub size-4" />
           <span className="sr-only">Search</span>
         </div>
+
+        {/* 브라우저 기본 X 버튼 숨기는 클래스 추가 */}
         <Input
           id={id}
-          type="search"
+          type="text" // search 대신 text로 변경해서 기본 X 버튼 제거 (또는 CSS로 처리)
           placeholder={placeholder}
           value={term}
           onChange={(e) => setTerm(e.target.value)}
-          className="peer px-9 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none"
+          className="peer px-9 pr-8" // 오른쪽 여백 확보
         />
+
+        {/* 커스텀 X 버튼 (검색어가 있을 때만 노출) */}
+        {term && !isLoading && (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={handleClear}
+            className="hover:text-muted-foreground absolute top-1/2 right-1 -translate-y-1/2 hover:bg-transparent"
+            type="button"
+          >
+            <XIcon className="size-4" />
+          </Button>
+        )}
+
         {isLoading && (
           <div className="text-muted-foreground pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center pr-3 peer-disabled:opacity-50">
             <LoaderCircleIcon className="size-4 animate-spin" />
-            <span className="sr-only">Loading...</span>
           </div>
         )}
       </div>
-      {isStart && results.length === 0 && (
+
+      {/* 초기 상태 안내 */}
+      {isStart && results.length === 0 && !defaultCoords && !term && (
         <div className="flex flex-1 grow flex-col items-center justify-center gap-4 py-10">
           <div className="bg-bg-sub rounded-full p-5">
             <MapIcon className="size-10" />
@@ -84,26 +137,68 @@ export default function SearchPlaces({
           </div>
         </div>
       )}
+
+      {/* 추천 리스트 라벨 */}
+      {isRecommendation && results.length > 0 && (
+        <div className="flex items-center gap-1.5 px-1 pt-1 text-xs font-medium text-gray-500">
+          <UtensilsIcon className="size-3" />
+          <span>공연장 주변 맛집</span>
+        </div>
+      )}
+
+      {/* 결과 리스트 */}
       {results.length > 0 && (
-        <div className="space-y-3 overflow-y-auto">
+        <div className={cn("max-h-[60vh] space-y-3 overflow-y-auto", defaultCoords && "max-h-46")}>
           <ul className="space-y-2">
-            {results.map((place) => (
-              <li
-                key={`${place.id ?? place.place_name}-${place.address_name}`}
-                className="hover:bg-muted flex cursor-pointer items-center gap-3 rounded-md p-2"
-                onClick={() => {
-                  // 클릭 시 입력값 반영 + 선택 콜백 전달
-                  setTerm(place.place_name);
-                  onSelect?.(place);
-                }}
-              >
-                <MapPinnedIcon className="stroke-text-sub size-5" />
-                <div className="space-y-0.5">
-                  <strong className="text-text-main text-sm font-medium">{place.place_name}</strong>
-                  <p className="text-text-sub text-xs">{place.address_name}</p>
-                </div>
-              </li>
-            ))}
+            {results.map((place, index) => {
+              const placeLat = Number(place.y);
+              const placeLon = Number(place.x);
+
+              const distance =
+                defaultCoords && defaultCoords.lat && defaultCoords.lon
+                  ? calculateDistance(defaultCoords.lat, defaultCoords.lon, placeLat, placeLon)
+                  : 0;
+
+              const itemKey = place.id || `${place.place_name}-${index}`;
+
+              return (
+                <li
+                  key={itemKey}
+                  className="hover:bg-muted group flex cursor-pointer items-start gap-3 rounded-md p-2 transition-colors"
+                  onClick={() => {
+                    setTerm(place.place_name);
+                    onSelect?.(place as SearchPlace);
+                  }}
+                >
+                  <div className="bg-muted flex size-10 items-center justify-center rounded-full">
+                    {isRecommendation ? (
+                      <UtensilsIcon className="stroke-text-sub group-hover:text-foreground size-4 shrink-0 transition-colors" />
+                    ) : (
+                      <MapPinnedIcon className="stroke-text-sub group-hover:text-foreground size-4 shrink-0 transition-colors" />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <strong className="text-text-main truncate text-sm font-medium">
+                        {place.place_name}
+                      </strong>
+
+                      {/* 거리 표시: 주황색 대신 차분한 회색, 혹은 강조하고 싶으면 text-primary */}
+                      {defaultCoords && (
+                        <span className="text-muted-foreground group-hover:text-primary shrink-0 text-xs font-medium transition-colors">
+                          {formatDistance(distance)}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-text-sub truncate text-xs">
+                      {place.road_address_name || place.address_name}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -111,6 +206,7 @@ export default function SearchPlaces({
   );
 }
 
+// Debounce Hook (유지)
 function useDebounce<T>(value: T, delay = 300) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {

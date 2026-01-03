@@ -127,3 +127,18 @@ export function formatTimeToKoreanAMPM(timeStr: string): string {
  */
 export const toMinutePrecision = (time?: string): string =>
   time?.split(":").slice(0, 2).join(":") || "";
+
+/**
+ * 거리 포맷팅
+ * @param {number} distance - 거리 (미터 단위)
+ * @returns {string} 포맷팅된 거리 문자열
+ * - 1000m 미만: "xxx m"
+ * - 1000m 이상: "x.x km"
+ */
+export const formatDistance = (distance: number): string => {
+  if (distance < 1000) {
+    return `${Math.round(distance)}m`;
+  } else {
+    return `${(distance / 1000).toFixed(1)}km`;
+  }
+};
