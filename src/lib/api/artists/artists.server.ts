@@ -5,6 +5,7 @@ import {
   ArtistDetail,
   ArtistDetailResponse,
   ArtistListData,
+  IsLikedArtistsResponse,
   LikeArtistResponse,
 } from "@/types/artists";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
@@ -117,5 +118,40 @@ export async function getFeaturedArtists({
     console.error("Error fetching upcoming concerts:", err);
 
     return createEmptyResponse("아티스트 목록을 가져오는데 실패했습니다");
+  }
+}
+// 서버에서 아티스트 좋아요 불러오기
+export async function getArtistLikeStatus(artistId: number): Promise<boolean> {
+  try {
+    const res = await ServerApi(`/api/v1/artists/likes/${artistId}`, {
+      method: "GET",
+    });
+
+    if (res.status === 401 || res.status === 403) {
+      return false;
+    }
+
+    if (!res.ok) {
+      throw new Error("아티스트 좋아요 상태를 불러오는 중 오류가 발생했습니다.");
+    }
+
+    let json: IsLikedArtistsResponse;
+    try {
+      json = await res.json();
+    } catch {
+      throw new Error("서버 응답을 처리할 수 없습니다.");
+    }
+
+    if (json.resultCode && json.resultCode !== "OK") {
+      throw new Error(json.msg ?? "좋아요 상태 조회에 실패했습니다.");
+    }
+
+    return json.data?.isLiked ?? false;
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error("서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.");
+    }
+    if (err instanceof Error) throw err;
+    throw new Error("알 수 없는 오류가 발생했습니다.");
   }
 }

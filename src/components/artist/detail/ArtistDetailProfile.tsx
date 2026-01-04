@@ -5,15 +5,45 @@ import { ArtistDetail } from "@/types/artists";
 import Image from "next/image";
 import FollowButton from "@/components/artist/detail/FollowButton";
 import { useState } from "react";
+import { toggleArtistLike } from "@/lib/api/artists/artists.server";
+import { toast } from "sonner";
 
 export default function ArtistDetailProfile({
   artist,
   artistId,
+  initialIsLiked,
 }: {
   artist: ArtistDetail;
   artistId: number;
+  initialIsLiked: boolean;
 }) {
   const [likeCount, setLikeCount] = useState(artist.likeCount);
+  const [isLiked, setIsLiked] = useState<boolean>(initialIsLiked);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLikeClick = async () => {
+    if (isLoading) return;
+
+    const previousIsLiked = isLiked;
+    const nextIsLiked = !isLiked;
+
+    setIsLiked(nextIsLiked);
+    setLikeCount((count) => count + (nextIsLiked ? 1 : -1));
+    setIsLoading(true);
+
+    try {
+      await toggleArtistLike(artistId, previousIsLiked);
+      toast.success(nextIsLiked ? "아티스트를 팔로우했습니다!" : "언팔로우했습니다.");
+    } catch (err) {
+      setIsLiked(previousIsLiked);
+      setLikeCount((count) => count + (previousIsLiked ? 1 : -1));
+
+      toast.error(err instanceof Error ? err.message : "오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <section className={"bg-bg-sub border-border flex items-center gap-12 border-b px-15 py-16"}>
       <div className={"mx-auto flex w-full max-w-400 gap-12"}>
@@ -38,16 +68,7 @@ export default function ArtistDetailProfile({
               {/*  <Badge className={"bg-text-point-sub text-text-main text-sm"}>R&B</Badge>*/}
               {/*</div>*/}
             </div>
-            <FollowButton
-              artistId={artistId}
-              // TODO : 나중에 initialLiked 값엔 서버에서 받아온 팔로우 상태값 전달
-              // TODO: 좋아요 API 실패 시 likeCount 롤백 처리
-              // TODO: 다른 화면과 좋아요 상태/카운트 동기화 전략 정리
-              initialLiked={false}
-              onLikeChange={(nextIsLiked) => {
-                setLikeCount((count) => count + (nextIsLiked ? 1 : -1));
-              }}
-            />
+            <FollowButton isLiked={isLiked} disabled={isLoading} onClick={handleLikeClick} />
           </div>
           {/*팔로워 수, 다가올 콘서트 부분*/}
           <div className={"flex gap-8"}>
