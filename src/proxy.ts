@@ -112,9 +112,10 @@ function clearAuthCookies(res: NextResponse) {
 function setAccessCookie(res: NextResponse, token: string) {
   res.cookies.set("ACCESS_TOKEN", token, {
     httpOnly: true,
-    sameSite: "lax", // 동일한 도메인에만 쿠키를 저장할 것인지를 정하는 것
+    sameSite: "lax",
     path: "/",
-    secure: true, // HTTPS면 켜기
+    secure: process.env.NODE_ENV === "production",
+    domain: process.env.NODE_ENV === "production" ? ".naeconcertbutakhae.shop" : undefined,
   });
 }
 
