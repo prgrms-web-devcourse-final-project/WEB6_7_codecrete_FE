@@ -12,21 +12,16 @@ import ReviewConfirmSection from "@/components/review/write/ReviewConfirmSection
 import ReviewFooterActions from "@/components/review/write/ReviewFooterActions";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { ReviewPostWrite } from "@/types/community/concert-review";
+import { createReviewPost } from "@/lib/api/community/concert-review/review.client";
+import { toast } from "sonner";
 
 /**
  * 데이터를 다루기 위해 FormProvider 사용
  * MateWriteMain.tsx 파일 참고
  * 입력 데이터 및 타입 등 임시로 작성한 것이므로 오류가 있을 수 있음
  */
-
-type ReviewPostWrite = {
-  concertId: number;
-  title: string;
-  rating: number;
-  content: string;
-  images: string;
-  activityTags: string[];
-};
 
 export default function ReviewWriteMain({ concertId }: { concertId: number }) {
   const methods = useForm<ReviewPostWrite>({
@@ -40,6 +35,8 @@ export default function ReviewWriteMain({ concertId }: { concertId: number }) {
     },
   });
 
+  const router = useRouter();
+
   // 데이터가 서버로 날아가고 있는지 여부 (boolean)
   const {
     formState: { isSubmitting },
@@ -51,10 +48,32 @@ export default function ReviewWriteMain({ concertId }: { concertId: number }) {
   };
 
   // 등록 버튼
-  const onSubmitMate = () => {};
+  const onSubmitReview = async (data: ReviewPostWrite) => {
+    const finalData = { ...data };
+
+    try {
+      const isSuccess = await createReviewPost(finalData);
+
+      if (isSuccess) {
+        toast.success("리뷰글이 성공적으로 등록되었습니다!");
+        router.push(`/concerts/${concertId}`);
+        router.refresh();
+      } else {
+        toast.error("등록에 실패했습니다. 입력 내용을 확인해주세요.");
+      }
+    } catch (error) {
+      console.error("제출 중 에러 발생:", error);
+
+      toast.error("서버와 통신 중 오류가 발생했습니다.");
+    }
+    // TODO : 필수 데이터를 안 써도 통과 시킴 : 에러 처리 안 한 애들도 막힘
+  };
 
   // 취소 버튼
-  const onCancelMate = () => {};
+  const onCancelReview = () => {
+    router.push(`/concerts/${concertId}`);
+    router.refresh();
+  };
 
   return (
     <FormProvider {...methods}>
@@ -75,8 +94,8 @@ export default function ReviewWriteMain({ concertId }: { concertId: number }) {
             </div>
             <ReviewConfirmSection checked={isConfirmed} onChange={onCheckedChange} />
             <ReviewFooterActions
-              onSubmit={methods.handleSubmit(onSubmitMate)}
-              onCancel={onCancelMate}
+              onSubmit={methods.handleSubmit(onSubmitReview)}
+              onCancel={onCancelReview}
               isPending={isSubmitting}
               isDisabled={!isConfirmed}
               buttonText={"리뷰 등록"}
