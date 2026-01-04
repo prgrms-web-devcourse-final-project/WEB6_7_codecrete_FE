@@ -22,8 +22,9 @@ export const createPlanSchedule = async ({
       body: JSON.stringify(scheduleData),
     });
     if (!res.ok) {
-      console.error("API Error:", res.status, res.statusText);
-      throw new Error(`API 요청 실패: ${res.status}`);
+      const errorData = await res.json();
+      console.error("API Error:", res.status, res.statusText, errorData);
+      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
     }
     const data = await res.json();
     return data;

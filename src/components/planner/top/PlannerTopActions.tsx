@@ -6,14 +6,16 @@ import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon, SaveIcon } from "luci
 import AddScheduleDialog from "../dialogs/AddScheduleDialog";
 import InviteMemberDialog from "../dialogs/InviteMemberDialog";
 import LinkShareDialog from "../dialogs/LinkShareDialog";
-import { ConcertCoords } from "@/types/planner";
+import { ConcertCoords, ScheduleDetail } from "@/types/planner";
 
 export default function PlannerTopActions({
   planId,
   concertCoords,
+  schedules,
 }: {
   planId: string;
   concertCoords?: ConcertCoords;
+  schedules?: ScheduleDetail[];
 }) {
   const [showAdd, setShowAdd] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
@@ -65,6 +67,7 @@ export default function PlannerTopActions({
         open={showAdd}
         onOpenChange={setShowAdd}
         defaultCoords={concertCoords}
+        schedules={schedules}
       />
       <InviteMemberDialog open={showInvite} onOpenChange={setShowInvite} />
       <LinkShareDialog open={showShare} onOpenChange={setShowShare} />

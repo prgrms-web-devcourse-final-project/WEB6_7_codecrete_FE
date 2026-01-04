@@ -1,17 +1,19 @@
-import { KakaoCarRouteGuide, KakaoMapSummary, TMapSummary } from "@/types/planner";
+import { KakaoCarRouteGuide, KakaoMapSummary, TMapDetail, TMapSummary } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
+
+interface RouteCoords {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+}
 
 export const getTransitRouteSummaryByTmap = async ({
   startX,
   startY,
   endX,
   endY,
-}: {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-}): Promise<TMapSummary> => {
+}: RouteCoords): Promise<TMapSummary> => {
   const res = await ClientApi(
     `/api/v1/location/tmap/summary?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
     {
@@ -25,17 +27,31 @@ export const getTransitRouteSummaryByTmap = async ({
   return data;
 };
 
-export const getTransitRouteByTmap = async ({
+export const getTransitRouteDetailsByTmap = async ({
   startX,
   startY,
   endX,
   endY,
-}: {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-}) => {
+}: RouteCoords): Promise<TMapDetail> => {
+  try {
+    const res = await ClientApi(
+      `/api/v1/location/tmap/transit?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
+      {
+        method: "GET",
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Tmap 대중교통 경로 정보를 불러오는데 실패했습니다.");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Tmap 대중교통 경로 정보 불러오기 실패:", error);
+    throw error;
+  }
+};
+
+export const getTransitRouteByTmap = async ({ startX, startY, endX, endY }: RouteCoords) => {
   const res = await ClientApi(
     `/api/v1/location/tmap/transit?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
     {
@@ -54,12 +70,7 @@ export const getCarRouteByKakaoMap = async ({
   startY,
   endX,
   endY,
-}: {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-}): Promise<KakaoCarRouteGuide[]> => {
+}: RouteCoords): Promise<KakaoCarRouteGuide[]> => {
   const res = await ClientApi(
     `/api/v1/location/kakao/navigate/guides?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
     {
@@ -78,12 +89,7 @@ export const getCarRouteSummaryByKakaoMap = async ({
   startY,
   endX,
   endY,
-}: {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-}): Promise<KakaoMapSummary> => {
+}: RouteCoords): Promise<KakaoMapSummary> => {
   const res = await ClientApi(
     `/api/v1/location/kakao/navigate/summary?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
     {

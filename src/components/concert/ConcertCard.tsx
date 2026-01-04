@@ -26,7 +26,7 @@ export default function ConcertCard({
       />
       <div className="flex flex-col gap-1 lg:gap-3">
         <strong className="line-clamp-1 text-base md:text-lg lg:text-xl xl:text-2xl">{name}</strong>
-        <div className="text-text-sub flex flex-col gap-1 text-xs lg:text-sm">
+        <div className="text-text-sub flex flex-col gap-1 text-xs leading-normal lg:text-sm">
           <div className="flex items-center gap-1">
             <Calendar className="size-3 lg:size-4" />
             <p>{startDate === endDate ? startDate : `${startDate} ~ ${endDate}`}</p>

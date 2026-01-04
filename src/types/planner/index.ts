@@ -108,6 +108,8 @@ export type SearchPlace = {
   y: number;
 };
 
+// ====== TMAP 대중교통 타입 =====
+
 /** TMAP 경로탐색 결과의 pathType 숫자 매핑
  * 1-지하철, 2-버스, 3-버스+지하철
  * 4-고속/시외버스, 5-기차, 6-항공, 7-해운 */
@@ -121,29 +123,108 @@ export enum TMapPathType {
   SHIP = 7,
 }
 
+// 1. 최상위 응답 객체 (Summary 포함 전체 구조)
+export interface TMapDetail {
+  metaData: {
+    requestParameters: {
+      busCount: number;
+      expressbusCount: number;
+      subwayCount: number;
+      airplaneCount: number;
+      locale: string;
+      endY: string;
+      endX: string;
+      wideareaRouteCount: number;
+      subwayBusCount: number;
+      startY: string;
+      startX: string;
+      ferryCount: number;
+      trainCount: number;
+      reqDttm: string;
+    };
+    plan: {
+      itineraries: Itinerary[];
+    };
+  };
+}
+
+// 2. 경로 (Itinerary) - 추천 경로 하나하나
+export interface Itinerary {
+  totalTime: number; // 총 소요 시간 (초)
+  totalDistance: number; // 총 거리 (m)
+  totalWalkTime: number; // 총 도보 시간 (초)
+  totalWalkDistance: number; // 총 도보 거리 (m)
+  transferCount: number; // 환승 횟수
+  pathType: number; // 경로 타입 (1: 지하철, 2: 버스, 3: 지하철+버스)
+  fare: {
+    regular: {
+      totalFare: number; // 총 요금
+      currency: {
+        symbol: string;
+        currency: string;
+        currencyCode: string;
+      };
+    };
+  };
+  legs?: Leg[]; // 상세 이동 구간 리스트
+}
+
+// 3. 이동 구간 (Leg) - 도보, 버스, 지하철 등
+export interface Leg {
+  mode: "WALK" | "BUS" | "SUBWAY" | "EXPRESSBUS" | "TRAIN" | "AIRPLANE" | "FERRY"; // 이동 수단
+  sectionTime: number; // 해당 구간 소요 시간 (초)
+  distance: number; // 해당 구간 거리 (m)
+  start: LocationPoint; // 구간 시작점
+  end: LocationPoint; // 구간 도착점
+
+  // -- 도보(WALK)일 때만 존재 --
+  steps?: Step[];
+
+  // -- 대중교통(BUS, SUBWAY 등)일 때만 존재 --
+  route?: string; // 노선명 (예: "간선:472", "지하철 2호선")
+  routeId?: string; // 노선 ID
+  routeColor?: string; // 노선 색상 (Hex 코드)
+  service?: number; // 운행 정보
+  type?: number; // 노선 타입
+  passStopList?: {
+    // 경유 정류장 리스트
+    stations: Station[];
+  };
+  passShape?: {
+    // 경로 선형 (지도 그리기용)
+    linestring: string; // "lon,lat lon,lat ..." 형태의 문자열
+  };
+}
+
+// 4. 위치 좌표 객체 (TMAP 내부용)
+export interface LocationPoint {
+  name: string;
+  lon: number;
+  lat: number;
+}
+
+// 5. 도보 상세 경로 (Step)
+export interface Step {
+  streetName: string; // 도로명
+  distance: number; // 거리 (m)
+  description: string; // 이동 설명
+  linestring: string; // 경로 좌표 문자열
+}
+
+// 6. 정류장/역 정보 (Station)
+export interface Station {
+  index: number;
+  stationName: string;
+  lon: string; // 주의: API가 좌표를 string으로 줄 때가 있음
+  lat: string;
+  stationID: string;
+}
+
+// 7. 요약 정보용
 export type TMapSummary = {
   metaData: {
     plan: {
-      itineraries: [
-        {
-          pathType: number;
-          totalTime: number;
-          transferCount: number;
-          totalWalkDistance: number;
-          totalDistance: number;
-          totalWalkTime: number;
-          fare: {
-            regular: {
-              currency: {
-                symbol: "￦";
-                currency: "원";
-                currencyCode: "KRW";
-              };
-              totalFare: number;
-            };
-          };
-        },
-      ];
+      itineraries: Itinerary[];
     };
     requestParameters: {
       reqDttm: string;
@@ -155,6 +236,7 @@ export type TMapSummary = {
   };
 };
 
+// ====== KakaoMap 타입 ======
 export type KakaoMapSummary = {
   distance: number;
   duration: number;
@@ -197,4 +279,4 @@ export type NearbyPlaces = {
 };
 
 // 콘서트 장소 좌표 타입
-export type ConcertCoords = { lat?: number; lon?: number };
+export type ConcertCoords = { lat: number; lon: number };
