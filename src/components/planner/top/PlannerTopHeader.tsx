@@ -3,14 +3,14 @@ import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import { formatDateKorean } from "@/utils/helpers/formatters";
 import { ArrowLeftIcon, Calendar1Icon, MapPinIcon } from "lucide-react";
 import PlannerEdit from "./PlannerEdit";
-import { PlanDetail } from "@/types/planner";
+import { PlanDetail, PlannerParticipantRole } from "@/types/planner";
 
 export default async function PlannerTopHeader({
   planDetail,
   role,
 }: {
   planDetail: PlanDetail;
-  role: string;
+  role: PlannerParticipantRole;
 }) {
   const concertDetail = await getConcertDetail({ concertId: planDetail.concertId.toString() });
 

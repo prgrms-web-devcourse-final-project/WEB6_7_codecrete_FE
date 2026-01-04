@@ -1,13 +1,16 @@
 import PlannerTopActions from "@/components/planner/top/PlannerTopActions";
 import PlannerTopHeader from "@/components/planner/top/PlannerTopHeader";
 import PlannerBodySection from "@/components/planner/PlannerBodySection";
-import { getPlanDetail } from "@/lib/api/planner/planner.server";
+import { getPlanDetail, getPlanShareLink } from "@/lib/api/planner/planner.server";
 import { getUsersMe } from "@/lib/api/user/user.server";
 import PlannerError from "@/components/planner/PlannerError";
-import { ScheduleDetail } from "@/types/planner";
+import { PlannerParticipantRole, PlannerShareLink, ScheduleDetail } from "@/types/planner";
+import { headers } from "next/headers";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const domain: string = (await headers()).get("host") || "";
+
   const planDetail = await getPlanDetail(id);
 
   if (!planDetail) {
@@ -15,20 +18,34 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   }
 
   // planDetail.schedules에서 콘서트 일정만 필터링
-  const concertSchedules = planDetail.schedules.find(
+  const concertSchedules: ScheduleDetail = planDetail.schedules.find(
     (schedule) => schedule.isMainEvent
-  ) as ScheduleDetail;
+  )!;
 
   // 플랜에 참여자로 등록되어 있지 않을 경우
   const me = await getUsersMe();
-  let myRole = "";
+  let myRole: PlannerParticipantRole = null;
   if (!planDetail.participants.find((participant) => participant.userId === me.id)) {
     const error = new Error("해당 플래너에 접근할 권한이 없습니다.");
     (error as Error & { statusCode?: number }).statusCode = 403;
     throw error;
   } else {
     myRole =
-      planDetail.participants.find((participant) => participant.userId === me.id)?.role || "";
+      planDetail.participants.find((participant) => participant.userId === me.id)?.role || null;
+  }
+
+  const shareLink: PlannerShareLink = {
+    domain: domain,
+    url: "",
+    status: "",
+  };
+
+  try {
+    const data = await getPlanShareLink(id);
+    shareLink.url = `${domain}/planner/share?code=${data.shareToken}`;
+  } catch (error) {
+    shareLink.status =
+      error instanceof Error ? error.message : "공유 링크를 불러오는 중 오류가 발생했습니다.";
   }
 
   return (
@@ -41,6 +58,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         }}
         planId={id}
         schedules={planDetail.schedules}
+        role={myRole}
+        shareLink={shareLink}
       />
       <PlannerBodySection
         planId={id}

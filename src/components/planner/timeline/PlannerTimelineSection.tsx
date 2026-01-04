@@ -1,4 +1,4 @@
-import { ConcertCoords, ScheduleDetail } from "@/types/planner";
+import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
 import PlannerTimelineItem from "./PlannerTimelineItem";
 import StartLocationCard from "./StartLocationCard";
 import { getMyLocation } from "@/lib/api/planner/location.server";
@@ -14,7 +14,7 @@ export default async function PlannerTimelineSection({
   planId: string;
   schedules: ScheduleDetail[];
   concertCoords: ConcertCoords;
-  role: string;
+  role: PlannerParticipantRole;
   totalDuration: number;
 }) {
   const firstSchedule = schedules[0];

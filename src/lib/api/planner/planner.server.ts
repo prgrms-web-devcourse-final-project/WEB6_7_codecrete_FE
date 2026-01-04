@@ -66,3 +66,20 @@ export const getPlanList = async (): Promise<PlannerListWithDetails[]> => {
     throw error;
   }
 };
+
+// 플래너 공유 링크 조회
+export const getPlanShareLink = async (
+  planId: string
+): Promise<{ planId: string; shareToken: string; shareLink: string }> => {
+  try {
+    const res = await ServerApi(`/api/v1/plans/${planId}/share/link`, { method: "GET" });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};

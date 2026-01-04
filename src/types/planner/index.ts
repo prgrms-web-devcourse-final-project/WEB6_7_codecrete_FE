@@ -7,7 +7,7 @@ export type PlanParticipants = {
   id: number;
   userId: number;
   inviteStatus: "JOINED" | "PENDING" | "DECLINED";
-  role: "OWNER" | "MEMBER";
+  role: PlannerParticipantRole;
 };
 
 export type PlanDetail = {
@@ -280,3 +280,12 @@ export type NearbyPlaces = {
 
 // 콘서트 장소 좌표 타입
 export type ConcertCoords = { lat: number; lon: number };
+
+// 플래너 링크
+export type PlannerShareLink = {
+  domain: string;
+  url: string;
+  status: string;
+};
+
+export type PlannerParticipantRole = "OWNER" | "EDITOR" | "VIEWER" | null;

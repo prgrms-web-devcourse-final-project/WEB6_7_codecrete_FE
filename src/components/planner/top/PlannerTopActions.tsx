@@ -1,28 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon, SaveIcon } from "lucide-react";
 import AddScheduleDialog from "../dialogs/AddScheduleDialog";
 import InviteMemberDialog from "../dialogs/InviteMemberDialog";
 import LinkShareDialog from "../dialogs/LinkShareDialog";
-import { ConcertCoords, ScheduleDetail } from "@/types/planner";
+import {
+  ConcertCoords,
+  PlannerParticipantRole,
+  PlannerShareLink,
+  ScheduleDetail,
+} from "@/types/planner";
+import { createPlanShareLink } from "@/lib/api/planner/planner.client";
+
+interface PlannerTopActionsProps {
+  planId: string;
+  concertCoords?: ConcertCoords;
+  schedules?: ScheduleDetail[];
+  role: PlannerParticipantRole;
+  shareLink: PlannerShareLink;
+}
 
 export default function PlannerTopActions({
   planId,
   concertCoords,
   schedules,
-}: {
-  planId: string;
-  concertCoords?: ConcertCoords;
-  schedules?: ScheduleDetail[];
-}) {
+  role,
+  shareLink,
+}: PlannerTopActionsProps) {
+  const [isPending, startTransition] = useTransition();
+
   const [showAdd, setShowAdd] = useState(false);
-  const [showInvite, setShowInvite] = useState(false);
+  const [showInvite, setShowInvite] = useState(true);
   const [showShare, setShowShare] = useState(false);
+
+  // 공유링크 state
+  const [plannerShareLink, setPlannerShareLink] = useState<PlannerShareLink>(shareLink);
 
   const handleSave = () => {
     // TODO : 저장 로직 구현
+  };
+
+  // 공유 링크 생성 핸들러
+  const handleCreateShareLink = () => {
+    startTransition(async () => {
+      try {
+        const data = await createPlanShareLink(planId);
+        setPlannerShareLink({
+          ...plannerShareLink,
+          url: `${plannerShareLink.domain}/planner/share?code=${data.shareToken}`,
+          status: "",
+        });
+      } catch (error) {
+        setPlannerShareLink({
+          ...plannerShareLink,
+          url: "",
+          status:
+            error instanceof Error ? error.message : "공유 링크를 불러오는 중 오류가 발생했습니다.",
+        });
+      }
+    });
   };
 
   return (
@@ -61,7 +99,7 @@ export default function PlannerTopActions({
         </div>
       </section>
 
-      {/* 분리된 다이얼로그들 */}
+      {/* 일정 추가하기 */}
       <AddScheduleDialog
         planId={planId}
         open={showAdd}
@@ -69,7 +107,16 @@ export default function PlannerTopActions({
         defaultCoords={concertCoords}
         schedules={schedules}
       />
-      <InviteMemberDialog open={showInvite} onOpenChange={setShowInvite} />
+      {/* 친구 초대하기 */}
+      <InviteMemberDialog
+        open={showInvite}
+        onOpenChange={setShowInvite}
+        role={role}
+        shareLink={shareLink}
+        isPending={isPending}
+        onCreateShareLink={handleCreateShareLink}
+      />
+      {/* 링크 공유하기 */}
       <LinkShareDialog open={showShare} onOpenChange={setShowShare} />
     </>
   );

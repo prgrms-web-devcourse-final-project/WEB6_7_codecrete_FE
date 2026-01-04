@@ -1,7 +1,7 @@
 import PlannerQuickTips from "./timeline/PlannerQuickTips";
 import PlannerTimelineSection from "./timeline/PlannerTimelineSection";
 import PlannerSidebarContents from "./sidebar/PlannerSidebarContents";
-import { ConcertCoords, ScheduleDetail } from "@/types/planner";
+import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
 
 export default function PlannerBodySection({
   planId,
@@ -13,7 +13,7 @@ export default function PlannerBodySection({
   planId: string;
   schedules: ScheduleDetail[];
   concertCoords: ConcertCoords;
-  role: string;
+  role: PlannerParticipantRole;
   totalDuration: number;
 }) {
   return (

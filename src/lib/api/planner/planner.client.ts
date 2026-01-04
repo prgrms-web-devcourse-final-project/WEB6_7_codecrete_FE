@@ -86,3 +86,22 @@ export const deletePlan = async ({ planId }: { planId: string }): Promise<void> 
     throw error;
   }
 };
+
+// 플래너 공유 링크 생성
+export const createPlanShareLink = async (
+  planId: string
+): Promise<{ planId: string; shareToken: string; shareLink: string }> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { ConcertCoords, ScheduleDetail } from "@/types/planner";
+import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
 
 // 분리한 하위 컴포넌트들 임포트
 import TimelineIcon from "./TimelineIcon";
@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 
 interface PlannerTimelineItemProps {
   planId: string;
-  role?: string;
+  role: PlannerParticipantRole;
   concertCoords: ConcertCoords;
   schedule: ScheduleDetail;
 }
