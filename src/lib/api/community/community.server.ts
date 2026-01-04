@@ -15,7 +15,7 @@ export const getPostsList = async ({
   page: number;
 }): Promise<PostListResponse | null> => {
   try {
-    const res = await ServerApi(`/api/v1/posts/category/${category}?page=${page}&size=5`, {
+    const res = await ServerApi(`/api/v1/posts/category/${category}?page=${page}`, {
       method: "GET",
     });
 
