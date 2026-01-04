@@ -68,7 +68,6 @@ export default function MateWriteMain() {
 
       toast.error("서버와 통신 중 오류가 발생했습니다.");
     }
-    // TODO : 필수 데이터를 안 써도 통과 시킴 : 에러 처리 안 한 애들도 막힘
   };
 
   // 취소 버튼

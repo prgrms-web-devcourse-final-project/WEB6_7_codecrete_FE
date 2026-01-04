@@ -12,9 +12,10 @@ import { MatePostWrite } from "@/types/community/concert-mate";
 import { format, parseISO } from "date-fns";
 
 export function MateDatePicker() {
-  // 필요한 결과값 meetingAt: "2025-01-05T18:30:00"
+  // TODO : 지난 날짜는 선택 막기
   const [open, setOpen] = React.useState(false);
 
+  // 1. formState에서 errors 추출
   const { setValue, watch } = useFormContext<MatePostWrite>();
 
   const meetingAt = watch("meetingAt");
