@@ -83,3 +83,32 @@ export const getPlanShareLink = async (
     throw error;
   }
 };
+
+// 공유받은 링크로 접속했을 때 액세스 토큰 검증
+export const getSharedPlan = async (shareToken: string): Promise<PlanDetail> => {
+  try {
+    const res = await ServerApi(`/api/v1/plans/share/${shareToken}`, { method: "GET" });
+    if (!res.ok) {
+      notFound();
+    }
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 공유받은 링크로 접속 후 액세스 토큰 검증까지 완료되면 참가자로 넣기
+export const joinPlanAsParticipant = async (shareToken: string): Promise<PlanDetail> => {
+  try {
+    const res = await ServerApi(`/api/v1/plans/share/${shareToken}/accept`, { method: "POST" });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
