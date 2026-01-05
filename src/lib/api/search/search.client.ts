@@ -110,10 +110,9 @@ export const getSearchArtistsWithLiked = async ({
   size?: number;
 }): Promise<SearchArtistWithLiked[]> => {
   try {
-    const encodedArtistName = encodeURIComponent(artistName);
     const res = await ClientApi("/api/v1/artists/search", {
       method: "POST",
-      body: JSON.stringify({ artistName: encodedArtistName }),
+      body: JSON.stringify({ artistName }),
     });
     if (!res.ok) {
       throw new Error("Failed to fetch search artists");
