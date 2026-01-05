@@ -19,11 +19,15 @@ export default async function MateListPostList({
     <section className="px-15">
       <div className="mx-auto w-full max-w-400">
         <div className="flex flex-col gap-6 py-12">
-          {/* TODO : 데이터 없을 때 처리 */}
-          {posts.length > 0
-            ? posts.map((post) => <MateListCard key={post.postId} post={post} />)
-            : "데이터 없음"}
+          {posts.length > 0 ? (
+            posts.map((post) => <MateListCard key={post.postId} post={post} />)
+          ) : (
+            <div className="text-text-sub flex justify-center py-50 text-xl">
+              <span>작성된 글이 없습니다</span>
+            </div>
+          )}
         </div>
+
         <MatePagination currentPage={currentPage} totalPages={totalPages} />
       </div>
     </section>
