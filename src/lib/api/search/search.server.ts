@@ -1,6 +1,8 @@
 import ServerApi from "@/utils/helpers/serverApi";
 import { getIsLikedConcert } from "../concerts/concerts.server";
 import { ConcertDataWithLiked } from "@/types/concerts";
+import { SearchArtist, SearchArtistWithLiked } from "@/types/search";
+import { getIsLikedArtist } from "../artists/artists.client";
 
 /**
  * 검색어로 공연 목록을 가져옵니다.
@@ -54,6 +56,55 @@ export const getSearchConcerts = async ({
     return concertsWithLiked;
   } catch (error) {
     console.error("Error fetching search concerts:", error);
+    return [];
+  }
+};
+
+/**
+ * 검색어로 아티스트 목록을 가져옵니다.
+ *
+ * @param {string} artistName - 검색할 아티스트 이름
+ * @returns {Promise<SearchArtist[]>} 아티스트 목록
+ */
+export const getSearchArtistsWithLiked = async ({
+  artistName,
+  size = 12,
+}: {
+  artistName: string;
+  size?: number;
+}): Promise<SearchArtistWithLiked[]> => {
+  try {
+    const encodedArtistName = encodeURIComponent(artistName);
+    const res = await ServerApi("/api/v1/artists/search", {
+      method: "POST",
+      body: JSON.stringify({ artistName: encodedArtistName }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch search artists");
+    }
+
+    const data = await res.json();
+    const artistsWithLike = await Promise.all(
+      data.data.map(async (artist: SearchArtist) => {
+        try {
+          const isLiked = await getIsLikedArtist(artist.id);
+          return {
+            ...artist,
+            isLiked,
+          };
+        } catch (error) {
+          console.error("Error checking liked artist:", error);
+          return {
+            ...artist,
+            isLiked: false,
+          };
+        }
+      })
+    );
+
+    return artistsWithLike.slice(0, size);
+  } catch (error) {
+    console.error("Error fetching search artists:", error);
     return [];
   }
 };
