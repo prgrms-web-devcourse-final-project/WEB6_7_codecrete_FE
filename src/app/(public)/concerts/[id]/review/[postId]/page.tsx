@@ -19,7 +19,7 @@ export default async function Page({
     notFound();
   }
 
-  // 글 작성자인지 판단하는 변수
+  // TODO: 글 작성자인지 판단하는 변수
   const isAuthor = userMe !== null && userMe.id === reviewDetail.post.userId;
 
   return (
