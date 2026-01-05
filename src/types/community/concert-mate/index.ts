@@ -10,3 +10,8 @@ export type MatePostWrite = {
   meetingPlace: string;
   activityTags: string[];
 };
+
+// 폼 내부에서 날짜 제한용으로만 사용
+export interface MatePostForm extends MatePostWrite {
+  concertEndDate?: string;
+}

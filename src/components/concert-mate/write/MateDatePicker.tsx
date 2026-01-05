@@ -7,18 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useFormContext } from "react-hook-form";
-import { MatePostWrite } from "@/types/community/concert-mate";
+import { useFormContext, useWatch } from "react-hook-form";
+import { MatePostForm } from "@/types/community/concert-mate";
 import { format, parseISO } from "date-fns";
 
 export function MateDatePicker() {
-  // TODO : 지난 날짜는 선택 막기
   const [open, setOpen] = React.useState(false);
 
   // 1. formState에서 errors 추출
-  const { setValue, watch } = useFormContext<MatePostWrite>();
+  const { setValue, control } = useFormContext<MatePostForm>();
 
-  const meetingAt = watch("meetingAt");
+  const concertEndDate = useWatch({
+    control,
+    name: "concertEndDate",
+  });
+
+  const meetingAt = useWatch({
+    control,
+    name: "meetingAt",
+  });
 
   const [localTime, setLocalTime] = React.useState(
     meetingAt ? format(parseISO(meetingAt), "HH:mm") : "10:00"
@@ -32,6 +39,19 @@ export function MateDatePicker() {
     const combined = `${ymd}T${timePart}:00`;
     setValue("meetingAt", combined);
   };
+
+  const isDateDisabled = React.useCallback(
+    (date: Date) => {
+      // 오늘 이전 막기
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (date < today) return true;
+      // 콘서트 이후 막기
+      if (concertEndDate && date > new Date(concertEndDate)) return true;
+      return false;
+    },
+    [concertEndDate]
+  );
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -52,6 +72,7 @@ export function MateDatePicker() {
               mode="single"
               selected={currentDate}
               captionLayout="dropdown"
+              disabled={isDateDisabled}
               onSelect={(date) => {
                 update(date, localTime);
                 setOpen(false);
