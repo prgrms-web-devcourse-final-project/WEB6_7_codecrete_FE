@@ -7,9 +7,8 @@ import SearchConcertPreview from "@/components/search/SearchConcertPreview";
 import SearchIntro from "@/components/search/SearchIntro";
 import SearchNavigation from "@/components/search/SearchNavigation";
 import { getAuthStatus } from "@/lib/api/auth/auth.server";
-import { getSearchConcerts } from "@/lib/api/search/search.client";
+import { getSearchConcerts } from "@/lib/api/search/search.server";
 import { getSearchArtistsWithLiked, getSearchConcertsCount } from "@/lib/api/search/search.server";
-import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
 export default async function Page({
@@ -49,8 +48,7 @@ export default async function Page({
           concertCounts={concertsCount}
         />
       </Suspense>
-      <section className={cn("flex flex-col gap-30 px-15 py-16")}>
-        {/* TODO : 한줄 이상은 사라지도록 해야함 */}
+      <section className="flex flex-col gap-30 px-15 py-16">
         <SearchArtistPreview keyword={keyword} artists={artists.slice(0, 12)} />
         <SearchConcertPreview
           keyword={keyword}
