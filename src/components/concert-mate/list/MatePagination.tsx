@@ -20,6 +20,8 @@ export const MatePagination = ({
   const isFirstPage = currentPage <= 1;
   const isLastPage = currentPage >= totalPages;
 
+  // TODO : 페이지 몇 개 고정으로 만들기
+
   return (
     <Pagination className="py-12">
       <PaginationContent>
