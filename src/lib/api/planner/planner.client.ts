@@ -107,6 +107,21 @@ export const createPlanShareLink = async (
   }
 };
 
+// 플래너 공유 링크 삭제
+export const deletePlanShareLink = async (planId: string): Promise<void> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 공유받은 링크로 접속 후 액세스 토큰 검증까지 완료되면 참가자로 넣기
 export const joinPlanAsParticipant = async (shareToken: string): Promise<boolean> => {
   const res = await ClientApi(`/api/v1/plans/share/${shareToken}/accept`, { method: "POST" });
