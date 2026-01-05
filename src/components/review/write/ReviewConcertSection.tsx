@@ -21,15 +21,20 @@ export default function ReviewConcertSection() {
           placeholder="공연의 분위기, 무대 연출, 관객 반응까지 느꼈던 그대로 자유롭게 적어주세요."
           id="message-2"
           {...register("content", {
-            required: "리뷰 내용은 최소 100자 이상 작성해주세요.",
-            minLength: 100,
+            required: "리뷰 내용은 필수 입력입니다.",
+            minLength: {
+              value: 100,
+              message: "리뷰 내용은 최소 100자 이상 작성해주세요.",
+            },
           })}
         />
         <p className="text-text-sub text-xs">
           최소 100자 이상 작성해주세요. 구체적인 후기는 다른 관객들에게 큰 도움이 됩니다.
         </p>
       </div>
-      {errors.content && <span className="text-xs text-red-500">{errors.content.message}</span>}
+      {errors.content?.message && (
+        <span className="text-xs text-red-500">{errors.content.message}</span>
+      )}
     </CardContent>
   );
 }

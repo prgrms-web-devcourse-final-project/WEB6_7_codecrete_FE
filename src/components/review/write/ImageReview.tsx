@@ -21,7 +21,13 @@ export default function ImagePreview({ file, onRemove }: { file: File; onRemove:
 
   return (
     <div className="relative aspect-square overflow-hidden rounded-md border">
-      <Image src={preview} alt="preview" className="h-full w-full object-cover" />
+      <Image
+        src={preview}
+        alt="preview"
+        className="h-full w-full object-cover"
+        width={50}
+        height={50}
+      />
       <button
         type="button"
         onClick={onRemove}
