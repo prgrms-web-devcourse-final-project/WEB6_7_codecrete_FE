@@ -32,3 +32,16 @@ export type PostConfirmSectionProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
+
+export interface CreateCommentRequest {
+  content: string;
+}
+
+export interface CommentResponse {
+  content: string[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+  hasNext: boolean;
+}
