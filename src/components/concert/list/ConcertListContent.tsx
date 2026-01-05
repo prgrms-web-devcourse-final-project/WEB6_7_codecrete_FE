@@ -7,19 +7,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ConcertData } from "@/types/concerts";
 import ConcertCardSkeleton from "@/components/loading/concert/list/ConcertCardSkeleton";
-import { totalConcertCount } from "@/lib/api/concerts/concerts.client";
 
 export default function ConcertListContent({
   initialList,
-  sortType = "LIKE",
+  sortType = "REGISTERED",
+  totalCount,
 }: {
   initialList: ConcertData[];
   sortType?: string;
+  totalCount: number;
 }) {
   const [concertsList, setConcertsList] = useState(initialList);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState<number | null>(null);
 
   const oTarget = useRef(null);
   const pageRef = useRef(1); // 0 시작 이므로
@@ -91,26 +91,13 @@ export default function ConcertListContent({
     setLoading(false);
   }, [initialList, sortType]);
 
-  useEffect(() => {
-    const fetchTotalCount = async () => {
-      const count = await totalConcertCount();
-      if (count !== null) {
-        setTotalCount(count);
-      }
-    };
-
-    fetchTotalCount();
-  }, []);
-
   return (
     // 정렬 수정 시, 스켈레톤 사이즈 주의 <ConcertCardSkeleton/>
     <section className="px-15 py-16">
       <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-9`)}>
         <div className="header flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-text-main text-2xl font-bold">
-              {totalCount ?? concertsList.length}
-            </span>
+            <span className="text-text-main text-2xl font-bold">{totalCount}</span>
             <span className="text-text-main text-lg">items</span>
           </div>
           {/* TODO : 정렬 API 수정 따라 수정 */}
