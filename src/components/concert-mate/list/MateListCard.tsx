@@ -15,8 +15,12 @@ export default async function MateListCard({ post }: { post: Post }) {
   const formattedDate = format(new Date(post.createdDate), "yyyy-MM-dd");
 
   return (
-    <div className={twMerge(`border-border flex flex-col gap-4 rounded-2xl border p-6`)}>
-      <Link href={`concert-mate/${post.postId}`}>
+    <div
+      className={twMerge(
+        `border-border hover:bg-accent/50 group flex flex-col gap-4 rounded-2xl border p-6`
+      )}
+    >
+      <Link href={`concert-mate/${post.postId}`} className="flex flex-col gap-2">
         <div className="flex justify-between">
           <div className="flex gap-4">
             <Avatar className="ring-border size-10 ring-4">
@@ -38,7 +42,12 @@ export default async function MateListCard({ post }: { post: Post }) {
         </div>
         <div className={twMerge(`flex flex-col gap-2 px-16`)}>
           <h2 className="text-text-main text-lg font-bold">{post.title}</h2>
-          <div className={twMerge(`bg-bg-sub flex justify-between rounded-lg p-3`)}>
+          <div
+            className={twMerge(
+              `bg-bg-sub flex justify-between rounded-lg p-3`,
+              `group-hover:bg-bg-main`
+            )}
+          >
             <div>
               <strong className="text-text-main text-sm">{concertInfoRes?.name}</strong>
               <p className="text-text-sub text-sm">
