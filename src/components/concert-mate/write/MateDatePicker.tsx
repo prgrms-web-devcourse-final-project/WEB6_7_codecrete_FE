@@ -8,24 +8,18 @@ import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useFormContext, useWatch } from "react-hook-form";
-import { MatePostForm } from "@/types/community/concert-mate";
 import { format, parseISO } from "date-fns";
+import { MatePostWrite } from "@/types/community/concert-mate";
+import { getConcertDetail } from "@/lib/api/concerts/concerts.client";
 
 export function MateDatePicker() {
   const [open, setOpen] = React.useState(false);
+  const [endDate, setEndDate] = React.useState<string | null>(null);
 
-  // 1. formState에서 errors 추출
-  const { setValue, control } = useFormContext<MatePostForm>();
+  const { setValue, control } = useFormContext<MatePostWrite>();
 
-  const concertEndDate = useWatch({
-    control,
-    name: "concertEndDate",
-  });
-
-  const meetingAt = useWatch({
-    control,
-    name: "meetingAt",
-  });
+  const meetingAt = useWatch({ control, name: "meetingAt" });
+  const concertId = useWatch({ control, name: "concertId" });
 
   const [localTime, setLocalTime] = React.useState(
     meetingAt ? format(parseISO(meetingAt), "HH:mm") : "10:00"
@@ -40,6 +34,18 @@ export function MateDatePicker() {
     setValue("meetingAt", combined);
   };
 
+  // 콘서트 날짜 불러오기
+  React.useEffect(() => {
+    if (!concertId || concertId === 0) return;
+
+    const fetchDetail = async () => {
+      const data = await getConcertDetail({ concertId: concertId.toString() });
+      setEndDate(data?.endDate || null);
+    };
+    fetchDetail();
+  }, [concertId]);
+
+  // 날짜 막기
   const isDateDisabled = React.useCallback(
     (date: Date) => {
       // 오늘 이전 막기
@@ -47,10 +53,10 @@ export function MateDatePicker() {
       today.setHours(0, 0, 0, 0);
       if (date < today) return true;
       // 콘서트 이후 막기
-      if (concertEndDate && date > new Date(concertEndDate)) return true;
+      if (endDate && date > new Date(endDate)) return true;
       return false;
     },
-    [concertEndDate]
+    [endDate]
   );
 
   return (

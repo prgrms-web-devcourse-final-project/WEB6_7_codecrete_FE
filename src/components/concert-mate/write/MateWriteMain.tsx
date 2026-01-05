@@ -14,14 +14,14 @@ import PreferenceSelectSection from "@/components/concert-mate/write/PreferenceS
 import { twMerge } from "tailwind-merge";
 import SelectedConcert from "@/components/concert-mate/write/SelectedConcert";
 import { FormProvider, useForm } from "react-hook-form";
-import { MatePostForm } from "@/types/community/concert-mate";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createMatePost } from "@/lib/api/community/concert-mate/mate.client";
+import { MatePostWrite } from "@/types/community/concert-mate";
 
 export default function MateWriteMain() {
-  const methods = useForm<MatePostForm>({
+  const methods = useForm<MatePostWrite>({
     defaultValues: {
       concertId: 0,
       title: "",
@@ -33,7 +33,6 @@ export default function MateWriteMain() {
       meetingAt: "",
       meetingPlace: "",
       activityTags: [],
-      concertEndDate: "",
     },
   });
   const router = useRouter();
@@ -49,9 +48,10 @@ export default function MateWriteMain() {
   };
 
   // 등록 버튼
-  const onSubmitMate = async (data: MatePostForm) => {
-    const finalData = { ...data };
-    delete finalData.concertEndDate;
+  const onSubmitMate = async (data: MatePostWrite) => {
+    const finalData = {
+      ...data,
+    };
 
     try {
       const isSuccess = await createMatePost(finalData);

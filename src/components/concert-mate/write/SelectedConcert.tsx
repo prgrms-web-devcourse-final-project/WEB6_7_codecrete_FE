@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.client";
 import { getSearchConcertsAutoComplete } from "@/lib/api/search/search.client";
 import { cn } from "@/lib/utils";
-import { MatePostForm } from "@/types/community/concert-mate";
+import { MatePostWrite } from "@/types/community/concert-mate";
 import { ConcertDetail } from "@/types/concerts";
 import { AutoCompleteConcerts } from "@/types/search";
 import { formatDateRange } from "@/utils/helpers/formatters";
@@ -21,7 +21,7 @@ export default function SelectedConcert() {
     // 필수 항목 에러 처리를 위해 추가
     register,
     formState: { errors },
-  } = useFormContext<MatePostForm>();
+  } = useFormContext<MatePostWrite>();
 
   useEffect(() => {
     register("concertId", {
@@ -74,7 +74,6 @@ export default function SelectedConcert() {
     try {
       const concertId = concert.id.toString();
       const data = await getConcertDetail({ concertId });
-      setValue("concertEndDate", data?.endDate);
 
       if (!data) {
         throw new Error("콘서트 정보를 불러올 수 없습니다.");
