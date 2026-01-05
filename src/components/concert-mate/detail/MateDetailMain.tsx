@@ -1,9 +1,9 @@
 import ReviewPostComments from "@/components/review/post/comments/ReviewPostComments";
 import { Separator } from "@/components/ui/separator";
-import ReviewPostSidebar from "@/components/review/post/sidebar/ReviewPostSidebar";
 import MeetingConcertCard from "@/components/concert-mate/detail/MeetingConcertCard";
 import MeetingPostHeader from "@/components/concert-mate/detail/MeetingPostHeader";
 import MeetingPostBody from "@/components/concert-mate/detail/MeetingPostBody";
+import MeetingPostSidebar from "@/components/concert-mate/detail/MeetingPostSidebar";
 
 export default function MateDetailMain() {
   return (
@@ -18,7 +18,7 @@ export default function MateDetailMain() {
           <ReviewPostComments />
         </section>
         {/*오른쪽 파트*/}
-        <ReviewPostSidebar showMeetingDetail={true} />
+        <MeetingPostSidebar showMeetingDetail={true} />
       </div>
     </section>
   );
