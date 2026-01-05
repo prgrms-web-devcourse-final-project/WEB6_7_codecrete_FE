@@ -2,7 +2,7 @@ import ServerApi from "@/utils/helpers/serverApi";
 import { getIsLikedConcert } from "../concerts/concerts.server";
 import { ConcertDataWithLiked } from "@/types/concerts";
 import { SearchArtist, SearchArtistWithLiked } from "@/types/search";
-import { getIsLikedArtist } from "../artists/artists.client";
+import { getIsLikedArtist } from "../artists/artists.server";
 
 /**
  * 검색어로 공연 목록을 가져옵니다.
