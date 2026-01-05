@@ -61,6 +61,26 @@ export const getSearchConcerts = async ({
 };
 
 /**
+ * 검색어로 공연 검색 결과의 갯수를 가져옵니다.
+ */
+export const getSearchConcertsCount = async ({ keyword }: { keyword: string }): Promise<number> => {
+  try {
+    const encodedKeyword = encodeURIComponent(keyword);
+    const res = await ServerApi(`/api/v1/concerts/searchCount?keyword=${encodedKeyword}`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch search concerts count");
+    }
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching search concerts count:", error);
+    return 0;
+  }
+};
+
+/**
  * 검색어로 아티스트 목록을 가져옵니다.
  *
  * @param {string} artistName - 검색할 아티스트 이름
@@ -68,7 +88,7 @@ export const getSearchConcerts = async ({
  */
 export const getSearchArtistsWithLiked = async ({
   artistName,
-  size = 12,
+  size,
 }: {
   artistName: string;
   size?: number;
@@ -102,6 +122,7 @@ export const getSearchArtistsWithLiked = async ({
       })
     );
 
+    if (!size) return artistsWithLike;
     return artistsWithLike.slice(0, size);
   } catch (error) {
     console.error("Error fetching search artists:", error);

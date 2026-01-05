@@ -1,17 +1,26 @@
 "use client";
-
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 
-export default function SearchNavigation() {
-  const searchParams = useSearchParams();
-  const keyword = searchParams.get("keyword") || "";
-
+export default function SearchNavigation({
+  keyword,
+  artistCounts,
+  concertCounts,
+}: {
+  keyword: string;
+  artistCounts: number;
+  concertCounts: number;
+}) {
   const searchTabs = [
-    { id: "overview", label: "전체보기", href: "/search/overview" },
-    { id: "artists", label: "아티스트", href: "/search/artists" },
-    { id: "concerts", label: "공연", href: "/search/concerts" },
+    {
+      id: "overview",
+      label: "전체보기",
+      href: "/search/overview",
+      count: artistCounts + concertCounts,
+    },
+    { id: "artists", label: "아티스트", href: "/search/artists", count: artistCounts },
+    { id: "concerts", label: "공연", href: "/search/concerts", count: concertCounts },
   ];
 
   const pathname = usePathname();
@@ -33,7 +42,7 @@ export default function SearchNavigation() {
                 )}
               >
                 {tab.label}
-                <p className="text-sm font-normal">(12)</p>
+                <p className="text-sm font-normal">({tab.count})</p>
               </div>
             </Link>
           );
