@@ -23,16 +23,28 @@ export default function CommentItem({
   res: CommentResponse | null;
   comments: CommentAddUser[] | undefined;
 }) {
+  /**
+   * TODO:
+   * - 댓글 목록 map 로직은 상위 컴포넌트로 이동
+   * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
+   * - 페이지네이션
+   * - 한 번에 보여줄 갯수 지정
+   */
+  const handlerEdit = () => {};
+  const handlerDelete = () => {};
+
+  // 댓글이 하나도 없을 때
+  if (!comments || comments.length === 0) {
+    return (
+      <div className="text-text-sub text-md bg-bg-sub flex justify-center rounded-md py-5">
+        <span>댓글을 작성해주세요</span>
+      </div>
+    );
+  }
+
+  // 댓글이 있을 때
   return (
     <>
-      {/**
-       * TODO:
-       * - 댓글 목록 map 로직은 상위 컴포넌트로 이동
-       * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
-       * - 댓글 아예 없을 때 처리
-       * - 페이지네이션
-       * - 한 번에 보여줄 갯수 지정
-       */}
       {comments?.map((comment, index) => {
         const isLast = index === comments.length - 1;
         const formattedDate = format(new Date(comment.createdDate), "yyyy-MM-dd");
@@ -55,7 +67,11 @@ export default function CommentItem({
                       <span>{comment.author}</span>
                       <span className={"text-text-sub text-xs"}>{formattedDate}</span>
                     </div>
-
+                    {/**
+                     * TODO:
+                     * - 작성자 본인/비본인 권한에 따라 메뉴 항목 분기
+                     *   (수정/삭제 vs 안 보이기)
+                     */}
                     <DropdownMenu modal={false}>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -69,11 +85,12 @@ export default function CommentItem({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-40" align="end">
                         {/**
-                         * TODO:
-                         * - 작성자 본인/비본인 권한에 따라 메뉴 항목 분기
-                         *   (수정/삭제 vs 신고)
+                         * TODO: 신고하기
+                         * - 작성자 본인 권한
                          */}
                         <DropdownMenuItem>신고하기</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handlerEdit}>수정하기</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handlerDelete}>삭제하기</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -81,7 +98,7 @@ export default function CommentItem({
                   <p>{comment.content}</p>
 
                   {/**
-                   * TODO:
+                   * TODO: 댓글 좋아요 구현
                    * - 좋아요 API 연동 및 토글 상태 처리
                    * - 이미 좋아요한 경우 아이콘 상태 변경
                     <div className="text-text-sub flex items-center gap-1 text-xs">
@@ -96,6 +113,7 @@ export default function CommentItem({
         );
       })}
 
+      {/* 임시 */}
       <div className={"flex justify-center"}>{res?.hasNext && <LoadMoreBtn />}</div>
     </>
   );
