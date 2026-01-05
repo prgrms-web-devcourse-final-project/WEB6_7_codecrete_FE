@@ -1,9 +1,9 @@
-import ReviewPostBody from "@/components/review/post/body/ReviewPostBody";
 import ReviewPostComments from "@/components/review/post/comments/ReviewPostComments";
-import ReviewPostHeader from "@/components/review/post/header/ReviewPostHeader";
-import ReviewConcertCard from "@/components/review/post/info/ReviewConcertCard";
 import { Separator } from "@/components/ui/separator";
 import ReviewPostSidebar from "@/components/review/post/sidebar/ReviewPostSidebar";
+import MeetingConcertCard from "@/components/concert-mate/detail/MeetingConcertCard";
+import MeetingPostHeader from "@/components/concert-mate/detail/MeetingPostHeader";
+import MeetingPostBody from "@/components/concert-mate/detail/MeetingPostBody";
 
 export default function MateDetailMain() {
   return (
@@ -11,10 +11,10 @@ export default function MateDetailMain() {
       <div className="mx-auto flex w-full max-w-400 gap-12">
         {/*왼쪽 파트*/}
         <section className="flex w-full flex-col gap-8">
-          <ReviewConcertCard />
-          <ReviewPostHeader />
+          <MeetingConcertCard />
+          <MeetingPostHeader />
           <Separator />
-          <ReviewPostBody showBadge={true} />
+          <MeetingPostBody showBadge={true} />
           <ReviewPostComments />
         </section>
         {/*오른쪽 파트*/}
