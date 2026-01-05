@@ -312,3 +312,21 @@ export type PlannerShareLink = {
 };
 
 export type PlannerParticipantRole = "OWNER" | "EDITOR" | "VIEWER" | null;
+
+export type PlannerParticipantInviteStatus =
+  | "JOINED"
+  | "PENDING"
+  | "ACCEPTED"
+  | "DECLINED"
+  | "LEFT"
+  | "REMOVED";
+
+export type PlannerParticipant = {
+  participantId: string;
+  userId: number;
+  nickname: string;
+  email: string;
+  profileImage: string;
+  inviteStatus: PlannerParticipantInviteStatus;
+  role: PlannerParticipantRole;
+};

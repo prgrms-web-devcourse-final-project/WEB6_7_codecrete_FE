@@ -1,4 +1,5 @@
 import { ResponseData } from "@/types/api";
+import { PlannerParticipant } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 interface Planner {
@@ -116,4 +117,44 @@ export const joinPlanAsParticipant = async (shareToken: string): Promise<boolean
 export const declinePlanAsParticipant = async (shareToken: string): Promise<boolean> => {
   const res = await ClientApi(`/api/v1/plans/share/${shareToken}/decline`, { method: "POST" });
   return res.ok;
+};
+
+// 플래너 참가자 목록 조회
+export const getPlanParticipants = async (planId: string): Promise<PlannerParticipant[]> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/${planId}/participants`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.data.participants;
+  } catch (error) {
+    console.error("Error fetching participants:", error);
+    throw error;
+  }
+};
+
+// 플래너 참가자 추방
+export const deletePlanParticipant = async ({
+  planId,
+  participantId,
+}: {
+  planId: string;
+  participantId: string;
+}): Promise<void> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/${planId}/participants/${participantId}/kick`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status}`);
+    }
+  } catch (error) {
+    console.error("Error deleting participant:", error);
+    throw error;
+  }
 };

@@ -8,16 +8,21 @@ import { Separator } from "@/components/ui/separator";
 import { CheckIcon, CopyIcon, LinkIcon, Loader2Icon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { PlannerMembers } from "../sidebar/PlannerMembers"; // 경로 확인 필요
-import { PlannerParticipantRole, PlannerShareLink } from "@/types/planner";
-import { Card } from "@/components/ui/card";
+import { PlannerParticipant, PlannerParticipantRole, PlannerShareLink } from "@/types/planner";
 
 interface InviteMemberDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   role: PlannerParticipantRole;
   shareLink: PlannerShareLink;
-  isPending: boolean;
+  isCreatingShareLink: boolean;
+  isSettingParticipants: boolean;
+  isChangingRole: boolean;
   onCreateShareLink: () => void;
+  participants: PlannerParticipant[];
+  isBanningParticipant: boolean;
+  handleRemoveParticipant: (participantId: string) => void;
+  handleChangeRole: (participantId: string, nextRole: PlannerParticipantRole) => void;
 }
 
 export default function InviteMemberDialog({
@@ -25,8 +30,14 @@ export default function InviteMemberDialog({
   onOpenChange,
   role,
   shareLink,
-  isPending,
+  isCreatingShareLink,
   onCreateShareLink,
+  participants,
+  isSettingParticipants,
+  isBanningParticipant,
+  handleRemoveParticipant,
+  isChangingRole,
+  handleChangeRole,
 }: InviteMemberDialogProps) {
   const [copied, setCopied] = useState(false);
 
@@ -51,11 +62,15 @@ export default function InviteMemberDialog({
           <Field>
             <FieldLabel>링크 공유하기</FieldLabel>
             {!shareLink.url && (
-              <Card className="p-4 text-sm">
-                {shareLink.status || "공유 링크를 불러오는 중 오류가 발생했습니다."}
+              <div className="flex justify-between gap-2 text-sm">
+                <div className="bg-muted border-input flex h-9 flex-1 items-center rounded-md border px-2">
+                  <p className="text-sm">
+                    {shareLink.status || "공유 링크를 불러오는 중 오류가 발생했습니다."}
+                  </p>
+                </div>
                 {role === "OWNER" && (
-                  <Button type="button" onClick={onCreateShareLink} disabled={isPending}>
-                    {isPending ? (
+                  <Button type="button" onClick={onCreateShareLink} disabled={isCreatingShareLink}>
+                    {isCreatingShareLink ? (
                       <>
                         <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                         생성 중...
@@ -68,24 +83,28 @@ export default function InviteMemberDialog({
                     )}
                   </Button>
                 )}
-              </Card>
+              </div>
             )}
             {shareLink.url && (
               <div className="flex gap-2">
                 <Input readOnly value={shareLink.url} className="read-only:bg-muted" />
-                <Button className="relative shrink-0" onClick={handleCopy} disabled={copied}>
+                <Button
+                  className="relative w-12 shrink-0 sm:w-auto"
+                  onClick={handleCopy}
+                  disabled={copied}
+                >
                   <span
                     className={twMerge(
-                      "transition-all",
-                      copied ? "scale-100 opacity-100" : "absolute scale-0 opacity-0"
+                      "absolute inset-0 flex items-center justify-center transition-opacity duration-300",
+                      copied ? "opacity-100" : "opacity-0"
                     )}
                   >
-                    <CheckIcon className="stroke-green-600" />
+                    <CheckIcon className="h-4 w-4 stroke-green-600" />
                   </span>
                   <span
                     className={twMerge(
-                      "flex items-center gap-1 transition-all",
-                      copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                      "flex items-center gap-1 transition-opacity duration-300",
+                      copied ? "opacity-0" : "opacity-100"
                     )}
                   >
                     <CopyIcon className="h-4 w-4" />
@@ -96,7 +115,15 @@ export default function InviteMemberDialog({
             )}
           </Field>
           <Separator />
-          <PlannerMembers />
+          <PlannerMembers
+            isSettingParticipants={isSettingParticipants}
+            participants={participants}
+            isChangingRole={isChangingRole}
+            isBanningParticipant={isBanningParticipant}
+            handleRemoveParticipant={handleRemoveParticipant}
+            handleChangeRole={handleChangeRole}
+            myRole={role}
+          />
         </FieldGroup>
       </DialogContent>
     </Dialog>

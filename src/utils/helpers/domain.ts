@@ -3,9 +3,18 @@ export const getShareBaseUrl = (domain: string) => {
   if (domain.startsWith("http://") || domain.startsWith("https://")) {
     return domain;
   }
-  let protocol = "https:";
-  if (typeof window !== "undefined" && window.location && window.location.protocol) {
+
+  // 프로덕션 환경에서는 항상 https 사용
+  const isProduction = process.env.NODE_ENV === "production";
+  if (isProduction) {
+    return `https://${domain}`;
+  }
+
+  // 개발 환경에서는 현재 프로토콜 사용
+  let protocol = "http:";
+  if (typeof window !== "undefined" && window.location?.protocol) {
     protocol = window.location.protocol;
   }
+
   return `${protocol}//${domain}`;
 };
