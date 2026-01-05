@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.scdn.co",
       },
+      {
+        protocol: "https",
+        hostname: "nconb-assets.s3.ap-northeast-2.amazonaws.com",
+      },
     ],
   },
 };

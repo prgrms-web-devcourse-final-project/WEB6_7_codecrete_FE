@@ -88,12 +88,6 @@ export default function ReviewPostHeader({ isAuthor, post }: PostHeaderProps) {
 
             <DropdownMenuContent className="w-40" align="end">
               <DropdownMenuGroup>
-                {/**
-                 * TODO:
-                 * - 수정하기: 리뷰 수정 페이지로 이동
-                 * - 삭제하기: 삭제 확인 모달 + API 호출
-                 * - 신고하기: 신고 사유 선택 모달 연동
-                 */}
                 <DropdownMenuItem onClick={handleModify}>수정하기</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
                   삭제하기
