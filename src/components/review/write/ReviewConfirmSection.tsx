@@ -1,6 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { CardContent } from "@/components/ui/card";
+import { PostConfirmSectionProps } from "@/types/community";
 
 /*
  * TODO: 리뷰 작성 동의 체크 기능 구현
@@ -23,7 +24,7 @@ import { CardContent } from "@/components/ui/card";
  *   - 또는 제출 시 validation 에러 처리
  */
 
-export default function ReviewConfirmSection() {
+export default function ReviewConfirmSection({ checked, onChange }: PostConfirmSectionProps) {
   return (
     <CardContent className={"flex flex-col gap-4"}>
       <div className="bg-bg-sub flex w-full items-start gap-3 p-6">
@@ -31,6 +32,8 @@ export default function ReviewConfirmSection() {
           className={"bg-bg-main border-border-point"}
           id="review-confirm"
           type={"button"}
+          checked={checked}
+          onCheckedChange={onChange}
         />
 
         <Label htmlFor="review-confirm" className="text-text-main flex flex-col items-start">

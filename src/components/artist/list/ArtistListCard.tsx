@@ -8,7 +8,7 @@ import Link from "next/link";
 import React, { memo, useState } from "react";
 import { ArtistListContent } from "@/types/artists";
 import { toast } from "sonner";
-import { toggleArtistLike } from "@/lib/artists/artists.server";
+import { toggleArtistLike } from "@/lib/api/artists/artists.server";
 
 // TODO: 좋아요/취소 시 optimistic update 적용 검토
 

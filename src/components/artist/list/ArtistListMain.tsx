@@ -1,4 +1,4 @@
-import { getArtists } from "@/lib/artists/artists.client";
+import { getArtists } from "@/lib/api/artists/artists.client";
 import { cookies } from "next/headers";
 import ArtistListClient from "@/components/artist/list/ArtistListClient";
 

@@ -1,4 +1,5 @@
 import { ArtistListContent, ArtistListResponse } from "@/types/artists";
+import ClientApi from "@/utils/helpers/clientApi";
 
 // 아티스트 목록 불러오기
 export async function getArtists(
@@ -52,5 +53,29 @@ export async function getArtists(
 
     // 정말 예외적인 케이스
     throw new Error("알 수 없는 오류가 발생했습니다.");
+  }
+}
+
+// 아티스트 좋아요
+export async function postLikeArtist(artistId: number): Promise<boolean> {
+  try {
+    const res = await ClientApi(`/api/v1/artists/likes/${artistId}`, {
+      method: "POST",
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+// 아티스트 좋아요 취소
+export async function deleteLikeArtist(artistId: number): Promise<boolean> {
+  try {
+    const res = await ClientApi(`/api/v1/artists/likes/${artistId}`, {
+      method: "DELETE",
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
 }

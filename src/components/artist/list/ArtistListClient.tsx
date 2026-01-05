@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ArtistListFilters from "@/components/artist/list/ArtistListFilters";
 import ArtistListItems from "@/components/artist/list/ArtistListItems";
-import { getArtists } from "@/lib/artists/artists.client";
+import { getArtists } from "@/lib/api/artists/artists.client";
 import { ArtistListContent } from "@/types/artists";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";

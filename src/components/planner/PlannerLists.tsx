@@ -8,6 +8,7 @@ import { PlannerListWithDetails } from "@/types/planner";
 import { cn } from "@/lib/utils";
 import { CalendarDaysIcon, MapPinIcon, SpotlightIcon, Users2Icon } from "lucide-react";
 import { formatDateKorean } from "@/utils/helpers/formatters";
+import Link from "next/link";
 
 export default function PlannerLists({ planLists }: { planLists: PlannerListWithDetails[] }) {
   const router = useRouter();
@@ -41,12 +42,9 @@ export default function PlannerLists({ planLists }: { planLists: PlannerListWith
             <p className="text-muted-foreground text-center text-sm">생성된 플래너가 없습니다.</p>
           )}
           {planLists.map((plan) => (
-            <button
+            <Link
               key={plan.id}
-              onClick={() => {
-                router.push(`/planner/${plan.id}`);
-                setPlannerDialogOpen(false);
-              }}
+              href={`/planner/${plan.id}`}
               className={cn(
                 "border-input hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-start justify-between rounded-md border p-3 text-left"
               )}
@@ -72,7 +70,7 @@ export default function PlannerLists({ planLists }: { planLists: PlannerListWith
                   </li>
                 </ul>
               </div>
-            </button>
+            </Link>
           ))}
         </div>
         <DialogFooter>

@@ -97,3 +97,72 @@ export function formatConcertPrice(minPrice: number, maxPrice: number): string {
   // 최소와 최대가 다른 경우
   return `${minPrice.toLocaleString("ko-KR")}원 ~ ${maxPrice.toLocaleString("ko-KR")}원`;
 }
+
+/**
+ * 시간 문자열을 "오전 HH:MM" 형식으로 포맷팅
+ * @param {string} timeStr - 시간 문자열 (예: "14:30:00")
+ * @returns {string} 포맷팅된 시간 문자열 (예: "오후 02:30")
+ */
+export function formatTimeToKoreanAMPM(timeStr: string): string {
+  const [hourStr, minuteStr] = timeStr.split(":");
+  let hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const period = hour < 12 ? "오전" : "오후";
+
+  if (hour === 0) {
+    hour = 12; // 오전 12시
+  } else if (hour > 12) {
+    hour -= 12; // 오후 시간 변환
+  }
+  const formattedHour = String(hour).padStart(2, "0");
+  const formattedMinute = String(minute).padStart(2, "0");
+  return `${period} ${formattedHour}:${formattedMinute}`;
+}
+
+/** HH:mm:ss 혹은 HH:mm을 받아 분 단위(HH:mm)로 자릅니다.
+ * 빈 값이면 빈 문자열 반환.
+ *
+ * @param {string} time 시간 문자열
+ * @returns {string} 분 단위 시간 문자열
+ */
+export const toMinutePrecision = (time?: string): string =>
+  time?.split(":").slice(0, 2).join(":") || "";
+
+/**
+ * 거리 포맷팅
+ * @param {number} distance - 거리 (미터 단위)
+ * @returns {string} 포맷팅된 거리 문자열
+ * - 1000m 미만: "xxx m"
+ * - 1000m 이상: "x.x km"
+ */
+export const formatDistance = (distance: number): string => {
+  if (distance < 1000) {
+    return `${Math.round(distance)}m`;
+  } else {
+    return `${(distance / 1000).toFixed(1)}km`;
+  }
+};
+
+/**
+ * 가격 포맷팅
+ * @param {number} price - 가격 (숫자)
+ * @returns {string} 포맷팅된 가격 문자열 (예: "1,000원")
+ */
+export const formatPrice = (price: number): string => {
+  return `${price.toLocaleString("ko-KR")}원`;
+};
+
+/**
+ * 시간 포맷팅
+ * @param {number} totalMinutes - 총 시간 (초 단위)
+ * @returns {string} 포맷팅된 시간 문자열 (예: "1시간 30분", "45분")
+ */
+export const formatDuration = (totalMinutes: number): string => {
+  const hours = Math.floor(totalMinutes / 3600);
+  const minutes = Math.floor((totalMinutes % 3600) / 60);
+  if (hours > 0) {
+    return `${hours}시간 ${minutes}분`;
+  } else {
+    return `${minutes}분`;
+  }
+};

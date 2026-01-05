@@ -70,3 +70,50 @@ export const updatePlanDetail = async ({
     throw error;
   }
 };
+
+// 플래너 계획 삭제
+export const deletePlan = async ({ planId }: { planId: string }): Promise<void> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/delete/${planId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status}`);
+    }
+  } catch (error) {
+    console.error("Error deleting planner:", error);
+    throw error;
+  }
+};
+
+// 플래너 공유 링크 생성
+export const createPlanShareLink = async (
+  planId: string
+): Promise<{ planId: string; shareToken: string; shareLink: string }> => {
+  try {
+    const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 공유받은 링크로 접속 후 액세스 토큰 검증까지 완료되면 참가자로 넣기
+export const joinPlanAsParticipant = async (shareToken: string): Promise<boolean> => {
+  const res = await ClientApi(`/api/v1/plans/share/${shareToken}/accept`, { method: "POST" });
+  return res.ok;
+};
+
+// 공유받은 링크로 접속 후 초대 거절
+export const declinePlanAsParticipant = async (shareToken: string): Promise<boolean> => {
+  const res = await ClientApi(`/api/v1/plans/share/${shareToken}/decline`, { method: "POST" });
+  return res.ok;
+};

@@ -1,39 +1,18 @@
 import BackPageButton from "@/components/common/BackPageButton";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
-import { getPlanDetail } from "@/lib/api/planner/planner.server";
-import { getUsersMe } from "@/lib/api/user/user.server";
 import { formatDateKorean } from "@/utils/helpers/formatters";
 import { ArrowLeftIcon, Calendar1Icon, MapPinIcon } from "lucide-react";
 import PlannerEdit from "./PlannerEdit";
+import { PlanDetail, PlannerParticipantRole } from "@/types/planner";
 
-export default async function PlannerTopHeader({ planId }: { planId: string }) {
-  let planDetail;
-  try {
-    planDetail = await getPlanDetail(planId);
-  } catch (error) {
-    throw error;
-  }
-
-  if (!planDetail) {
-    const error = new Error("해당 플랜을 불러올 수 없습니다.");
-    (error as Error & { statusCode?: number }).statusCode = 404;
-    throw error;
-  }
-
-  // 플랜에 참여자로 등록되어 있지 않을 경우
-  const me = await getUsersMe();
-  let myRole = "";
-  if (!planDetail.participants.find((participant) => participant.userId === me.id)) {
-    const error = new Error("해당 플래너에 접근할 권한이 없습니다.");
-    (error as Error & { statusCode?: number }).statusCode = 403;
-    throw error;
-  } else {
-    myRole =
-      planDetail.participants.find((participant) => participant.userId === me.id)?.role || "";
-  }
-
-  const concertId = planDetail.concertId.toString();
-  const concertDetail = await getConcertDetail({ concertId });
+export default async function PlannerTopHeader({
+  planDetail,
+  role,
+}: {
+  planDetail: PlanDetail;
+  role: PlannerParticipantRole;
+}) {
+  const concertDetail = await getConcertDetail({ concertId: planDetail.concertId.toString() });
 
   return (
     <header
@@ -56,7 +35,7 @@ export default async function PlannerTopHeader({ planId }: { planId: string }) {
             <ArrowLeftIcon size={16} />
             뒤로 가기
           </BackPageButton>
-          {myRole === "OWNER" && (
+          {role === "OWNER" && (
             <PlannerEdit planDetail={planDetail} concertDetail={concertDetail!} />
           )}
         </div>

@@ -1,16 +1,5 @@
+import { User } from "@/types/user";
 import ServerApi from "@/utils/helpers/serverApi";
-
-// TODO : 임시... 유저 타입 저장 필요
-type User = {
-  birthdate: Date | null;
-  createdDate: Date;
-  email: string;
-  id: number;
-  nickname: string;
-  profileImageUrl: string;
-  role: string;
-  status: string;
-};
 
 // 현재 로그인 된 사용자 정보 조회
 export const getUsersMe = async (): Promise<User> => {

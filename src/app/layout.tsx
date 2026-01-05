@@ -8,6 +8,7 @@ import { twMerge } from "tailwind-merge";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import TopButton from "@/components/common/TopButton";
+import Script from "next/script";
 
 export const metadata = {
   title: "내콘부",
@@ -25,11 +26,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           <Header />
-          <main className="min-h-dvh">{children}</main>
+          <main>{children}</main>
           <Footer />
           <Toaster className={pretendard.className} />
           <TopButton />
         </ThemeProvider>
+        <Script
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY}&libraries=services&autoload=false`}
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );

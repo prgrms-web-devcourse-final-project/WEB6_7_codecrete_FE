@@ -1,74 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardTitle } from "@/components/ui/card";
 import InfoBadge from "@/components/concert/chat/InfoBadge";
 import ParticipantItem from "@/components/concert/chat/ParticipantItem";
 import { Button } from "@/components/ui/button";
+import { Client } from "@stomp/stompjs";
 
-// TODO:
-// - 참여자 목록을 서버(API/WebSocket)에서 받아 실시간으로 갱신
-// - statusText를 서버 기준 시간으로 계산하여 동적 생성
-// - online 상태 변경 시 애니메이션 또는 강조 효과 추가
-const PARTICIPANTS = [
-  {
-    id: 1,
-    name: "MusicFan_2024",
-    statusText: "현재 활동 중",
-    online: true,
-    imageUrl: "https://example.com/images/user1.png",
-  },
-  {
-    id: 2,
-    name: "JazzLover88",
-    statusText: "2분 전 활동",
-    online: false,
-    imageUrl: "https://example.com/images/user2.png",
-  },
-  {
-    id: 3,
-    name: "RockStar99",
-    statusText: "5분 전 활동",
-    online: false,
-    imageUrl: "https://example.com/images/user3.png",
-  },
-  {
-    id: 4,
-    name: "ClassicalQueen",
-    statusText: "현재 활동 중",
-    online: true,
-    imageUrl: "https://example.com/images/user4.png",
-  },
-  {
-    id: 5,
-    name: "PopGuru",
-    statusText: "10분 전 활동",
-    online: false,
-    imageUrl: "https://example.com/images/user5.png",
-  },
-  {
-    id: 6,
-    name: "IndieVibes",
-    statusText: "1분 전 활동",
-    online: true,
-    imageUrl: "https://example.com/images/user6.png",
-  },
-  {
-    id: 7,
-    name: "IndieVibes",
-    statusText: "1분 전 활동",
-    online: true,
-    imageUrl: "https://example.com/images/user6.png",
-  },
-  {
-    id: 8,
-    name: "IndieVibes",
-    statusText: "1분 전 활동",
-    online: true,
-    imageUrl: "https://example.com/images/user6.png",
-  },
-] as const;
+interface ServerParticipant {
+  userId: number;
+  nickname: string;
+  profileImage: string;
+}
 
-export default function ActiveParticipantsCard() {
+export default function ActiveParticipantsCard({
+  concertId,
+  stompClient,
+}: {
+  concertId: string | undefined;
+  stompClient: Client | null;
+}) {
+  const [participants, setParticipants] = useState<ServerParticipant[]>([]);
   const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    if (!stompClient || !stompClient.connected || !concertId) return;
+
+    const subscription = stompClient.subscribe(`/topic/chat/${concertId}/users`, (message) => {
+      try {
+        const userList: ServerParticipant[] = JSON.parse(message.body);
+        setParticipants(userList);
+      } catch (error) {
+        console.error("참여자 목록 파싱 에러:", error);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [stompClient, stompClient?.connected, concertId]);
 
   return (
     <Card className="flex flex-col gap-4 p-7">
@@ -77,27 +45,35 @@ export default function ActiveParticipantsCard() {
         <CardTitle className="text-text-main text-xl font-bold">현재 참여자</CardTitle>
 
         <InfoBadge>
-          <span className="text-text-sub">{PARTICIPANTS.length}</span>
+          <span className="text-text-sub">{participants.length}</span>
         </InfoBadge>
       </div>
-      {/* Scrollable List */}
-      {/*TODO: 디자인 확정 후 ParticipantItem 높이 기준으로 리스트 영역 높이를 (5개 기준) calc()로 재조정*/}
 
+      {/* Scrollable List */}
       <div
-        className={`flex max-h-[238px] flex-col gap-3 overscroll-contain pr-2 ${showAll ? "scrollbar-hide overflow-y-auto" : ""}`}
+        className={`flex max-h-[238px] flex-col gap-3 overscroll-contain pr-2 ${
+          showAll ? "scrollbar-hide overflow-y-auto" : "overflow-hidden"
+        }`}
       >
-        {(showAll ? PARTICIPANTS : PARTICIPANTS.slice(0, 5)).map((user) => (
-          <ParticipantItem
-            key={user.id}
-            name={user.name}
-            statusText={user.statusText}
-            online={user.online}
-            imageUrl={user.imageUrl}
-          />
-        ))}
+        {participants.length === 0 ? (
+          <div className="py-10 text-center">
+            <p className="text-text-sub text-xs">참여자를 불러오는 중입니다...</p>
+          </div>
+        ) : (
+          (showAll ? participants : participants.slice(0, 5)).map((user) => (
+            <ParticipantItem
+              key={user.userId}
+              name={user.nickname}
+              statusText="현재 활동 중"
+              online={true}
+              imageUrl={user.profileImage}
+            />
+          ))
+        )}
       </div>
+
       {/* View All Button (조건부) */}
-      {PARTICIPANTS.length > 5 && (
+      {participants.length > 5 && (
         <Button
           type="button"
           size={"lg"}

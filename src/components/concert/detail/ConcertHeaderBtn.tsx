@@ -48,8 +48,8 @@ export default function ConcertHeaderBtn({
   const [openEnd, setOpenEnd] = useState(false);
   const [startTicketDate, setStartTicketDate] = useState<Date | undefined>(undefined);
   const [endTicketDate, setEndTicketDate] = useState<Date | undefined>(undefined);
-  const [startTime, setStartTime] = useState("20:00:00");
-  const [endTime, setEndTime] = useState("20:00:00");
+  const [startTime, setStartTime] = useState("20:00");
+  const [endTime, setEndTime] = useState("20:00");
 
   // 플래너 생성 상태 관리
   const [plannerTitle, setPlannerTitle] = useState<string>("");
@@ -130,12 +130,12 @@ export default function ConcertHeaderBtn({
 
     // 날짜와 시간을 합쳐서 완전한 DateTime 생성
     const startDateTime = new Date(startTicketDate);
-    const [startHour, startMinute, startSecond] = startTime.split(":").map(Number);
-    startDateTime.setHours(startHour, startMinute, startSecond || 0);
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    startDateTime.setHours(startHour, startMinute, 0);
 
     const endDateTime = new Date(endTicketDate);
-    const [endHour, endMinute, endSecond] = endTime.split(":").map(Number);
-    endDateTime.setHours(endHour, endMinute, endSecond || 0);
+    const [endHour, endMinute] = endTime.split(":").map(Number);
+    endDateTime.setHours(endHour, endMinute, 0);
 
     if (startDateTime >= endDateTime) {
       toast.error("티켓팅 시작 일시는 종료 일시보다 앞서야 합니다.");
@@ -150,9 +150,7 @@ export default function ConcertHeaderBtn({
         const day = String(date.getDate()).padStart(2, "0");
         const hours = String(date.getHours()).padStart(2, "0");
         const minutes = String(date.getMinutes()).padStart(2, "0");
-        const seconds = String(date.getSeconds()).padStart(2, "0");
-
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        return `${year}-${month}-${day}T${hours}:${minutes}:00`;
       };
 
       const result = await patchTicketTimeSet({
@@ -348,7 +346,6 @@ export default function ConcertHeaderBtn({
                 <Input
                   type="time"
                   id="time-start"
-                  step="1"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
                   className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
@@ -395,7 +392,6 @@ export default function ConcertHeaderBtn({
                 <Input
                   type="time"
                   id="time-end"
-                  step="1"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
                   className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"

@@ -1,4 +1,4 @@
-import { getAuthStatus, getMe } from "@/lib/auth/auth.server";
+import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

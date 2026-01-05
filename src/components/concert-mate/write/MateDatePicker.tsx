@@ -7,10 +7,31 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useFormContext } from "react-hook-form";
+import { MatePostWrite } from "@/types/community/concert-mate";
+import { format, parseISO } from "date-fns";
 
 export function MateDatePicker() {
+  // TODO : 지난 날짜는 선택 막기
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+
+  // 1. formState에서 errors 추출
+  const { setValue, watch } = useFormContext<MatePostWrite>();
+
+  const meetingAt = watch("meetingAt");
+
+  const [localTime, setLocalTime] = React.useState(
+    meetingAt ? format(parseISO(meetingAt), "HH:mm") : "10:00"
+  );
+
+  const currentDate = meetingAt ? parseISO(meetingAt) : undefined;
+
+  const update = (datePart: Date | undefined, timePart: string) => {
+    if (!datePart) return;
+    const ymd = format(datePart, "yyyy-MM-dd");
+    const combined = `${ymd}T${timePart}:00`;
+    setValue("meetingAt", combined);
+  };
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -20,19 +41,19 @@ export function MateDatePicker() {
             <Button
               variant="outline"
               id="date-picker"
-              className="w-full justify-between font-normal"
+              className="h-13 w-full justify-between font-normal"
             >
-              {date ? date.toLocaleDateString() : "날짜를 입력하세요"}
+              {currentDate ? format(currentDate, "yyyy-MM-dd") : "날짜를 입력하세요"}
               <ChevronDownIcon />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto overflow-hidden p-0" align="start">
             <Calendar
               mode="single"
-              selected={date}
+              selected={currentDate}
               captionLayout="dropdown"
               onSelect={(date) => {
-                setDate(date);
+                update(date, localTime);
                 setOpen(false);
               }}
             />
@@ -44,8 +65,13 @@ export function MateDatePicker() {
           type="time"
           id="time-picker"
           step="60"
-          defaultValue="10:00"
-          className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+          value={localTime}
+          onChange={(e) => {
+            const newTime = e.target.value;
+            setLocalTime(newTime);
+            update(currentDate, newTime);
+          }}
+          className="bg-background h-13 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />
       </div>
     </div>

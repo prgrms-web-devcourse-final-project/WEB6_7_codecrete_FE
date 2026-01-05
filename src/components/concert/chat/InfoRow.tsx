@@ -7,7 +7,7 @@ export default function InfoRow({
 }: {
   icon: React.ReactNode;
   title: string;
-  sub: string;
+  sub?: string;
 }) {
   return (
     <div className="flex gap-3">
