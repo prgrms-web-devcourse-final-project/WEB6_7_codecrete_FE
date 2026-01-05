@@ -6,7 +6,7 @@ import ConcertReviewCard from "@/components/concert/detail/ConcertReviewCard";
 import LoadMoreBtn from "@/components/common/LoadMoreBtn";
 import Link from "next/link";
 
-export default function ConcertDetailReview() {
+export default function ConcertDetailReview({ concertId }: { concertId: string }) {
   return (
     <div className="review flex flex-col gap-6">
       <h2 className="text-text-main text-3xl font-bold">리뷰 게시판</h2>
@@ -34,7 +34,7 @@ export default function ConcertDetailReview() {
               <p className="text-text-sub text-sm">리뷰 1,475개</p>
             </div>
           </div>
-          <Link href="#">
+          <Link href={`/concerts/${concertId}/review/write`}>
             <Button
               variant="outline"
               size="sm"
