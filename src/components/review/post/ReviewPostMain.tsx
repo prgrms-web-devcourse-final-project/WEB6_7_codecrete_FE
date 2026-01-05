@@ -7,6 +7,8 @@ import ReviewPostSidebar from "@/components/review/post/sidebar/ReviewPostSideba
 import { ConcertDetail } from "@/types/concerts";
 import { ReviewDetailData } from "@/types/community/concert-review";
 
+// TODO: 똑같이 구현하기 위해선 아래 세 개의 데이터가 필요합니다
+
 export default function ReviewPostMain({
   concertDetail,
   reviewDetail,
@@ -30,7 +32,7 @@ export default function ReviewPostMain({
           <ReviewPostComments />
         </section>
         {/*오른쪽 파트*/}
-        <ReviewPostSidebar showMeetingDetail={false} />
+        <ReviewPostSidebar authorId={reviewDetail.post.userId} />
       </div>
     </section>
   );
