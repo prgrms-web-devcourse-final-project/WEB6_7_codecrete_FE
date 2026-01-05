@@ -32,3 +32,10 @@ export type PostConfirmSectionProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
+
+export type LikeToggleResponse = {
+  status: number;
+  resultCode: string;
+  msg: string;
+  data: string | null;
+};

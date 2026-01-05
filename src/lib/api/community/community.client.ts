@@ -1,0 +1,61 @@
+import ClientApi from "@/utils/helpers/clientApi";
+import { LikeToggleResponse } from "@/types/community";
+
+// 해당 포스트의 좋아요 수 불러오기
+export const getPostLikeCount = async (postId: number): Promise<number> => {
+  const res = await ClientApi(`/api/v1/posts/${postId}/likes/count`, {
+    method: "GET",
+  });
+
+  if (!res.ok) {
+    throw new Error("좋아요 개수를 불러오지 못했습니다.");
+  }
+
+  const json = await res.json();
+  return json.data;
+};
+
+// 해당 글에 대한 좋아요 토글 함수
+export const togglePostLike = async (postId: number): Promise<void> => {
+  try {
+    const res = await ClientApi(`/api/v1/posts/${postId}/likes`, {
+      method: "POST",
+    });
+
+    let json: LikeToggleResponse;
+
+    try {
+      json = (await res.json()) as LikeToggleResponse;
+    } catch {
+      throw new Error("서버 응답을 처리할 수 없습니다.");
+    }
+
+    if (!res.ok || json.resultCode !== "OK") {
+      let fallbackMsg = "좋아요 처리 중 오류가 발생했습니다.";
+
+      if (res.status === 401) {
+        fallbackMsg = "로그인이 필요한 기능입니다.";
+      } else if (res.status === 403) {
+        fallbackMsg = "좋아요를 누를 권한이 없습니다.";
+      } else if (res.status === 404) {
+        fallbackMsg = "게시글을 찾을 수 없습니다.";
+      } else if (res.status >= 500) {
+        fallbackMsg = "서버 오류가 발생했습니다.";
+      }
+
+      throw new Error(json.msg ?? fallbackMsg);
+    }
+
+    return;
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error("네트워크 연결이 원활하지 않습니다.");
+    }
+
+    if (err instanceof Error) {
+      throw err;
+    }
+
+    throw new Error("알 수 없는 오류가 발생했습니다.");
+  }
+};
