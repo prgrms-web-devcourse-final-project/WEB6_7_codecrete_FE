@@ -2,6 +2,7 @@ import PlannerQuickTips from "./timeline/PlannerQuickTips";
 import PlannerTimelineSection from "./timeline/PlannerTimelineSection";
 import PlannerSidebarContents from "./sidebar/PlannerSidebarContents";
 import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
+import MobilePlannerSidebar from "./sidebar/MobilePlannerSidebar";
 
 export default function PlannerBodySection({
   planId,
@@ -38,6 +39,8 @@ export default function PlannerBodySection({
           </div>
         </div>
       </div>
+      {/* === 모바일 사이드바 === */}
+      <MobilePlannerSidebar />
     </section>
   );
 }
