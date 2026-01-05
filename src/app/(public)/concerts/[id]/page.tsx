@@ -21,12 +21,15 @@ import ConcertDetailSkeleton from "@/components/loading/concert/detail/ConcertDe
 import ConcertHeaderSkeleton from "@/components/loading/concert/detail/ConcertHeaderSkeleton";
 import ConcertSimilarSkeleton from "@/components/loading/concert/detail/ConcertSimilarSkeleton";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
-import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
+import { getConcertDetail, getSimilarConcerts } from "@/lib/api/concerts/concerts.server";
 import { Suspense } from "react";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const concertDetail = await getConcertDetail({ concertId: id });
+
+  const similarConcertsData = await getSimilarConcerts({ concertId: id });
+  const similarConcerts = similarConcertsData.data ?? [];
 
   // TODO: 존재하지 않는 공연 id 접근 시 404 페이지로 리다이렉트 처리 필요
   if (!concertDetail) {
@@ -48,9 +51,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       <Suspense fallback={<ConcertDetailSkeleton />}>
         <ConcertDetail concertId={id} />
       </Suspense>
-      <Suspense fallback={<ConcertSimilarSkeleton />}>
-        <ConcertSimilar />
-      </Suspense>
+      {similarConcerts.length > 0 && (
+        <Suspense fallback={<ConcertSimilarSkeleton />}>
+          <ConcertSimilar similarConcerts={similarConcerts} />
+        </Suspense>
+      )}
     </>
   );
 }
