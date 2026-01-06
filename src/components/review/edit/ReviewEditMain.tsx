@@ -64,7 +64,7 @@ export default function ReviewEditMain({
 
       if (isSuccess) {
         toast.success("리뷰글이 성공적으로 수정되었습니다!");
-        router.push(`/concerts/${concertId}`);
+        router.push(`/concerts/${concertId}/review/${postId}`);
       } else {
         toast.error("수정에 실패했습니다. 입력 내용을 확인해주세요.");
       }

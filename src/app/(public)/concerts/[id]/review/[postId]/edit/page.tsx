@@ -1,8 +1,9 @@
 import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import ReviewEditMain from "@/components/review/edit/ReviewEditMain";
 import { getReviewDetail } from "@/lib/api/community/concert-review/review.server";
+import { getUsersMe } from "@/lib/api/user/user.server";
 
 export default async function page({
   params,
@@ -12,6 +13,11 @@ export default async function page({
   const { id, postId } = await params;
   const concertDetail = await getConcertDetail({ concertId: id });
   const reviewDetail = await getReviewDetail(Number(postId));
+  const me = await getUsersMe();
+
+  if (reviewDetail?.post.userId !== me?.id) {
+    redirect(`/concerts/${id}/review/${postId}`);
+  }
 
   if (!concertDetail || !reviewDetail) {
     notFound();

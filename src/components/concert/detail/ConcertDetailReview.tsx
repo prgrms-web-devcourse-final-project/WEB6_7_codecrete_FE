@@ -73,7 +73,7 @@ export default function ConcertDetailReview({
                       key={index}
                       size={20}
                       className={
-                        isFilled ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-300"
+                        isFilled ? "fill-yellow-400 text-yellow-400" : "fill-gray-300 text-gray-300"
                       }
                     />
                   );
