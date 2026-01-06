@@ -23,11 +23,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { deleteMatePost } from "@/lib/api/community/concert-mate/mate.client";
+import { closeMatePost, deleteMatePost } from "@/lib/api/community/concert-mate/mate.client";
 
 const normalizeDate = (iso: string) => iso.split(".")[0];
 
-export default function MeetingPostHeader({ postDetail, isAuthor }: MeetingPostHeaderProps) {
+export default function MeetingPostHeader({
+  postDetail,
+  isAuthor,
+  isOpen,
+}: MeetingPostHeaderProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -59,6 +63,24 @@ export default function MeetingPostHeader({ postDetail, isAuthor }: MeetingPostH
       }
     }
   };
+
+  // TODO : close된 게시글 감추기 등 정책 추가
+  const handlerClosed = async () => {
+    try {
+      // 서버에 상태 변경 요청
+      const success = await closeMatePost({
+        postId: postDetail.postId,
+      });
+
+      if (success) {
+        toast.success("동행 구인 모집을 마감했습니다.");
+        router.refresh();
+      }
+    } catch {
+      toast.error("마감 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <header className={"flex flex-col gap-4"}>
       <h1 className={"text-4xl"}>{postDetail.title}</h1>
@@ -95,6 +117,8 @@ export default function MeetingPostHeader({ postDetail, isAuthor }: MeetingPostH
                 <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
                   삭제하기
                 </DropdownMenuItem>
+                {/* closing 되면 완료하기 버튼 사라짐 */}
+                {isOpen && <DropdownMenuItem onClick={handlerClosed}>완료하기</DropdownMenuItem>}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

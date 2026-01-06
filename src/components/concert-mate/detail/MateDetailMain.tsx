@@ -14,7 +14,7 @@ export default function MateDetailMain({
   isAuthor,
   isLiked,
 }: MateDetailMainProps) {
-  const isOpen = res?.status === "OPEN" ? true : false;
+  const isOpen = res?.status === "OPEN";
 
   return (
     <section className="px-15 py-16">
@@ -22,7 +22,7 @@ export default function MateDetailMain({
         {/*왼쪽 파트*/}
         <section className="flex w-full flex-col gap-8">
           <MeetingConcertCard concertDetail={concertDetail} />
-          <MeetingPostHeader postDetail={res.post} isAuthor={isAuthor} />
+          <MeetingPostHeader postDetail={res.post} isAuthor={isAuthor} isOpen={isOpen} />
           <Separator />
           <MeetingPostBody postDetail={res.post} initialIsLiked={isLiked} isOpen={isOpen} />
           <ReviewPostComments postId={postId} />

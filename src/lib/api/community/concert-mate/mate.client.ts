@@ -31,3 +31,20 @@ export const deleteMatePost = async ({ postId }: { postId: number }): Promise<bo
     return false;
   }
 };
+
+/**
+ * 구인글 마감하기
+ *
+ * @param {number} postId - 게시글 ID
+ */
+export const closeMatePost = async ({ postId }: { postId: number }): Promise<boolean> => {
+  try {
+    const res = await ClientApi(`/api/v1/join/${postId}/close`, {
+      method: "PATCH",
+    });
+    return res.ok;
+  } catch (error) {
+    console.error("Error closing mate post:", error);
+    return false;
+  }
+};
