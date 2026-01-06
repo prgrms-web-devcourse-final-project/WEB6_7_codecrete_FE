@@ -13,7 +13,7 @@ import ServerApi from "@/utils/helpers/serverApi";
  */
 export const getUpcomingConcerts = async ({
   page = 0,
-  size = 20,
+  size = 21,
 }: {
   page?: number;
   size?: number;
