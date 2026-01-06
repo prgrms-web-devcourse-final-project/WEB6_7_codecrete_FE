@@ -3,10 +3,46 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { ReviewListItem } from "@/types/community/concert-review";
+import { useEffect, useState } from "react";
+import { UserInfo } from "@/types/user";
+import { getUserInfo } from "@/lib/api/user/user.client";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 
-export default function ConcertReviewCard() {
+export default function ConcertReviewCard({
+  review,
+  concertId,
+}: {
+  review: ReviewListItem;
+  concertId: string;
+}) {
+  const [author, setAuthor] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    if (!review.userId) return;
+
+    const fetchAuthor = async () => {
+      try {
+        const data = await getUserInfo(review.userId);
+        setAuthor(data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    fetchAuthor();
+  }, [review.userId]);
+
+  const createdAt = new Date(review.createdDate);
+
+  const timeAgo = formatDistanceToNow(createdAt, {
+    addSuffix: true,
+    locale: ko,
+  });
+
   return (
-    <Link href="#">
+    <Link href={`/concerts/${concertId}/review/${review.postId}`}>
       <div
         className={twMerge(
           `border-border flex cursor-pointer flex-col gap-4 rounded-xl border-2 p-6`
@@ -15,49 +51,43 @@ export default function ConcertReviewCard() {
         <div className="flex justify-between">
           <div className="flex gap-4">
             <Avatar className="ring-border size-10 ring-4">
-              <AvatarImage
-                src="https://kopis.or.kr/_next/image?url=%2Fupload%2FpfmPoster%2FPF_PF281383_251211_125646.jpg&w=384&q=75"
-                alt="아티스트"
-              />
+              <AvatarImage src={author?.profileImageUrl} alt={author?.nickname} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div>
-              <strong className="text-text-main text-lg">김철수</strong>
+              <strong className="text-text-main text-lg">{author?.nickname}</strong>
               <div className="flex items-center gap-2">
-                <div className="flex gap-1">
+                <div className="flex gap-1" aria-label={`평점 ${review.rating}점`}>
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <button
+                    <Star
                       key={index}
-                      type="button"
-                      className="cursor-pointer"
-                      aria-label={`${index + 1}점`}
-                    >
-                      <Star
-                        className="text-text-main h-4 w-4"
-                        fill={index < 4 ? "currentColor" : "none"}
-                      />
-                    </button>
+                      className="text-text-main h-4 w-4"
+                      fill={index < Math.floor(review.rating) ? "currentColor" : "none"}
+                    />
                   ))}
                 </div>
-                <p className="text-text-sub text-sm">2주 전</p>
+                <p className="text-text-sub text-sm">{timeAgo}</p>
               </div>
             </div>
           </div>
           <div className="text-text-sub flex items-center gap-0.5 text-sm">
             <Heart className="h-4 w-4" />
-            <p>52</p>
+            <p>{review.likeCount}</p>
           </div>
         </div>
 
-        <p className="text-text-sub">
-          아 공연 대박 재밌었어요. 다음에 또 열어주실거죠? 정말 기대했는데, 최고에요. 최고의 공연.
-          무대를 뒤집어놓으셨다. 선배님 짱. 아무 내용이나 추가할게요. 아무 내용 아무 내용 아무 내용
-          아무 내용 아무 내용
-        </p>
+        <h3 className={"text-text-main line-clamp-1 text-base font-medium"}>{review.title}</h3>
+
+        <p className="text-text-sub line-clamp-1">{review.content}</p>
 
         <div>
-          <Badge className="bg-border text-text-main mr-2 text-sm">최고의 퍼포먼스</Badge>
-          <Badge className="bg-border text-text-main mr-2 text-sm">좋은 공연장</Badge>
+          {review.tags.map((tag) => {
+            return (
+              <Badge key={tag} className="bg-border text-text-main mr-2 text-sm">
+                {tag}
+              </Badge>
+            );
+          })}
         </div>
       </div>
     </Link>
