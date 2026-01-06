@@ -1,5 +1,5 @@
 // 리뷰글 작성
-import { ReviewPostWrite } from "@/types/community/concert-review";
+import { ConcertReviewListResponse, ReviewPostWrite } from "@/types/community/concert-review";
 import ClientApi from "@/utils/helpers/clientApi";
 
 export const createReviewPost = async (data: ReviewPostWrite): Promise<boolean> => {
@@ -80,4 +80,26 @@ export const deleteReviewPost = async (postId: number): Promise<boolean> => {
 
     throw new Error("알 수 없는 에러가 발생했습니다.");
   }
+};
+
+// 후기 목록 불러오기
+export const getConcertReviewList = async (
+  concertId: number
+): Promise<ConcertReviewListResponse> => {
+  const res = await ClientApi(`/api/v1/reviews/concert/${concertId}`, {
+    method: "GET",
+  });
+
+  let json;
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error("서버 응답을 처리할 수 없습니다.");
+  }
+
+  if (!res.ok || json.resultCode !== "OK") {
+    throw new Error(json.msg ?? "후기 목록을 불러오는데 실패했습니다.");
+  }
+
+  return json.data as ConcertReviewListResponse;
 };
