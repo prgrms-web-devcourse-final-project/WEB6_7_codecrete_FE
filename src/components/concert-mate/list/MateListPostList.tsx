@@ -1,5 +1,5 @@
 import MateListCard from "@/components/concert-mate/list/MateListCard";
-import { getPostsList } from "@/lib/api/community/community.server";
+import { getLikesCount, getPostsList } from "@/lib/api/community/community.server";
 import { MatePagination } from "@/components/concert-mate/list/MatePagination";
 import { getUserInfo } from "@/lib/api/user/user.server";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
@@ -20,18 +20,26 @@ export default async function MateListPostList({ pageParam }: { pageParam: numbe
   // TODO : 리팩토링 - 다시 보기
   const userIds = Array.from(new Set(posts.map((post) => post.userId)));
   const concertIds = Array.from(new Set(posts.map((post) => String(post.concertId))));
+  const postIds = posts.map((post) => post.postId); // 좋아요용 postId
   // const userInfoRes = await getUserInfo(res?.content.userId);
   // const concertInfoRes = await getConcertDetail({ concertId: String(post.concertId) });
 
-  const [users, concerts] = await Promise.all([
+  const [users, concert, likeCounts] = await Promise.all([
     Promise.all(userIds.map((id) => getUserInfo(id))),
     Promise.all(concertIds.map((id) => getConcertDetail({ concertId: id }))),
+    Promise.all(postIds.map((id) => getLikesCount({ postId: id }))),
   ]);
 
-  const userMap = new Map(users.filter((u): u is UserInfo => u !== null).map((u) => [u.id, u]));
+  const userMap: Map<number, UserInfo> = new Map(
+    users.filter((u): u is UserInfo => u !== null).map((u) => [u.id, u])
+  );
 
-  const concertMap = new Map(
-    concerts.filter((c): c is ConcertDetail => c !== null).map((c) => [String(c.concertId), c]) // 🔥 여기!
+  const concertMap: Map<string, ConcertDetail> = new Map(
+    concert.filter((c): c is ConcertDetail => c !== null).map((c) => [String(c.concertId), c])
+  );
+
+  const likeCountMap: Map<number, string> = new Map(
+    posts.map((post, index) => [post.postId, likeCounts[index] || "0"])
   );
 
   return (
@@ -45,6 +53,7 @@ export default async function MateListPostList({ pageParam }: { pageParam: numbe
                 post={post}
                 user={userMap.get(post.userId)}
                 concert={concertMap.get(String(post.concertId))}
+                likeCount={likeCountMap.get(post.postId)}
               />
             ))
           ) : (

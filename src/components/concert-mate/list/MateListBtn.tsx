@@ -9,8 +9,8 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
-export default function MateListBtn({ postId }: { postId: number }) {
-  // TODO : 좋아요, 댓글 기능 - 클릭은 아니고 숫자랑 내가 눌렀는지 정도만 표시
+export default function MateListBtn({ postId, likeCount }: { postId: number; likeCount?: string }) {
+  // TODO : 좋아요, 댓글 - 본인이 달았는지 여부 진한색으로 확인 기능
 
   // 공유 버튼
   // TODO : 공유 버튼 컴포넌트화 (QuickActionsSection.tsx)
@@ -45,7 +45,7 @@ export default function MateListBtn({ postId }: { postId: number }) {
       <div className="reaction flex gap-4 px-16">
         <button className="text-text-sub flex items-center gap-1 text-sm">
           <Heart className="h-4 w-4" />
-          <p>52</p>
+          <p>{likeCount ?? "0"}</p>
         </button>
         <button className="text-text-sub flex items-center gap-1 text-sm">
           <MessageCircle className="h-4 w-4" />

@@ -101,3 +101,29 @@ export async function getPostLikeMe(postId: number): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * 게시글 좋아요 수 조회
+ *
+ * @param {string} postId - 게시글 ID
+ * @returns {Promise<string | null>} - 좋아요 갯수 또는 null
+ */
+export const getLikesCount = async ({ postId }: { postId: number }): Promise<string | null> => {
+  try {
+    const res = await ServerApi(`/api/v1/posts/${postId}/likes/count`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+
+    return data.data;
+  } catch (error) {
+    console.error("Error counting likes:", error);
+    return null;
+  }
+};
