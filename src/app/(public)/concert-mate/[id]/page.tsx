@@ -1,10 +1,10 @@
 import MateDetailMain from "@/components/concert-mate/detail/MateDetailMain";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
+import { getAuthStatus } from "@/lib/api/auth/auth.server";
 import { getPostLikeMe } from "@/lib/api/community/community.server";
 import { getPostsDetail } from "@/lib/api/community/concert-mate/mate.server";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import { getUserInfo, getUsersMe } from "@/lib/api/user/user.server";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -30,8 +30,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   }
 
   // 게시글 본인 여부
-  const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.has("ACCESS_TOKEN");
+  const isLoggedIn = await getAuthStatus();
   const currentUser = isLoggedIn ? await getUsersMe() : null;
   const currentUserId = currentUser?.id;
   const isAuthor = String(userId) === String(currentUserId);

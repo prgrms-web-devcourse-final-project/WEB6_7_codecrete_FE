@@ -1,15 +1,14 @@
 import CommentInput from "@/components/review/post/comments/CommentInput";
 import CommentItem from "@/components/review/post/comments/CommentItem";
+import { getAuthStatus } from "@/lib/api/auth/auth.server";
 import { getCommentsList } from "@/lib/api/community/community.server";
 import { getUserInfo, getUsersMe } from "@/lib/api/user/user.server";
 import { compareDesc } from "date-fns";
-import { cookies } from "next/headers";
 
 export default async function ReviewPostComments({ postId }: { postId: string }) {
   const postIdNum = Number(postId) || 1;
 
-  const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.has("ACCESS_TOKEN");
+  const isLoggedIn = await getAuthStatus();
 
   // TODO : page 수정
   const res = await getCommentsList({ postId: postIdNum, page: 1 });
