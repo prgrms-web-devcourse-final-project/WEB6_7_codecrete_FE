@@ -88,10 +88,10 @@ export default function SearchPlaces({
 
           // 스케줄 타입에 따라 맛집 또는 카페 추천
           if (scheduleType === "WAITING") {
-            data = await getNearbyCafes(defaultCoords.lat, defaultCoords.lon);
+            data = await getNearbyCafes(defaultCoords.lon, defaultCoords.lat);
           }
           if (scheduleType === "MEAL") {
-            data = await getNearbyRestaurants(defaultCoords.lat, defaultCoords.lon);
+            data = await getNearbyRestaurants(defaultCoords.lon, defaultCoords.lat);
           }
 
           setResults(data || []);

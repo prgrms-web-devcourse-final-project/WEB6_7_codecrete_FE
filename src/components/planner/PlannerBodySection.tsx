@@ -38,12 +38,12 @@ export default async function PlannerBodySection({
         {/* === 데스크톱 사이드바 === */}
         <div className="hidden lg:block lg:max-w-125 lg:flex-1">
           <div className="sticky top-30 space-y-8">
-            <PlannerSidebarContents participants={participants} />
+            <PlannerSidebarContents participants={participants} schedules={schedules} />
           </div>
         </div>
       </div>
       {/* === 모바일 사이드바 === */}
-      <MobilePlannerSidebar participants={participants} />
+      <MobilePlannerSidebar participants={participants} schedules={schedules} />
     </section>
   );
 }
