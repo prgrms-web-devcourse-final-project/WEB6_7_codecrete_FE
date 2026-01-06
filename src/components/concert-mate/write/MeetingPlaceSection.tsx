@@ -12,7 +12,7 @@ export default function MeetingPlaceSection() {
 
   return (
     <CardContent className="flex flex-col gap-2">
-      <Label htmlFor="place">약속 장소</Label>
+      <Label htmlFor="place">약속 장소 (선택)</Label>
       <Input
         id="place"
         className="h-13"

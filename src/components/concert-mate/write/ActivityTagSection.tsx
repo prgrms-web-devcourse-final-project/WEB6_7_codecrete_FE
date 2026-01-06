@@ -48,7 +48,7 @@ export default function ActivityTagSection() {
 
   return (
     <CardContent className={"flex flex-col gap-4"}>
-      <Label htmlFor="custom-tag">태그 선택</Label>
+      <Label htmlFor="custom-tag">태그 선택 (선택)</Label>
       <div className={"flex flex-wrap gap-2"}>
         {DEFAULT_TAGS.map((tag) => {
           const Icon = tag.icon;

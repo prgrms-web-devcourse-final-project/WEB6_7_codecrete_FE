@@ -81,7 +81,7 @@ export default function PreferenceSelectSection() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="age-range-min">연령대</Label>
+        <Label htmlFor="age-range-min">연령대 (선택)</Label>
         <div className="flex gap-2">
           <Input
             id="age-range-min"
