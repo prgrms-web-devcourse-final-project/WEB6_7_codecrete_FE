@@ -1,4 +1,4 @@
-import { User } from "@/types/user";
+import { User, UserInfo } from "@/types/user";
 import ServerApi from "@/utils/helpers/serverApi";
 
 // 현재 로그인 된 사용자 정보 조회
@@ -24,7 +24,7 @@ export const getUsersMe = async (): Promise<User | null> => {
 };
 
 // 유저 ID로 사용자 정보 조회
-export const getUserInfo = async (userId: number): Promise<User> => {
+export const getUserInfo = async (userId: number): Promise<UserInfo | null> => {
   try {
     const res = await ServerApi(`/api/v1/users/${userId}`, { method: "GET" });
     if (!res.ok) {
