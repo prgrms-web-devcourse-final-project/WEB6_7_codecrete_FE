@@ -4,6 +4,7 @@ import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import { notFound } from "next/navigation";
 import { getReviewDetail } from "@/lib/api/community/concert-review/review.server";
 import { getUsersMe } from "@/lib/api/user/user.server";
+import { getPostLikeMe } from "@/lib/api/community/community.server";
 
 export default async function Page({
   params,
@@ -14,6 +15,7 @@ export default async function Page({
   const concertDetail = await getConcertDetail({ concertId: id });
   const reviewDetail = await getReviewDetail(Number(postId));
   const userMe = await getUsersMe();
+  const isLiked = await getPostLikeMe(Number(postId));
 
   if (!concertDetail || !reviewDetail) {
     notFound();
@@ -36,6 +38,7 @@ export default async function Page({
         concertDetail={concertDetail}
         reviewDetail={reviewDetail}
         isAuthor={isAuthor}
+        isLiked={isLiked}
       />
     </>
   );
