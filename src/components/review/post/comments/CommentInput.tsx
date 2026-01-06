@@ -8,14 +8,16 @@ import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { useState } from "react";
 import { toast } from "sonner";
 import { createComment } from "@/lib/api/community/community.client";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function CommentInput({
   isLoggedIn,
   totalComments,
+  postId,
 }: {
   isLoggedIn: boolean;
   totalComments: number;
+  postId: string;
 }) {
   /**
    * TODO:
@@ -26,9 +28,6 @@ export default function CommentInput({
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  const params = useParams();
-  const postId = params.id as string;
 
   const handleSubmit = async () => {
     const finalComment = comment.trim();
