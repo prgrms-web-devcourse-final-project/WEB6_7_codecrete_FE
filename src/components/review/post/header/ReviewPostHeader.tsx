@@ -41,7 +41,6 @@ export default function ReviewPostHeader({ isAuthor, post }: PostHeaderProps) {
     normalizeDate(isModified ? post.modifiedDate : post.createdDate)
   );
 
-  // TODO: 아래 수정 주소는 동행구인 변경 주소로 변경해주세요
   const handleModify = () => {
     router.push(`/concerts/${post.concertId}/review/${post.postId}/edit`);
   };

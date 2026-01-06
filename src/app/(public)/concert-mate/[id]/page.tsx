@@ -50,7 +50,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       />
       <MateDetailMain
         postId={postId}
-        postDetail={res}
+        res={res}
         concertDetail={resConcertInfo}
         userDetail={resUserInfo}
         isAuthor={isAuthor}

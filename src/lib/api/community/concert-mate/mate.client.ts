@@ -18,9 +18,9 @@ export const createMatePost = async (data: MatePostWrite): Promise<boolean> => {
 /**
  * 구인글 삭제하기
  *
- * @param {string} postId - 게시글 ID
+ * @param {number} postId - 게시글 ID
  */
-export const deleteMatePost = async ({ postId }: { postId: string }): Promise<boolean> => {
+export const deleteMatePost = async ({ postId }: { postId: number }): Promise<boolean> => {
   try {
     const res = await ClientApi(`/api/v1/join/${postId}`, {
       method: "DELETE",
