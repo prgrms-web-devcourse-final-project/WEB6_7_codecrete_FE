@@ -30,14 +30,22 @@ interface PostHeaderProps {
   post: ReviewPost;
 }
 
+const normalizeDate = (iso: string) => iso.split(".")[0];
+
 export default function ReviewPostHeader({ isAuthor, post }: PostHeaderProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const isModified = normalizeDate(post.createdDate) !== normalizeDate(post.modifiedDate);
+  const displayDate = formatDateKorean(
+    normalizeDate(isModified ? post.modifiedDate : post.createdDate).replace("T", " ")
+  );
 
   // TODO: 아래 수정 주소는 동행구인 변경 주소로 변경해주세요
   const handleModify = () => {
     router.push(`/concerts/${post.concertId}/review/${post.postId}/edit`);
   };
+
   const handleDelete = async () => {
     try {
       await deleteReviewPost(post.postId);
@@ -64,11 +72,10 @@ export default function ReviewPostHeader({ isAuthor, post }: PostHeaderProps) {
           <div className={"text-text-sub flex gap-6"}>
             <div className={"flex items-center gap-2"}>
               <Clock4 size={14} />
-              {post.modifiedDate ? (
-                <p>{formatDateKorean(post.modifiedDate)}</p>
-              ) : (
-                <p>{formatDateKorean(post.createdDate)}</p>
-              )}
+              <p>
+                {displayDate}
+                {isModified && <span className="ml-1 text-xs">(수정됨)</span>}
+              </p>
             </div>
           </div>
         </div>
