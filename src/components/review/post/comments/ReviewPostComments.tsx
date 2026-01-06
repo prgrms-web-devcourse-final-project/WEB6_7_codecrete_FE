@@ -4,15 +4,14 @@ import { getCommentsList } from "@/lib/api/community/community.server";
 import { getUserInfo } from "@/lib/api/user/user.server";
 import { cookies } from "next/headers";
 
-export default async function ReviewPostComments({ params }: { params: Promise<{ id: string }> }) {
-  const pageParam = await params;
-  const postId = Number(pageParam.id) || 1;
+export default async function ReviewPostComments({ postId }: { postId: string }) {
+  const postIdNum = Number(postId) || 1;
 
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.has("ACCESS_TOKEN");
 
   // TODO : page 수정
-  const res = await getCommentsList({ postId: postId, page: 1 });
+  const res = await getCommentsList({ postId: postIdNum, page: 1 });
   const comments = res?.content || [];
 
   // 유저 정보 합치기

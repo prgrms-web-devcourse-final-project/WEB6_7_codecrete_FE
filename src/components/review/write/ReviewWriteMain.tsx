@@ -3,18 +3,19 @@
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import ReviewWriteHeader from "@/components/review/write/ReviewWriteHeader";
-import SelectedConcertCard from "@/components/review/write/SelectedConcertCard";
 import ReviewTitleSection from "@/components/review/write/ReviewTitleSection";
 import ReviewRatingSection from "@/components/review/write/ReviewRatingSection";
 import ReviewConcertSection from "@/components/review/write/ReviewConcertSection";
-import SeatInfoSection from "@/components/review/write/SeatInfoSection";
 import PhotoUploadSection from "@/components/review/write/PhotoUploadSection";
 import ReviewTagSection from "@/components/review/write/ReviewTagSection";
 import ReviewConfirmSection from "@/components/review/write/ReviewConfirmSection";
 import ReviewFooterActions from "@/components/review/write/ReviewFooterActions";
-import ModalContainer from "@/components/concert-mate/modal/ModalContainer";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { ReviewPostWrite } from "@/types/community/concert-review";
+import { createReviewPost } from "@/lib/api/community/concert-review/review.client";
+import { toast } from "sonner";
 
 /**
  * 데이터를 다루기 위해 FormProvider 사용
@@ -22,24 +23,18 @@ import { FormProvider, useForm } from "react-hook-form";
  * 입력 데이터 및 타입 등 임시로 작성한 것이므로 오류가 있을 수 있음
  */
 
-type ReviewPostWrite = {
-  concertId: number;
-  title: string;
-  content: string;
-  rating: number;
-  images: string;
-};
-
-export default function ReviewWriteMain() {
+export default function ReviewWriteMain({ concertId }: { concertId: number }) {
   const methods = useForm<ReviewPostWrite>({
     defaultValues: {
-      concertId: 0,
+      concertId: concertId,
       title: "",
+      rating: 0,
       content: "",
-      rating: undefined,
-      images: "",
+      activityTags: [],
     },
   });
+
+  const router = useRouter();
 
   // 데이터가 서버로 날아가고 있는지 여부 (boolean)
   const {
@@ -47,15 +42,37 @@ export default function ReviewWriteMain() {
   } = methods;
 
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [images, setImages] = useState<File[]>([]);
   const onCheckedChange = (isConfirmed: boolean) => {
     setIsConfirmed(isConfirmed);
   };
 
   // 등록 버튼
-  const onSubmitMate = () => {};
+  const onSubmitReview = async (data: ReviewPostWrite) => {
+    const finalData = { ...data, images };
+
+    try {
+      const isSuccess = await createReviewPost(finalData);
+
+      if (isSuccess) {
+        toast.success("리뷰글이 성공적으로 등록되었습니다!");
+        router.push(`/concerts/${concertId}`);
+      } else {
+        toast.error("등록에 실패했습니다. 입력 내용을 확인해주세요.");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("서버와 통신 중 오류가 발생했습니다.");
+      }
+    }
+  };
 
   // 취소 버튼
-  const onCancelMate = () => {};
+  const onCancelReview = () => {
+    router.push(`/concerts/${concertId}`);
+  };
 
   return (
     <FormProvider {...methods}>
@@ -63,14 +80,10 @@ export default function ReviewWriteMain() {
         <div className={"flex w-full max-w-400 flex-col gap-8"}>
           <Card className={"gap-8 p-12"}>
             <ReviewWriteHeader />
-            {/* 공연 선택칸 + 선택 모달 */}
-            <ModalContainer />
-            <SelectedConcertCard />
             <ReviewTitleSection />
             <ReviewRatingSection />
             <ReviewConcertSection />
-            <SeatInfoSection />
-            <PhotoUploadSection />
+            <PhotoUploadSection images={images} onChangeImages={setImages} />
             <div className="px-6">
               <Separator />
             </div>
@@ -80,8 +93,8 @@ export default function ReviewWriteMain() {
             </div>
             <ReviewConfirmSection checked={isConfirmed} onChange={onCheckedChange} />
             <ReviewFooterActions
-              onSubmit={methods.handleSubmit(onSubmitMate)}
-              onCancel={onCancelMate}
+              onSubmit={methods.handleSubmit(onSubmitReview)}
+              onCancel={onCancelReview}
               isPending={isSubmitting}
               isDisabled={!isConfirmed}
               buttonText={"리뷰 등록"}

@@ -1,7 +1,6 @@
 import ConcertDetailVenue from "@/components/concert/detail/ConcertDetailVenue";
 import ConcertDetailReview from "@/components/concert/detail/ConcertDetailReview";
 import ConcertDetailInfo from "@/components/concert/detail/ConcertDetailInfo";
-import { type ConcertDetail } from "@/types/concerts";
 import QuickActionsSection from "./QuickActionsSection";
 import {
   getConcertDetail,
@@ -38,7 +37,7 @@ export default async function ConcertDetail({ concertId }: { concertId: string }
             alt={concertDetail?.name}
           />
           <ConcertDetailVenue concertVenue={concertVenue.data} />
-          <ConcertDetailReview />
+          <ConcertDetailReview concertId={concertId} />
         </div>
 
         <div className="right relative flex-1">

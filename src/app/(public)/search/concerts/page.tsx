@@ -9,8 +9,7 @@ export default async function Page({
 }) {
   const { keyword } = await searchParams;
   const isAuthenticated = await getAuthStatus();
-
-  const concerts = await getSearchConcerts({ keyword: keyword, isAuthenticated });
+  const concerts = await getSearchConcerts({ keyword, isAuthenticated });
 
   return (
     <SearchConcerts

@@ -1,4 +1,5 @@
 import ClientApi from "@/utils/helpers/clientApi";
+import { UserInfo } from "@/types/user";
 
 // 이메일 알림 및 다크모드 설정 정보 가져오기
 export const getUsersSettings = async () => {
@@ -125,5 +126,47 @@ export const changePassword = async (data: { currentPassword: string; newPasswor
   } catch (error) {
     console.error("Error updating password:", error);
     return null;
+  }
+};
+
+// 유저 ID로 사용자 정보 조회
+export const getUserInfo = async (userId: number): Promise<UserInfo> => {
+  try {
+    const res = await ClientApi(`/api/v1/users/${userId}`, {
+      method: "GET",
+    });
+
+    let json;
+    try {
+      json = await res.json();
+    } catch {
+      throw new Error("서버 응답을 처리할 수 없습니다.");
+    }
+
+    if (!res.ok || json.resultCode !== "OK") {
+      let fallbackMsg = "사용자 정보를 가져오는 중 오류가 발생했습니다.";
+
+      if (res.status === 401) {
+        fallbackMsg = "인증이 만료되었습니다. 다시 로그인해주세요.";
+      } else if (res.status === 404) {
+        fallbackMsg = "존재하지 않는 사용자입니다.";
+      } else if (res.status >= 500) {
+        fallbackMsg = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+      }
+
+      throw new Error(json.msg ?? fallbackMsg);
+    }
+
+    return json.data;
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error("네트워크 연결이 원활하지 않습니다.");
+    }
+
+    if (err instanceof Error) {
+      throw err;
+    }
+
+    throw new Error("알 수 없는 에러가 발생했습니다.");
   }
 };

@@ -155,3 +155,19 @@ export async function getArtistLikeStatus(artistId: number): Promise<boolean> {
     throw new Error("알 수 없는 오류가 발생했습니다.");
   }
 }
+
+// 아티스트 좋아요 여부
+export async function getIsLikedArtist(artistId: number): Promise<boolean> {
+  try {
+    const res = await ServerApi(`/api/v1/artists/likes/${artistId}`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      return false;
+    }
+    const data = await res.json();
+    return data.data.isLiked;
+  } catch {
+    return false;
+  }
+}

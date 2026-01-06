@@ -17,3 +17,9 @@ export interface OtherUser {
   nickname: string;
   profileImageUrl: string;
 }
+
+export interface UserInfo {
+  id: number;
+  nickname: string;
+  profileImageUrl: string;
+}

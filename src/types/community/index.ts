@@ -57,3 +57,10 @@ export type CommentAddUser = CommentData & {
   author: string;
   avatar: string;
 };
+
+export type LikeToggleResponse = {
+  status: number;
+  resultCode: string;
+  msg: string;
+  data: string | null;
+};

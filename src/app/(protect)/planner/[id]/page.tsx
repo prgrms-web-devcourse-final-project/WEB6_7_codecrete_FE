@@ -26,13 +26,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   // 플랜에 참여자로 등록되어 있지 않을 경우
   const me = await getUsersMe();
   let myRole: PlannerParticipantRole = null;
-  if (!planDetail.participants.find((participant) => participant.userId === me.id)) {
+  if (!planDetail.participants.find((participant) => participant.userId === me?.id)) {
     const error = new Error("해당 플래너에 접근할 권한이 없습니다.");
     (error as Error & { statusCode?: number }).statusCode = 403;
     throw error;
   } else {
     myRole =
-      planDetail.participants.find((participant) => participant.userId === me.id)?.role || null;
+      planDetail.participants.find((participant) => participant.userId === me?.id)?.role || null;
   }
 
   const shareLink: PlannerShareLink = {

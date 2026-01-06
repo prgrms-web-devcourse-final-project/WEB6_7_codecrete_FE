@@ -1,7 +1,9 @@
 import MateDetailMain from "@/components/concert-mate/detail/MateDetailMain";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const pageParam = await params;
+  const postId = pageParam.id || "1";
   return (
     <>
       <BreadcrumbNavbar
@@ -11,7 +13,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           { label: "글 상세" },
         ]}
       />
-      <MateDetailMain params={params} />
+      <MateDetailMain postId={postId} />
     </>
   );
 }

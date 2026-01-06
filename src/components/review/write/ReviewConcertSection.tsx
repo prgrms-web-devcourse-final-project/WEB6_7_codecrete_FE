@@ -1,26 +1,15 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CardContent } from "@/components/ui/card";
-
-/*
- * TODO: 리뷰 본문 입력 기능 구현
- *
- * - 리뷰 본문(content)은 부모 컴포넌트에서 상태 관리
- *   (예: content: string)
- *
- * - ReviewConcertSection은
- *   - value
- *   - onChange
- *   를 props로 전달받는 controlled textarea로 변경
- *
- * Props 예시:
- * type ReviewConcertSectionProps = {
- *   value: string;
- *   onChange: (value: string) => void;
- * };
- */
+import { useFormContext } from "react-hook-form";
+import { ReviewPostWrite } from "@/types/community/concert-review";
 
 export default function ReviewConcertSection() {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<ReviewPostWrite>();
+
   return (
     <CardContent>
       <div className="grid w-full gap-3">
@@ -29,14 +18,23 @@ export default function ReviewConcertSection() {
         </Label>
         <Textarea
           className={"h-50 resize-none"}
-          placeholder="공연의 분위기, 무대 연출, 관객 반응까지
-느꼈던 그대로 자유롭게 적어주세요."
+          placeholder="공연의 분위기, 무대 연출, 관객 반응까지 느꼈던 그대로 자유롭게 적어주세요."
           id="message-2"
+          {...register("content", {
+            required: "리뷰 내용은 필수 입력입니다.",
+            minLength: {
+              value: 30,
+              message: "리뷰 내용은 최소 30자 이상 작성해주세요.",
+            },
+          })}
         />
         <p className="text-text-sub text-xs">
-          최소 100자 이상 작성해주세요. 구체적인 후기는 다른 관객들에게 큰 도움이 됩니다.
+          최소 30자 이상 작성해주세요. 구체적인 후기는 다른 관객들에게 큰 도움이 됩니다.
         </p>
       </div>
+      {errors.content?.message && (
+        <span className="text-xs text-red-500">{errors.content.message}</span>
+      )}
     </CardContent>
   );
 }
