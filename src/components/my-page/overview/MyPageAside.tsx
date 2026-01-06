@@ -2,15 +2,21 @@ import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { getLikedConcertCount } from "@/lib/api/myPage/myPage.server";
 import { ConcertWithTicket } from "@/types/home";
+import { LikedArtist } from "@/types/my-page";
+import { PlannerListWithDetails } from "@/types/planner";
 import { formatDateRange } from "@/utils/helpers/formatters";
-import { CalendarCheck, HeartIcon } from "lucide-react";
+import { CalendarCheck, MicVocalIcon, SpotlightIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function MyPageAside({
   likedConcerts,
+  likedArtists,
+  joinedPlanners,
 }: {
   likedConcerts: ConcertWithTicket[];
+  likedArtists: LikedArtist[];
+  joinedPlanners: PlannerListWithDetails[];
 }) {
   const likedConcertsCount = await getLikedConcertCount();
 
@@ -40,34 +46,44 @@ export default async function MyPageAside({
         <div className="space-y-4">
           <h4 className="text-base font-bold">빠른 탐색</h4>
           <ul className="space-y-3">
-            <li className="flex items-center gap-4">
-              <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
-                <CalendarCheck size={20} className="text-text-main" />
-              </div>
-              <div className="flex-1">
-                <h5 className="text-text-sub text-sm font-medium">찜한 콘서트</h5>
-                <p className="text-text-main line-clamp-1 text-base font-medium">
-                  {likedConcertsCount.data ?? 0}개
-                </p>
-              </div>
+            <li className="hover:opacity-80">
+              <Link href="/my-page/likes" className="flex items-center gap-4">
+                <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
+                  <SpotlightIcon size={20} className="text-text-main" />
+                </div>
+                <div className="flex-1">
+                  <h5 className="text-text-sub text-sm font-medium">찜한 콘서트</h5>
+                  <p className="text-text-main line-clamp-1 text-base font-medium">
+                    {likedConcertsCount.data ?? 0}개
+                  </p>
+                </div>
+              </Link>
             </li>
-            <li className="flex items-center gap-4">
-              <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
-                <HeartIcon size={20} className="text-text-main" />
-              </div>
-              <div className="flex-1">
-                <h5 className="text-text-sub text-sm font-medium">찜한 아티스트</h5>
-                <p className="text-text-main line-clamp-1 text-base font-medium">28명</p>
-              </div>
+            <li className="hover:opacity-80">
+              <Link href="/my-page/likes" className="flex items-center gap-4">
+                <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
+                  <MicVocalIcon size={20} className="text-text-main" />
+                </div>
+                <div className="flex-1">
+                  <h5 className="text-text-sub text-sm font-medium">찜한 아티스트</h5>
+                  <p className="text-text-main line-clamp-1 text-base font-medium">
+                    {likedArtists.length}명
+                  </p>
+                </div>
+              </Link>
             </li>
-            <li className="flex items-center gap-4">
-              <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
-                <CalendarCheck size={20} className="text-text-main" />
-              </div>
-              <div className="flex-1">
-                <h5 className="text-text-sub text-sm font-medium">알림 신청</h5>
-                <p className="text-text-main line-clamp-1 text-base font-medium">12개</p>
-              </div>
+            <li className="hover:opacity-80">
+              <Link href="/planner" className="flex items-center gap-4">
+                <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
+                  <CalendarCheck size={20} className="text-text-main" />
+                </div>
+                <div className="flex-1">
+                  <h5 className="text-text-sub text-sm font-medium">참여한 플래너</h5>
+                  <p className="text-text-main line-clamp-1 text-base font-medium">
+                    {joinedPlanners.length}개
+                  </p>
+                </div>
+              </Link>
             </li>
           </ul>
         </div>
@@ -102,30 +118,6 @@ export default async function MyPageAside({
                 </div>
               </li>
             ))}
-          </ul>
-        </div>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="text-base font-bold">최근 찜</h4>
-            <Link href="/my-page/likes" className="text-text-sub text-sm font-medium">
-              모두 보기
-            </Link>
-          </div>
-          <ul className="space-y-3">
-            <li className="flex items-center gap-4">
-              <div className="bg-bg-sub flex size-12 items-center justify-center rounded-xl">
-                <AspectRatio ratio={1}>
-                  <div className="bg-bg-sub"></div>
-                </AspectRatio>
-              </div>
-              <div className="flex-1 space-y-1">
-                <h5 className="text-text-main line-clamp-1 text-base font-medium">아티스트명</h5>
-                <p className="text-text-sub text-xs font-medium">3일 전</p>
-              </div>
-              <Link href="#" className="text-text-main underline">
-                View
-              </Link>
-            </li>
           </ul>
         </div>
         <div className="space-y-4">
