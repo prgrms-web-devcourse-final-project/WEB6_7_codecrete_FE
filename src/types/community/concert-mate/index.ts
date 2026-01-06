@@ -71,4 +71,7 @@ export type MateListCardProps = {
   user?: UserInfo | null;
   concert?: ConcertDetail | null;
   likeCount?: string;
+  commentCount?: number;
 };
+
+export type MateListBtnProps = { postId: number; likeCount?: string; commentCount?: number };

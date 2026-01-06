@@ -6,7 +6,13 @@ import MateListBtn from "@/components/concert-mate/list/MateListBtn";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { MateListCardProps } from "@/types/community/concert-mate";
 
-export default async function MateListCard({ post, user, concert, likeCount }: MateListCardProps) {
+export default async function MateListCard({
+  post,
+  user,
+  concert,
+  likeCount,
+  commentCount,
+}: MateListCardProps) {
   // TODO : closed, 활동 태그 추가 시도
 
   const formattedDate = format(new Date(post.createdDate), "yyyy-MM-dd");
@@ -60,7 +66,7 @@ export default async function MateListCard({ post, user, concert, likeCount }: M
           <p className="text-text-sub line-clamp-4 text-sm">{post.content}</p>
         </div>
       </Link>
-      <MateListBtn postId={post.postId} likeCount={likeCount} />
+      <MateListBtn postId={post.postId} likeCount={likeCount} commentCount={commentCount} />
     </div>
   );
 }

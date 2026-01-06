@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { MateListBtnProps } from "@/types/community/concert-mate";
 import { CheckIcon, CopyIcon, Heart, MessageCircle, Share2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
-export default function MateListBtn({ postId, likeCount }: { postId: number; likeCount?: string }) {
+export default function MateListBtn({ postId, likeCount, commentCount }: MateListBtnProps) {
   // TODO : 좋아요, 댓글 - 본인이 달았는지 여부 진한색으로 확인 기능
 
   // 공유 버튼
@@ -49,7 +50,7 @@ export default function MateListBtn({ postId, likeCount }: { postId: number; lik
         </button>
         <button className="text-text-sub flex items-center gap-1 text-sm">
           <MessageCircle className="h-4 w-4" />
-          <p>12</p>
+          <p>{commentCount ?? 0}</p>
         </button>
         <button
           onClick={handleOpenShareModal}

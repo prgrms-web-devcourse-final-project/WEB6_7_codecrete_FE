@@ -1,5 +1,5 @@
 import MateListCard from "@/components/concert-mate/list/MateListCard";
-import { getLikesCount, getPostsList } from "@/lib/api/community/community.server";
+import { getCommentsList, getLikesCount, getPostsList } from "@/lib/api/community/community.server";
 import { MatePagination } from "@/components/concert-mate/list/MatePagination";
 import { getUserInfo } from "@/lib/api/user/user.server";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
@@ -24,10 +24,11 @@ export default async function MateListPostList({ pageParam }: { pageParam: numbe
   // const userInfoRes = await getUserInfo(res?.content.userId);
   // const concertInfoRes = await getConcertDetail({ concertId: String(post.concertId) });
 
-  const [users, concert, likeCounts] = await Promise.all([
+  const [users, concert, likeCounts, totalComments] = await Promise.all([
     Promise.all(userIds.map((id) => getUserInfo(id))),
     Promise.all(concertIds.map((id) => getConcertDetail({ concertId: id }))),
     Promise.all(postIds.map((id) => getLikesCount({ postId: id }))),
+    Promise.all(postIds.map((id) => getCommentsList({ postId: id }))),
   ]);
 
   const userMap: Map<number, UserInfo> = new Map(
@@ -42,6 +43,10 @@ export default async function MateListPostList({ pageParam }: { pageParam: numbe
     posts.map((post, index) => [post.postId, likeCounts[index] || "0"])
   );
 
+  const commentCountMap: Map<number, number> = new Map(
+    posts.map((post, index) => [post.postId, totalComments[index]?.totalElements || 0])
+  );
+
   return (
     <section className="px-15">
       <div className="mx-auto w-full max-w-400">
@@ -54,6 +59,7 @@ export default async function MateListPostList({ pageParam }: { pageParam: numbe
                 user={userMap.get(post.userId)}
                 concert={concertMap.get(String(post.concertId))}
                 likeCount={likeCountMap.get(post.postId)}
+                commentCount={commentCountMap.get(post.postId)}
               />
             ))
           ) : (
