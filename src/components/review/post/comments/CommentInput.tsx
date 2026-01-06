@@ -8,7 +8,7 @@ import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { useState } from "react";
 import { toast } from "sonner";
 import { createComment } from "@/lib/api/community/community.client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function CommentInput({
   isLoggedIn,
@@ -19,14 +19,13 @@ export default function CommentInput({
 }) {
   /**
    * TODO:
-   * - 댓글 작성 성공 시 리프레시 처리하면 되는지 아니면 data 받은걸 보여주는 방법을 쓰는지
    * - 최대 글자 수 제한 및 안내 문구 추가 여부 검토
-   * - 엔터/쉬프트+엔터 입력 정책 결정
    * - 스켈레톤 처리
    */
 
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const params = useParams();
   const postId = params.id as string;
@@ -46,6 +45,12 @@ export default function CommentInput({
       if (isSuccess) {
         toast.success("댓글이 성공적으로 등록되었습니다!");
         setComment("");
+        /**
+         * TODO:
+         * - 댓글 작성 성공 시 리프레시 처리 대신
+         * - createComment를 통해 반환 받은 data를 보여주는 방법 사용해보기
+         */
+        router.refresh();
       } else {
         toast.error("등록에 실패했습니다.");
       }
@@ -55,6 +60,16 @@ export default function CommentInput({
       toast.error("서버와 통신 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // 엔터 입력
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing) return;
+
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // 줄바꿈 방지
+      handleSubmit(); // 등록 함수 호출
     }
   };
 
@@ -84,6 +99,7 @@ export default function CommentInput({
               className={"h-24 resize-none"}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <div className={"flex justify-between"}>
               <span className={"text-text-sub text-sm"}>
