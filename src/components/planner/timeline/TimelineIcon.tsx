@@ -47,7 +47,7 @@ export default function TimelineIcon({
       className={cn(
         "border-bg-main bg-bg-sub flex size-10 shrink-0 items-center justify-center rounded-full border-2 lg:size-16 lg:border-4",
         // 콘서트(메인)일 경우
-        concertId && "bg-point-main border-white shadow-md shadow-zinc-900/20",
+        concertId && "bg-point-main dark:border-bg-main border-white shadow-md shadow-zinc-900/20",
         // 식사일 경우
         type === "MEAL" && "bg-bg-main border-point-main border-3 lg:border-4",
         // 대기(카페)일 경우

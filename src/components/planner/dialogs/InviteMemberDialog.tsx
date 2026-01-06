@@ -163,11 +163,13 @@ export default function InviteMemberDialog({
   // 복사 핸들러
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(shareLink.url);
+      await navigator.clipboard.writeText(plannerShareLink.url);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+      toast.success("공유 링크가 복사되었습니다.");
     } catch (err) {
       console.error("Failed to copy text: ", err);
+      toast.error("공유 링크 복사에 실패했습니다. 다시 시도해주세요.");
     }
   };
 

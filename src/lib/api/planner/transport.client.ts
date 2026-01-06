@@ -35,7 +35,7 @@ export const getTransitRouteDetailsByTmap = async ({
 }: RouteCoords): Promise<TMapDetail> => {
   try {
     const res = await ClientApi(
-      `/api/v1/location/tmap/transit?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
+      `/api/v1/location/tmap/route?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
       {
         method: "GET",
       }
@@ -49,6 +49,20 @@ export const getTransitRouteDetailsByTmap = async ({
     console.error("Tmap 대중교통 경로 정보 불러오기 실패:", error);
     throw error;
   }
+};
+
+export const getWalkRouteByTmap = async ({ startX, startY, endX, endY }: RouteCoords) => {
+  const res = await ClientApi(
+    `/api/v1/location/tmap/walk?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
+    {
+      method: "GET",
+    }
+  );
+  if (!res.ok) {
+    throw new Error("Tmap 도보 경로 정보를 불러오는데 실패했습니다.");
+  }
+  const data = await res.json();
+  return data;
 };
 
 export const getTransitRouteByTmap = async ({ startX, startY, endX, endY }: RouteCoords) => {

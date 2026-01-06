@@ -37,3 +37,27 @@ export type ReviewDetailData = {
   rating: number;
   imageUrls: string[];
 };
+
+export type RatingDistribution = Record<1 | 2 | 3 | 4 | 5, number>;
+
+export type ReviewSummary = {
+  totalCount: number;
+  averageRating: number;
+  ratingDistribution: RatingDistribution;
+};
+
+export type ReviewListItem = {
+  postId: number;
+  userId: number;
+  title: string;
+  content: string;
+  rating: number;
+  likeCount: 0;
+  tags: string[];
+  createdDate: string;
+};
+
+export type ConcertReviewListResponse = {
+  summary: ReviewSummary;
+  reviews: ReviewListItem[];
+};

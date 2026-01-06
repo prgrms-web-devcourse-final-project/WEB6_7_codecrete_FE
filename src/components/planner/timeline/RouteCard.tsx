@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { Bus, BusFrontIcon, Car, CarFrontIcon, Loader2 } from "lucide-react";
+import { Bus, BusFrontIcon, Car, CarFrontIcon, FootprintsIcon, Loader2 } from "lucide-react";
 import {
   getCarRouteSummaryByKakaoMap,
-  getTransitRouteDetailsByTmap,
+  getTransitRouteSummaryByTmap,
+  getWalkRouteByTmap,
 } from "@/lib/api/planner/transport.client";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { KakaoMapSummary, TMapSummary } from "@/types/planner";
 import { Separator } from "@/components/ui/separator";
-import { formatDistance } from "@/utils/helpers/formatters";
+import { formatDistance, formatPrice } from "@/utils/helpers/formatters";
 
 interface RouteCardProps {
   start: { lat: number; lon: number; name: string };
@@ -18,6 +19,7 @@ interface RouteCardProps {
 
 export default function RouteCard({ start, end }: RouteCardProps) {
   const [transportType, setTransportType] = useState<"car" | "transit">("transit");
+  const [isWalkRoute, setIsWalkRoute] = useState(false);
   const [carData, setCarData] = useState<KakaoMapSummary | null>(null);
   const [transitData, setTransitData] = useState<TMapSummary | null>(null);
   const [loadingCar, setLoadingCar] = useState(false);
@@ -38,7 +40,12 @@ export default function RouteCard({ start, end }: RouteCardProps) {
     setLoadingCar(true);
     try {
       const res = await getCarRouteSummaryByKakaoMap(coords);
-      setCarData(res);
+      // API 응답에서 필요한 필드만 추출
+      setCarData({
+        distance: res.distance,
+        duration: res.duration,
+        fare: res.fare,
+      });
     } catch (e) {
       console.error("자동차 탐색 실패", e);
     } finally {
@@ -51,7 +58,44 @@ export default function RouteCard({ start, end }: RouteCardProps) {
     if (transitData) return;
     setLoadingTransit(true);
     try {
-      const res = await getTransitRouteDetailsByTmap(coords);
+      let res: TMapSummary = await getTransitRouteSummaryByTmap(coords);
+
+      // 경로가 없으면 도보로 안내
+      if (!res?.metaData?.plan?.itineraries || res.metaData.plan.itineraries.length === 0) {
+        const walk = await getWalkRouteByTmap(coords);
+        res = {
+          metaData: {
+            plan: {
+              itineraries: [
+                {
+                  totalTime: walk.totalTime,
+                  totalDistance: walk.totalDistance,
+                  transferCount: 0,
+                  fare: {
+                    regular: {
+                      totalFare: 0,
+                      currency: {
+                        symbol: "￦",
+                        currency: "원",
+                        currencyCode: "KRW",
+                      },
+                    },
+                  },
+                  pathType: 5, // 도보
+                },
+              ],
+            },
+            requestParameters: {
+              reqDttm: "",
+              startX: coords.startX,
+              startY: coords.startY,
+              endX: coords.endX,
+              endY: coords.endY,
+            },
+          },
+        };
+        setIsWalkRoute(true);
+      }
       setTransitData(res);
     } catch (e) {
       console.error("대중교통 탐색 실패", e);
@@ -76,6 +120,8 @@ export default function RouteCard({ start, end }: RouteCardProps) {
         <div className="border-bg-main bg-bg-sub flex size-10 items-center justify-center rounded-full border-2 lg:size-16 lg:border-4">
           {transportType === "car" ? (
             <CarFrontIcon className="size-4 lg:size-7" />
+          ) : isWalkRoute ? (
+            <FootprintsIcon className="size-4 lg:size-7" />
           ) : (
             <BusFrontIcon className="size-4 lg:size-7" />
           )}
@@ -128,10 +174,16 @@ export default function RouteCard({ start, end }: RouteCardProps) {
                 <h5 className="text-text-sub text-xs font-medium">소요 시간</h5>
                 <p className="text-sm">{Math.round(carData.duration / 60)} 분</p>
               </div>
-              <div className="">
+              <div className="flex flex-col">
                 <h5 className="text-text-sub text-xs font-medium">이동 거리</h5>
                 <p className="text-sm">{formatDistance(carData.distance)}</p>
               </div>
+              {carData.fare?.taxi && (
+                <div className="flex flex-col">
+                  <h5 className="text-text-sub text-xs font-medium">예상 택시비</h5>
+                  <p className="text-sm">{formatPrice(carData.fare?.taxi)}</p>
+                </div>
+              )}
             </div>
           ) : (
             <p className="text-text-sub py-2 text-center text-xs">경로를 찾을 수 없습니다.</p>
@@ -140,41 +192,42 @@ export default function RouteCard({ start, end }: RouteCardProps) {
           <div className="flex justify-center py-2">
             <Loader2 className="text-primary size-5 animate-spin" />
           </div>
-        ) : transitData ? (
-          // <div className="grid grid-cols-2 gap-4">
-          //   <div className="flex flex-col">
-          //     <h5 className="text-text-sub text-xs font-medium">소요 시간</h5>
-          //     <p className="text-sm">
-          //       {Math.round(transitData.metaData.plan.itineraries[0].totalTime / 60)} 분
-          //     </p>
-          //   </div>
-          //   <div className="flex flex-col">
-          //     <h5 className="text-text-sub text-xs font-medium">이동 거리</h5>
-          //     <p className="text-sm">
-          //       {formatDistance(transitData.metaData.plan.itineraries[0].totalDistance)}
-          //     </p>
-          //   </div>
-          //   {transitData.metaData.plan.itineraries[0].pathType < 4 && (
-          //     <>
-          //       <div className="flex flex-col">
-          //         <h5 className="text-text-sub text-xs font-medium">환승 횟수</h5>
-          //         <p className="text-sm">
-          //           {transitData.metaData.plan.itineraries[0].transferCount}회
-          //         </p>
-          //       </div>
-          //       <div className="flex flex-col">
-          //         <h5 className="text-text-sub text-xs font-medium">예상 금액</h5>
-          //         <p className="text-sm">
-          //           {formatPrice(transitData.metaData.plan.itineraries[0].fare.regular.totalFare)}
-          //         </p>
-          //       </div>
-          //     </>
-          //   )}
-          // </div>
-          <p></p>
-        ) : (
+        ) : transportType === "transit" &&
+          transitData?.metaData?.plan?.itineraries &&
+          transitData.metaData.plan.itineraries.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <h5 className="text-text-sub text-xs font-medium">소요 시간</h5>
+              <p className="text-sm">
+                {Math.round(transitData?.metaData?.plan.itineraries[0].totalTime / 60)}분
+              </p>
+            </div>
+            <div className="flex flex-col">
+              <h5 className="text-text-sub text-xs font-medium">이동 거리</h5>
+              <p className="text-sm">
+                {formatDistance(transitData?.metaData?.plan.itineraries[0].totalDistance)}
+              </p>
+            </div>
+            {!isWalkRoute && (
+              <>
+                <div className="flex flex-col">
+                  <h5 className="text-text-sub text-xs font-medium">환승 횟수</h5>
+                  <p className="text-sm">
+                    {transitData.metaData.plan.itineraries[0].transferCount}회
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                  <h5 className="text-text-sub text-xs font-medium">예상 금액</h5>
+                  <p className="text-sm">
+                    {formatPrice(transitData.metaData.plan.itineraries[0].fare.regular.totalFare)}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        ) : transportType === "transit" ? (
           <p className="text-text-sub py-2 text-center text-xs">경로를 찾을 수 없습니다.</p>
-        )}
+        ) : null}
       </div>
     </article>
   );

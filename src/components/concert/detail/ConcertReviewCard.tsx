@@ -3,61 +3,105 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { ReviewListItem } from "@/types/community/concert-review";
+import { useEffect, useState } from "react";
+import { UserInfo } from "@/types/user";
+import { getUserInfo } from "@/lib/api/user/user.client";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 
-export default function ConcertReviewCard() {
+export default function ConcertReviewCard({
+  review,
+  concertId,
+}: {
+  review: ReviewListItem;
+  concertId: string;
+}) {
+  const [author, setAuthor] = useState<UserInfo | null>(null);
+  const [isAuthorLoading, setIsAuthorLoading] = useState(true);
+
+  useEffect(() => {
+    if (!review.userId) return;
+    const fetchAuthor = async () => {
+      try {
+        setIsAuthorLoading(true);
+        const data = await getUserInfo(review.userId);
+        setAuthor(data);
+      } catch (e) {
+        // 에러 시 사용자에게 알리기보다 '알 수 없는 사용자'로 조용히 처리
+        console.error("작성자 로드 실패:", e);
+      } finally {
+        setIsAuthorLoading(false);
+      }
+    };
+    fetchAuthor();
+  }, [review.userId]);
+
+  const timeAgo = formatDistanceToNow(new Date(review.createdDate), {
+    addSuffix: true,
+    locale: ko,
+  });
+
   return (
-    <Link href="#">
-      <div
-        className={twMerge(
-          `border-border flex cursor-pointer flex-col gap-4 rounded-xl border-2 p-6`
-        )}
-      >
-        <div className="flex justify-between">
+    <Link href={`/concerts/${concertId}/review/${review.postId}`} className="block">
+      <div className="border-border hover:border-primary/50 flex cursor-pointer flex-col gap-4 rounded-xl border-2 p-6 transition-colors">
+        <div className="flex items-start justify-between">
           <div className="flex gap-4">
-            <Avatar className="ring-border size-10 ring-4">
-              <AvatarImage
-                src="https://kopis.or.kr/_next/image?url=%2Fupload%2FpfmPoster%2FPF_PF281383_251211_125646.jpg&w=384&q=75"
-                alt="아티스트"
-              />
-              <AvatarFallback>CN</AvatarFallback>
+            <Avatar className="size-10 ring-2 ring-gray-100">
+              {isAuthorLoading ? (
+                <AvatarFallback className="animate-pulse bg-gray-200" />
+              ) : (
+                <>
+                  <AvatarImage src={author?.profileImageUrl} alt={author?.nickname} />
+                  <AvatarFallback>{author?.nickname?.[0] ?? "익"}</AvatarFallback>
+                </>
+              )}
             </Avatar>
-            <div>
-              <strong className="text-text-main text-lg">김철수</strong>
+            <div className="flex flex-col gap-0.5">
+              <strong className="text-text-main text-base font-semibold">
+                {isAuthorLoading ? (
+                  <div className="h-4 w-16 animate-pulse rounded bg-gray-200" />
+                ) : (
+                  (author?.nickname ?? "탈퇴한 사용자")
+                )}
+              </strong>
               <div className="flex items-center gap-2">
-                <div className="flex gap-1">
+                <div className="flex gap-0.5 text-yellow-400">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <button
+                    <Star
                       key={index}
-                      type="button"
-                      className="cursor-pointer"
-                      aria-label={`${index + 1}점`}
-                    >
-                      <Star
-                        className="text-text-main h-4 w-4"
-                        fill={index < 4 ? "currentColor" : "none"}
-                      />
-                    </button>
+                      size={14}
+                      fill={index < review.rating ? "currentColor" : "none"}
+                      className={index < review.rating ? "text-yellow-400" : "text-gray-300"}
+                    />
                   ))}
                 </div>
-                <p className="text-text-sub text-sm">2주 전</p>
+                <p className="text-text-sub text-xs">{timeAgo}</p>
               </div>
             </div>
           </div>
-          <div className="text-text-sub flex items-center gap-0.5 text-sm">
-            <Heart className="h-4 w-4" />
-            <p>52</p>
+          <div className="text-text-sub flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 text-sm">
+            <Heart
+              className={twMerge(
+                "h-3.5 w-3.5",
+                review.likeCount > 0 && "fill-red-500 text-red-500"
+              )}
+            />
+            <span className="font-medium">{review.likeCount}</span>
           </div>
         </div>
 
-        <p className="text-text-sub">
-          아 공연 대박 재밌었어요. 다음에 또 열어주실거죠? 정말 기대했는데, 최고에요. 최고의 공연.
-          무대를 뒤집어놓으셨다. 선배님 짱. 아무 내용이나 추가할게요. 아무 내용 아무 내용 아무 내용
-          아무 내용 아무 내용
-        </p>
-
         <div>
-          <Badge className="bg-border text-text-main mr-2 text-sm">최고의 퍼포먼스</Badge>
-          <Badge className="bg-border text-text-main mr-2 text-sm">좋은 공연장</Badge>
+          <h3 className="text-text-main mb-1 line-clamp-1 text-lg font-bold">{review.title}</h3>
+          <p className="text-text-sub line-clamp-1 text-sm leading-relaxed">{review.content}</p>
+        </div>
+
+        <div className="mt-auto flex flex-wrap gap-2">
+          {review.tags.map((tag) => (
+            <Badge key={tag} variant="secondary" className="px-2 py-0 text-xs font-normal">
+              #{tag}
+            </Badge>
+          ))}
         </div>
       </div>
     </Link>

@@ -135,13 +135,13 @@ export const getAddressFromCoordsKakao = async (lat: number, lon: number): Promi
 
 /**
  * 주변 음식점을 조회합니다.
- * @param {number} lat - 위도
  * @param {number} lon - 경도
+ * @param {number} lat - 위도
  * @returns {Promise<any[]>} 주변 음식점 목록
  */
-export const getNearbyRestaurants = async (lat: number, lon: number): Promise<NearbyPlaces[]> => {
+export const getNearbyRestaurants = async (lon: number, lat: number): Promise<NearbyPlaces[]> => {
   try {
-    const res = await ClientApi(`/api/v1/location/kakao/restaurant?lat=${lat}&lon=${lon}`, {
+    const res = await ClientApi(`/api/v1/location/kakao/restaurant?x=${lon}&y=${lat}`, {
       method: "POST",
     });
     if (!res.ok) {
@@ -156,13 +156,13 @@ export const getNearbyRestaurants = async (lat: number, lon: number): Promise<Ne
 };
 /**
  * 주변 카페를 조회합니다.
- * @param {number} lat - 위도
  * @param {number} lon - 경도
+ * @param {number} lat - 위도
  * @returns {Promise<any[]>} 주변 카페 목록
  */
-export const getNearbyCafes = async (lat: number, lon: number): Promise<NearbyPlaces[]> => {
+export const getNearbyCafes = async (lon: number, lat: number): Promise<NearbyPlaces[]> => {
   try {
-    const res = await ClientApi(`/api/v1/location/kakao/cafes?lat=${lat}&lon=${lon}`, {
+    const res = await ClientApi(`/api/v1/location/kakao/cafes?x=${lon}&y=${lat}`, {
       method: "POST",
     });
     if (!res.ok) {

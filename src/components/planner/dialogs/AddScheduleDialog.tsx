@@ -27,17 +27,28 @@ import { createPlanSchedule } from "@/lib/api/planner/schedule.client";
 import {
   ConcertCoords,
   Itinerary,
+  KakaoMapSummary,
   ScheduleDetail,
   ScheduleType,
   SearchPlace,
+  TMapWalkRoute,
   TransportType,
 } from "@/types/planner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { formatTimeToKoreanAMPM, toMinutePrecision } from "@/utils/helpers/formatters";
 import { cn } from "@/lib/utils";
-import { getTransitRouteDetailsByTmap } from "@/lib/api/planner/transport.client";
+import {
+  getCarRouteSummaryByKakaoMap,
+  getTransitRouteDetailsByTmap,
+  getWalkRouteByTmap,
+} from "@/lib/api/planner/transport.client";
 import TransitRouteList from "../timeline/TransitRouteList";
+import { Separator } from "@/components/ui/separator";
+
+// 경로 정보 조회 실패 시 사용할 기본 소요 시간 (분)
+const DEFAULT_CAR_DURATION_MINUTES = 60; // 자동차: 평균 도심 이동 시간 고려
+const DEFAULT_WALK_DURATION_MINUTES = 30; // 도보: 평균 도보 이동 시간 고려
 
 // 시간에 분 단위 더하기
 function addMinutesToTime(timeStr: string, minutes: number): string {
@@ -79,7 +90,7 @@ export default function AddScheduleDialog({
   // 장소 관련 state
   const [placeName, setPlaceName] = useState("");
   const [placeAddress, setPlaceAddress] = useState("");
-  const [coords, setCoords] = useState<{ lat?: number; lon?: number } | null>(null);
+  const [coords, setCoords] = useState<{ lon?: number; lat?: number } | null>(null);
   const [isPlaceSelected, setIsPlaceSelected] = useState(false);
 
   // 이동 일정 관련 state
@@ -92,8 +103,12 @@ export default function AddScheduleDialog({
   const [isRouteFetching, setIsRouteFetching] = useState(false);
 
   // 경로 데이터 state
-  const [transportData, setRouteData] = useState<Itinerary[]>([]);
+  const [transportType, setTransportType] = useState<TransportType | null>(null);
+  const [routeData, setRouteData] = useState<Itinerary[]>([]);
   const [selectedRoute, setSelectedRoute] = useState<Itinerary | null>(null);
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState<number | null>(null);
+  const [carRouteSummary, setCarRouteSummary] = useState<KakaoMapSummary | null>(null);
+  const [walkRouteSummary, setWalkRouteSummary] = useState<TMapWalkRoute | null>(null);
 
   // 일반 일정(비TRANSPORT) 선택지 - 콘서트 제외, 모든 타입의 일정들
   const regularScheduleCandidates = useMemo(
@@ -135,20 +150,14 @@ export default function AddScheduleDialog({
     setCoords(null);
     setRouteData([]);
     setSelectedRoute(null);
+    setSelectedRouteIndex(null);
+    setCarRouteSummary(null);
+    setWalkRouteSummary(null);
     setSelectedRegularScheduleId(undefined);
-
-    if (scheduleType !== "TRANSPORT") {
-      setStartScheduleId(undefined);
-      setEndScheduleId(undefined);
-      return;
-    }
-    // 이동 타입이면 기본값으로 첫 번째, 두 번째 일정 선택
-    if (transportCandidates.length > 0) {
-      setStartScheduleId(String(transportCandidates[0].id));
-      if (transportCandidates[1]?.id) {
-        setEndScheduleId(String(transportCandidates[1].id));
-      }
-    }
+    setTransportType(null);
+    // 출발/도착은 항상 수동 선택으로 초기화 (자동 선택 시 바로 호출되는 문제 방지)
+    setStartScheduleId(undefined);
+    setEndScheduleId(undefined);
   }, [scheduleType, transportCandidates]);
 
   // 다이얼로그가 닫히면 모든 state 초기화
@@ -161,9 +170,13 @@ export default function AddScheduleDialog({
       setCoords(null);
       setRouteData([]);
       setSelectedRoute(null);
+      setSelectedRouteIndex(null);
+      setCarRouteSummary(null);
+      setWalkRouteSummary(null);
       setSelectedRegularScheduleId(undefined);
       setStartScheduleId(undefined);
       setEndScheduleId(undefined);
+      setTransportType(null);
 
       // 폼 입력값도 초기화
       if (formRef.current) {
@@ -172,19 +185,31 @@ export default function AddScheduleDialog({
     }
   }, [open]);
 
+  // 다이얼로그가 다시 열릴 때도 이동수단 기본값
+  useEffect(() => {
+    if (open) {
+      // 경로/선택/출발/도착 모두 초기화
+      setRouteData([]);
+      setSelectedRoute(null);
+      setSelectedRouteIndex(null);
+      setCarRouteSummary(null);
+      setWalkRouteSummary(null);
+      setStartScheduleId(undefined);
+      setEndScheduleId(undefined);
+      setTransportType("PUBLIC_TRANSPORT");
+    }
+  }, [open]);
+
   // 길찾기 API 호출 핸들러
   const handleFetchRoute = useCallback(
-    async (startId: string, endId: string) => {
+    async (startId: string, endId: string, currentTransportType: TransportType) => {
       setIsRouteFetching(true);
       setRouteData([]); // 이전 결과 초기화
       setSelectedRoute(null);
+      setCarRouteSummary(null);
+      setWalkRouteSummary(null);
 
       try {
-        if (!formRef.current) return;
-
-        const formData = new FormData(formRef.current);
-        const transportType = formData.get("transportType") as TransportType;
-
         const startSchedule = transportCandidates.find((s) => String(s.id) === startId);
         const endSchedule = transportCandidates.find((s) => String(s.id) === endId);
 
@@ -193,16 +218,33 @@ export default function AddScheduleDialog({
           return;
         }
 
-        if (transportType === "PUBLIC_TRANSPORT") {
+        if (currentTransportType === "PUBLIC_TRANSPORT") {
           const data = await getTransitRouteDetailsByTmap({
             startX: startSchedule.locationLon!,
             startY: startSchedule.locationLat!,
             endX: endSchedule.locationLon!,
             endY: endSchedule.locationLat!,
           });
-          setRouteData(data.metaData.plan.itineraries || []);
+          setRouteData(data?.metaData?.plan.itineraries || []);
+        } else if (currentTransportType === "CAR") {
+          const summary = await getCarRouteSummaryByKakaoMap({
+            startX: startSchedule.locationLon!,
+            startY: startSchedule.locationLat!,
+            endX: endSchedule.locationLon!,
+            endY: endSchedule.locationLat!,
+          });
+          setRouteData([]);
+          setCarRouteSummary(summary);
+        } else if (currentTransportType === "WALK") {
+          const summary = await getWalkRouteByTmap({
+            startX: startSchedule.locationLon!,
+            startY: startSchedule.locationLat!,
+            endX: endSchedule.locationLon!,
+            endY: endSchedule.locationLat!,
+          });
+          setRouteData([]);
+          setWalkRouteSummary(summary);
         } else {
-          // TODO: 자동차(CAR), 도보(WALK) 로직 추가
           setRouteData([]);
         }
       } catch (error) {
@@ -215,12 +257,54 @@ export default function AddScheduleDialog({
     [transportCandidates]
   );
 
+  // 이동 수단 변경 핸들러
+  const handleChangeTransportType = (value: TransportType) => {
+    setTransportType(value);
+    setRouteData([]);
+    setSelectedRoute(null);
+    setSelectedRouteIndex(null);
+    setCarRouteSummary(null);
+    setWalkRouteSummary(null);
+    if (scheduleType === "TRANSPORT" && startScheduleId && endScheduleId) {
+      handleFetchRoute(startScheduleId, endScheduleId, value);
+    }
+  };
+
+  // 장소 선택 핸들러
+  const handlePlaceSelect = (place: SearchPlace) => {
+    setPlaceName(place.place_name || place.address_name);
+    setPlaceAddress(place.road_address_name || place.address_name || "");
+    setCoords({ lat: place.y, lon: place.x });
+    setIsPlaceSelected(true);
+  };
+
+  // 장소 다시 검색 핸들러
+  const handlePlaceReset = () => {
+    setIsPlaceSelected(false);
+    setPlaceName("");
+    setPlaceAddress("");
+    setCoords(null);
+  };
+
+  // 일정 타입 변경 핸들러
+  const handleScheduleTypeChange = (value: string) => {
+    if (value === "new") {
+      setSelectedRegularScheduleId(undefined);
+      setIsPlaceSelected(false);
+      setPlaceName("");
+      setPlaceAddress("");
+      setCoords(null);
+    } else {
+      setSelectedRegularScheduleId(value);
+    }
+  };
+
   // 출발/도착 일정 변경 시 자동 조회
   useEffect(() => {
-    if (scheduleType === "TRANSPORT" && startScheduleId && endScheduleId) {
-      handleFetchRoute(startScheduleId, endScheduleId);
+    if (scheduleType === "TRANSPORT" && startScheduleId && endScheduleId && transportType) {
+      handleFetchRoute(startScheduleId, endScheduleId, transportType);
     }
-  }, [startScheduleId, endScheduleId, scheduleType, handleFetchRoute]);
+  }, [startScheduleId, endScheduleId, scheduleType, transportType, handleFetchRoute]);
 
   // 출발 일정이 선택되면 자동으로 시작 시간 설정
   useEffect(() => {
@@ -268,7 +352,7 @@ export default function AddScheduleDialog({
     const startTime = formData.get("scheduleStartTime") as string;
     const parsedDuration = Number(formData.get("scheduleDuration"));
     const duration = Number.isFinite(parsedDuration) ? parsedDuration : 0;
-    const transportType = formData.get("transportType") as TransportType;
+    const transportType = formData.get("transportType") as TransportType | null;
     const notes = formData.get("scheduleNotes") as string;
     const estimatedCost = 0; // TODO : 비용 입력 필드 추가 시 반영
 
@@ -287,17 +371,23 @@ export default function AddScheduleDialog({
       }
 
       // 대중교통인데 경로 선택 안 했으면 경고
-      if (transportType === "PUBLIC_TRANSPORT" && !selectedRoute && transportData.length > 0) {
-        toast.error("추천 경로 중 하나를 선택해주세요.");
+      if (!transportType) {
+        toast.error("이동 수단을 선택해주세요.");
         return;
       }
 
-      // 선택된 경로가 있다면 소요시간 및 상세정보 업데이트
-      if (selectedRoute) {
+      if (transportType === "PUBLIC_TRANSPORT" && !selectedRoute && routeData.length > 0) {
+        toast.error("추천 경로 중 하나를 선택해주세요.");
+        return;
       }
     }
 
     // 일정 데이터 구성
+    const selectedRouteCost =
+      scheduleType === "TRANSPORT" && selectedRoute?.fare?.regular?.totalFare
+        ? selectedRoute.fare.regular.totalFare
+        : undefined;
+
     let scheduleData: ScheduleDetail = {
       scheduleType,
       title,
@@ -307,8 +397,8 @@ export default function AddScheduleDialog({
       locationLon: coords?.lon,
       startAt: normalizedStartAt,
       details: notes,
-      transportType: scheduleType === "TRANSPORT" ? transportType : undefined,
-      estimatedCost,
+      transportType: scheduleType === "TRANSPORT" ? (transportType ?? undefined) : undefined,
+      estimatedCost: selectedRouteCost ?? estimatedCost,
     };
 
     // 이동 타입일 때 위치 정보 덮어쓰기
@@ -325,8 +415,105 @@ export default function AddScheduleDialog({
           endPlaceLat: endSchedule.locationLat,
           endPlaceLon: endSchedule.locationLon,
           startAt: startSchedule.startAt, // 이동 시작 시간은 출발 일정 시간? (로직에 따라 조정 필요)
-          // duration은 위에서 이미 계산됨
         };
+      }
+
+      if (selectedRoute) {
+        const routeDurationMinutes = Math.ceil(selectedRoute.totalTime / 60);
+        scheduleData = {
+          ...scheduleData,
+          duration: routeDurationMinutes,
+          estimatedCost: selectedRouteCost ?? estimatedCost,
+          distance: selectedRoute.totalDistance,
+          transportRoute: {
+            totalTime: selectedRoute.totalTime,
+            totalDistance: selectedRoute.totalDistance,
+            totalWalkTime: selectedRoute.totalWalkTime ?? 0,
+            totalWalkDistance: selectedRoute.totalWalkDistance ?? 0,
+            transferCount: selectedRoute.transferCount,
+            leg: selectedRoute.legs || [],
+            fare: {
+              taxi: selectedRoute.fare?.regular?.totalFare,
+            },
+          },
+        };
+      } else if (transportType === "CAR") {
+        // CAR: 요약 정보가 있으면 사용, 없으면 기본값 설정
+        if (carRouteSummary) {
+          const carDurationMinutes = Math.ceil(carRouteSummary.duration / 60);
+          scheduleData = {
+            ...scheduleData,
+            duration: carDurationMinutes,
+            estimatedCost: carRouteSummary.fare?.taxi ?? estimatedCost,
+            distance: carRouteSummary.distance,
+            transportRoute: {
+              totalTime: carRouteSummary.duration,
+              totalDistance: carRouteSummary.distance,
+              totalWalkTime: 0,
+              totalWalkDistance: 0,
+              transferCount: 0,
+              leg: [],
+              fare: {
+                taxi: carRouteSummary.fare?.taxi,
+              },
+            },
+          };
+        } else {
+          // 요약 정보 없을 때 기본값 설정
+          scheduleData = {
+            ...scheduleData,
+            duration: DEFAULT_CAR_DURATION_MINUTES,
+            transportRoute: {
+              totalTime: DEFAULT_CAR_DURATION_MINUTES * 60,
+              totalDistance: 0,
+              totalWalkTime: 0,
+              totalWalkDistance: 0,
+              transferCount: 0,
+              leg: [],
+              fare: {
+                taxi: undefined,
+              },
+            },
+          };
+        }
+      } else if (transportType === "WALK") {
+        // WALK: 요약 정보가 있으면 사용, 없으면 기본값 설정
+        if (walkRouteSummary) {
+          const walkDurationMinutes = Math.ceil(walkRouteSummary.totalTime / 60);
+          scheduleData = {
+            ...scheduleData,
+            duration: walkDurationMinutes,
+            distance: walkRouteSummary.totalDistance,
+            transportRoute: {
+              totalTime: walkRouteSummary.totalTime,
+              totalDistance: walkRouteSummary.totalDistance,
+              totalWalkTime: walkRouteSummary.totalTime,
+              totalWalkDistance: walkRouteSummary.totalDistance,
+              transferCount: 0,
+              leg: [],
+              fare: {
+                taxi: undefined,
+              },
+            },
+          };
+        } else {
+          // 요약 정보 없을 때 기본값 설정
+          scheduleData = {
+            ...scheduleData,
+            duration: DEFAULT_WALK_DURATION_MINUTES,
+            transportRoute: {
+              totalTime: DEFAULT_WALK_DURATION_MINUTES * 60,
+              totalDistance: 0,
+              totalWalkTime: DEFAULT_WALK_DURATION_MINUTES * 60,
+              totalWalkDistance: 0,
+              transferCount: 0,
+              leg: [],
+              fare: {
+                taxi: undefined,
+              },
+            },
+          };
+        }
       }
     }
 
@@ -345,14 +532,6 @@ export default function AddScheduleDialog({
         toast.error(errorMessage);
       }
     });
-  };
-
-  // 장소 선택 핸들러
-  const handlePlaceSelect = (place: SearchPlace) => {
-    setPlaceName(place.place_name || place.address_name);
-    setPlaceAddress(place.road_address_name || place.address_name || "");
-    setCoords({ lat: place.y, lon: place.x });
-    setIsPlaceSelected(true);
   };
 
   return (
@@ -402,17 +581,7 @@ export default function AddScheduleDialog({
                   {regularScheduleCandidates.length > 0 && (
                     <Select
                       value={selectedRegularScheduleId || "new"}
-                      onValueChange={(value) => {
-                        if (value === "new") {
-                          setSelectedRegularScheduleId(undefined);
-                          setIsPlaceSelected(false);
-                          setPlaceName("");
-                          setPlaceAddress("");
-                          setCoords(null);
-                        } else {
-                          setSelectedRegularScheduleId(value);
-                        }
-                      }}
+                      onValueChange={(value) => handleScheduleTypeChange(value)}
                       name="selectedSchedule"
                     >
                       <SelectTrigger>
@@ -461,12 +630,7 @@ export default function AddScheduleDialog({
                     </div>
                     <Button
                       size="sm"
-                      onClick={() => {
-                        setIsPlaceSelected(false);
-                        setPlaceName("");
-                        setPlaceAddress("");
-                        setCoords(null);
-                      }}
+                      onClick={handlePlaceReset}
                       className="h-8 text-xs"
                       type="button"
                     >
@@ -589,9 +753,13 @@ export default function AddScheduleDialog({
                     <Label htmlFor="transportType" className="gap-0.5">
                       이동 수단<span className="text-red-500">*</span>
                     </Label>
-                    <Select name="transportType" defaultValue="PUBLIC_TRANSPORT">
+                    <Select
+                      name="transportType"
+                      value={transportType ?? undefined}
+                      onValueChange={(val) => handleChangeTransportType(val as TransportType)}
+                    >
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="이동 수단을 선택하세요" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="PUBLIC_TRANSPORT">대중교통</SelectItem>
@@ -609,8 +777,83 @@ export default function AddScheduleDialog({
                   )}
 
                   {/* 최적 경로 */}
-                  {!isRouteFetching && transportData.length > 0 && (
-                    <TransitRouteList itineraries={transportData} onSelect={setSelectedRoute} />
+                  {!isRouteFetching &&
+                    startScheduleId &&
+                    endScheduleId &&
+                    routeData.length === 0 &&
+                    !carRouteSummary &&
+                    !walkRouteSummary && (
+                      <div className="border-input text-muted-foreground flex items-center justify-center rounded-md border py-4 text-sm">
+                        선택한 출발지와 도착지 사이의 경로 정보가 없습니다.
+                      </div>
+                    )}
+                  {!isRouteFetching && routeData.length > 0 && (
+                    <TransitRouteList
+                      itineraries={routeData}
+                      selectedIndex={selectedRouteIndex}
+                      onSelect={(route, index) => {
+                        setSelectedRoute(route);
+                        setSelectedRouteIndex(index);
+                      }}
+                    />
+                  )}
+
+                  {/* 자동차 요약 정보 (선택 없이 표시만) */}
+                  {!isRouteFetching && transportType === "CAR" && carRouteSummary && (
+                    <div className="space-y-3 rounded-md border p-3 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold">경로 요약</span>
+                        <span className="text-muted-foreground text-xs">카카오맵 제공</span>
+                      </div>
+                      <Separator />
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <p className="text-muted-foreground text-xs">예상 시간</p>
+                          <p className="font-medium">
+                            {Math.ceil(carRouteSummary.duration / 60)}분
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground text-xs">거리</p>
+                          <p className="font-medium">
+                            {(carRouteSummary.distance / 1000).toFixed(1)}km
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground text-xs">택시 요금</p>
+                          <p className="font-medium">
+                            {carRouteSummary.fare?.taxi !== undefined
+                              ? `${carRouteSummary.fare.taxi.toLocaleString()}원`
+                              : "정보 없음"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 도보 요약 정보 (선택 없이 표시만) */}
+                  {!isRouteFetching && transportType === "WALK" && walkRouteSummary && (
+                    <div className="space-y-3 rounded-md border p-3 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold">경로 요약</span>
+                        <span className="text-muted-foreground text-xs">TMap 제공</span>
+                      </div>
+                      <Separator />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-muted-foreground text-xs">예상 시간</p>
+                          <p className="font-medium">
+                            {Math.ceil(walkRouteSummary.totalTime / 60)}분
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground text-xs">거리</p>
+                          <p className="font-medium">
+                            {(walkRouteSummary.totalDistance / 1000).toFixed(1)}km
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
               </>

@@ -148,7 +148,7 @@ export enum TMapPathType {
 
 // 1. 최상위 응답 객체 (Summary 포함 전체 구조)
 export interface TMapDetail {
-  metaData: {
+  metaData?: {
     requestParameters: {
       busCount: number;
       expressbusCount: number;
@@ -168,15 +168,15 @@ export interface TMapDetail {
     plan: {
       itineraries: Itinerary[];
     };
-  };
+  } | null;
 }
 
 // 2. 경로 (Itinerary) - 추천 경로 하나하나
 export interface Itinerary {
   totalTime: number; // 총 소요 시간 (초)
   totalDistance: number; // 총 거리 (m)
-  totalWalkTime: number; // 총 도보 시간 (초)
-  totalWalkDistance: number; // 총 도보 거리 (m)
+  totalWalkTime?: number; // 총 도보 시간 (초)
+  totalWalkDistance?: number; // 총 도보 거리 (m)
   transferCount: number; // 환승 횟수
   pathType: number; // 경로 타입 (1: 지하철, 2: 버스, 3: 지하철+버스)
   fare: {
@@ -217,6 +217,14 @@ export interface Leg {
     // 경로 선형 (지도 그리기용)
     linestring: string; // "lon,lat lon,lat ..." 형태의 문자열
   };
+  Lane?: Array<{
+    // 버스 노선 옵션들 (여러 노선 선택 가능)
+    routeColor?: string;
+    route?: string;
+    routeId?: string;
+    service?: number;
+    type?: number;
+  }>;
 }
 
 // 4. 위치 좌표 객체 (TMAP 내부용)
@@ -245,24 +253,27 @@ export interface Station {
 
 // 7. 요약 정보용
 export type TMapSummary = {
-  metaData: {
+  metaData?: {
     plan: {
       itineraries: Itinerary[];
     };
     requestParameters: {
       reqDttm: string;
-      startX: string;
-      startY: string;
-      endX: string;
-      endY: string;
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
     };
-  };
+  } | null;
 };
 
 // ====== KakaoMap 타입 ======
 export type KakaoMapSummary = {
   distance: number;
   duration: number;
+  fare?: {
+    taxi?: number;
+  };
 };
 
 export type KakaoCarRouteGuide = {
@@ -302,7 +313,7 @@ export type NearbyPlaces = {
 };
 
 // 콘서트 장소 좌표 타입
-export type ConcertCoords = { lat: number; lon: number };
+export type ConcertCoords = { lon: number; lat: number };
 
 // 플래너 링크
 export type PlannerShareLink = {
@@ -329,4 +340,10 @@ export type PlannerParticipant = {
   profileImage: string;
   inviteStatus: PlannerParticipantInviteStatus;
   role: PlannerParticipantRole;
+};
+
+// 도보 이동 경로 요약 타입
+export type TMapWalkRoute = {
+  totalTime: number;
+  totalDistance: number;
 };

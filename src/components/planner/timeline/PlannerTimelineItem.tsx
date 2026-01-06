@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { MoreVerticalIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,6 @@ import DeleteScheduleDialog from "../dialogs/DeleteScheduleDialog";
 import { formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
 import { deletePlanSchedule } from "@/lib/api/planner/schedule.client";
 import { useRouter } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
 
 interface PlannerTimelineItemProps {
   planId: string;
@@ -44,10 +42,10 @@ export default function PlannerTimelineItem({
     try {
       await deletePlanSchedule({ planId, scheduleId: schedule.id });
       setShowDeleteDialog(false);
-      router.refresh();
     } catch (error) {
       console.error("Failed to delete schedule", error);
     }
+    router.refresh();
   };
 
   return (
@@ -124,19 +122,19 @@ export default function PlannerTimelineItem({
             </div>
 
             {/* 본문: 상세 설명 */}
-            {schedule.details && (
-              <div
-                className={cn(
-                  "text-text-sub text-xs leading-normal lg:text-sm",
-                  schedule.isMainEvent && "text-text-point-sub"
-                )}
-              >
-                <p className="whitespace-pre-wrap">{schedule.details}</p>
-              </div>
-            )}
+            <div
+              className={cn(
+                "text-text-sub space-y-3 text-xs leading-normal lg:text-sm",
+                schedule.isMainEvent && "text-text-point-sub"
+              )}
+            >
+              {schedule.transportType === "PUBLIC_TRANSPORT" && (
+                <p className="border-point-main border-l-2 pl-2">{schedule.location}</p>
+              )}
+              <p className="whitespace-pre-wrap">{schedule.details}</p>
+            </div>
           </div>
 
-          {schedule.scheduleType === "TRANSPORT" && <Separator className="bg-muted" />}
           {/* 하단 상세 정보 */}
           <TimelineInfoGrid schedule={schedule} concertCoords={concertCoords} />
         </div>
