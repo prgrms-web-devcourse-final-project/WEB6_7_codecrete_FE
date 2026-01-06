@@ -26,7 +26,6 @@ export default function ReviewPostMain({
         {/*왼쪽 파트*/}
         <section className={"flex w-full flex-col gap-8"}>
           <ReviewConcertCard concertDetail={concertDetail} />
-          {/*TODO: 아래에서 전달하는 post 타입은 구인글이나 후기글 상세 조회에서 동일한 타입입니다*/}
           <ReviewPostHeader post={reviewDetail.post} isAuthor={isAuthor} />
           <Separator />
           <ReviewPostBody showBadge={false} reviewDetail={reviewDetail} initialIsLiked={isLiked} />
