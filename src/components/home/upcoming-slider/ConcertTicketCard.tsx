@@ -101,7 +101,7 @@ function TicketPunch() {
 }
 
 function TicketCorners() {
-  const cornerClass = "absolute h-8 w-8 rounded-full bg-bg-main";
+  const cornerClass = "absolute h-8 w-8 rounded-full bg-background";
 
   return (
     <div className="pointer-events-none">

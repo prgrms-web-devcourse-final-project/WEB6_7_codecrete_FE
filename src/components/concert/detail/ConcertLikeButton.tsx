@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { deleteLikeConcert, postLikeConcert } from "@/lib/api/concerts/concerts.client";
 import { HeartIcon, Loader2Icon } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -49,22 +50,29 @@ export default function ConcertLikeButton({
   };
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      className="border-border hover:bg-border group"
-      onClick={handleLikeConcert}
-    >
-      {isPending ? (
-        <Loader2Icon className="animate-spin" />
-      ) : (
-        <HeartIcon
-          className={twMerge(
-            "transition-all group-active:scale-110",
-            currentLiked && "fill-red-500 text-red-500"
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className="border-border hover:bg-border group"
+          onClick={handleLikeConcert}
+        >
+          {isPending ? (
+            <Loader2Icon className="animate-spin" />
+          ) : (
+            <HeartIcon
+              className={twMerge(
+                "transition-all group-active:scale-110",
+                currentLiked && "fill-red-500 text-red-500"
+              )}
+            />
           )}
-        />
-      )}
-    </Button>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">
+        <span>{currentLiked ? "알림 설정됨" : "알림 설정하기"}</span>
+      </TooltipContent>
+    </Tooltip>
   );
 }
