@@ -38,7 +38,7 @@ export default function ReviewPostHeader({ isAuthor, post }: PostHeaderProps) {
 
   const isModified = normalizeDate(post.createdDate) !== normalizeDate(post.modifiedDate);
   const displayDate = formatDateKorean(
-    normalizeDate(isModified ? post.modifiedDate : post.createdDate).replace("T", " ")
+    normalizeDate(isModified ? post.modifiedDate : post.createdDate)
   );
 
   // TODO: 아래 수정 주소는 동행구인 변경 주소로 변경해주세요
