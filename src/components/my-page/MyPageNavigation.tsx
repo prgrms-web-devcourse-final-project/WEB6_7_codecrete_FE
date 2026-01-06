@@ -13,7 +13,7 @@ export default function MyPageNavigation() {
   ];
 
   return (
-    <div className="border-border border-y px-15">
+    <div className="border-border border-y px-5 lg:px-15">
       <nav className="m-auto flex w-full max-w-400 gap-8">
         {navItems.map(({ href, label }) => {
           const isActive = pathname === href || pathname.startsWith(href + "/");

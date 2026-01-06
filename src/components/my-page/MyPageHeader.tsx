@@ -8,7 +8,7 @@ import { User } from "@/types/user";
 export default function MyPageHeader({ userData }: { userData: User }) {
   const formattedDate = format(new Date(userData.createdDate), "yyyy-MM-dd");
   return (
-    <header className="bg-zinc-900 px-15 py-20">
+    <header className="bg-zinc-900 px-5 py-10 lg:px-15 lg:py-20">
       <div className="mx-auto flex max-w-400 gap-10">
         <div className="relative w-fit">
           <Avatar className="size-30">

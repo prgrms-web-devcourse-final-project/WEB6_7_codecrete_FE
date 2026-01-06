@@ -38,3 +38,12 @@ export interface ConcertListProps {
   schedules: UserSchedule[];
   selectedDate: Date;
 }
+
+// 찜한 아티스트
+export interface LikedArtist {
+  artistName: string;
+  id: number;
+  imageUrl: string;
+  nameKo: string;
+  isLiked: boolean;
+}
