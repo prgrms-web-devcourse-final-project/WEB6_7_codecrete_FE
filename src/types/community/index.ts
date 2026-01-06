@@ -56,6 +56,7 @@ export interface CommentData {
 export type CommentAddUser = CommentData & {
   author: string;
   avatar: string;
+  isMyComment: boolean;
 };
 
 export type LikeToggleResponse = {

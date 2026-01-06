@@ -1,7 +1,7 @@
 import CommentInput from "@/components/review/post/comments/CommentInput";
 import CommentItem from "@/components/review/post/comments/CommentItem";
 import { getCommentsList } from "@/lib/api/community/community.server";
-import { getUserInfo } from "@/lib/api/user/user.server";
+import { getUserInfo, getUsersMe } from "@/lib/api/user/user.server";
 import { compareDesc } from "date-fns";
 import { cookies } from "next/headers";
 
@@ -15,6 +15,9 @@ export default async function ReviewPostComments({ postId }: { postId: string })
   const res = await getCommentsList({ postId: postIdNum, page: 1 });
   const comments = res?.content || [];
 
+  const currentUser = isLoggedIn ? await getUsersMe() : null;
+  const currentUserId = currentUser?.id;
+
   // 유저 정보 합치기
   const userIds = Array.from(new Set(comments.map((c) => c.userId)));
   const userProfiles = await Promise.all(userIds.map((id) => getUserInfo(id)));
@@ -26,6 +29,8 @@ export default async function ReviewPostComments({ postId }: { postId: string })
         ...comment,
         author: user?.nickname || "알 수 없는 사용자",
         avatar: user?.profileImageUrl || "",
+        // 댓글 본인 여부 확인
+        isMyComment: String(comment.userId) === String(currentUserId),
       };
     })
     .sort((a, b) => compareDesc(new Date(a.createdDate), new Date(b.createdDate)));

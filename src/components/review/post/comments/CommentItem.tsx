@@ -29,11 +29,14 @@ export default function CommentItem({
    * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
    * - 페이지네이션
    * - 한 번에 보여줄 갯수 지정
+   * - 글자수 제한
    */
+
   const handlerEdit = () => {};
+
   const handlerDelete = () => {};
 
-  // 댓글이 하나도 없을 때
+  // 댓글이 없을 때
   if (!comments || comments.length === 0) {
     return (
       <div className="text-text-sub text-md bg-bg-sub flex justify-center rounded-md py-5">
@@ -58,7 +61,6 @@ export default function CommentItem({
                   <AvatarFallback>
                     <ProfileNoImage size="xs" />
                   </AvatarFallback>
-                  {/* <AvatarFallback>{comment.author[0]}</AvatarFallback> */}
                 </Avatar>
 
                 <div className="flex flex-1 flex-col gap-2">
@@ -67,32 +69,32 @@ export default function CommentItem({
                       <span>{comment.author}</span>
                       <span className={"text-text-sub text-xs"}>{formattedDate}</span>
                     </div>
-                    {/**
-                     * TODO:
-                     * - 작성자 본인/비본인 권한에 따라 메뉴 항목 분기
-                     *   (수정/삭제 vs 안 보이기)
-                     */}
-                    <DropdownMenu modal={false}>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          className="text-text-sub hover:bg-transparent"
-                          aria-label="댓글 옵션"
-                        >
-                          <MoreHorizontalIcon />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-40" align="end">
-                        {/**
-                         * TODO: 신고하기
-                         * - 작성자 본인 권한
-                         */}
-                        <DropdownMenuItem>신고하기</DropdownMenuItem>
-                        <DropdownMenuItem onClick={handlerEdit}>수정하기</DropdownMenuItem>
-                        <DropdownMenuItem onClick={handlerDelete}>삭제하기</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+
+                    {comment.isMyComment ? (
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            className="text-text-sub hover:bg-transparent"
+                            aria-label="댓글 옵션"
+                          >
+                            <MoreHorizontalIcon />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-40" align="end">
+                          <DropdownMenuItem onClick={handlerEdit}>수정하기</DropdownMenuItem>
+                          <DropdownMenuItem onClick={handlerDelete}>삭제하기</DropdownMenuItem>
+                          {/**
+                           * TODO: 신고하기
+                           * - 작성자 본인 권한
+                           *  <DropdownMenuItem>신고하기</DropdownMenuItem>
+                           */}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   <p>{comment.content}</p>
