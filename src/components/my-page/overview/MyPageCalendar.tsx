@@ -1,15 +1,14 @@
 "use client";
-
-import { createContext, useContext, useState } from "react";
-import { Calendar } from "../ui/calendar";
+import { createContext, useContext, useMemo, useState } from "react";
+import { Calendar } from "../../ui/calendar";
 import { twMerge } from "tailwind-merge";
 import { DayProps, MonthCaptionProps, useDayPicker } from "react-day-picker";
-import { Button } from "../ui/button";
-import { concertEvents, getConcertsByDate } from "@/data/concertData";
+import { Button } from "../../ui/button";
 import { EventContextType } from "@/types/my-page";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import MyPageCalendarList from "./MyPageCalendarList";
 import { getSchedulesByDate, scheduleEvents } from "@/data/userSchedules";
+import { ConcertWithTicket } from "@/types/home";
 
 const EventContext = createContext<EventContextType>({
   events: {},
@@ -132,8 +131,58 @@ const CustomDay = (props: DayProps) => {
   );
 };
 
-export default function MyPageCalendar() {
+export default function MyPageCalendar({ concerts }: { concerts: ConcertWithTicket[] }) {
   const [date, setDate] = useState<Date | undefined>(new Date());
+
+  // 날짜 유틸: YYYY-MM-DD로 포맷 (로컬 기준)
+  const toYMD = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
+  // 안전한 파서: UTC 오프셋 문제를 피하기 위해 로컬 Date 생성
+  const parseYMD = (s: string) => {
+    const [y, m, d] = s.split("-").map((v) => parseInt(v, 10));
+    const dt = new Date();
+    dt.setFullYear(y);
+    dt.setMonth((m || 1) - 1);
+    dt.setDate(d || 1);
+    dt.setHours(0, 0, 0, 0);
+    return dt;
+  };
+
+  // 날짜별 콘서트 목록을 메모이즈 (시작~종료일 전체 포함)
+  const concertsByDate = useMemo(() => {
+    const map: Record<string, ConcertWithTicket[]> = {};
+    concerts.forEach((concert) => {
+      const start = parseYMD(concert.startDate);
+      const end = parseYMD(concert.endDate ?? concert.startDate);
+      const cur = new Date(start);
+      while (cur.getTime() <= end.getTime()) {
+        const key = toYMD(cur);
+        if (!map[key]) map[key] = [];
+        map[key].push(concert);
+        cur.setDate(cur.getDate() + 1);
+      }
+    });
+    return map;
+  }, [concerts]);
+
+  // 콘서트 날짜별 이벤트 카운트는 맵에서 길이로 산출
+  const concertEvents: Record<string, number> = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const key in concertsByDate) {
+      acc[key] = concertsByDate[key].length;
+    }
+    return acc;
+  }, [concertsByDate]);
+
+  // 특정 날짜의 콘서트 목록 가져오기
+  const getConcertsByDate = (dateStr: string): ConcertWithTicket[] => {
+    return concertsByDate[dateStr] ?? [];
+  };
 
   const selectedConcerts = date
     ? getConcertsByDate(

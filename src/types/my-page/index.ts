@@ -32,13 +32,6 @@ export interface EventContextType {
   onDateClick?: (date: Date) => void;
 }
 
-// 콘서트 리스트 컴포넌트 props 타입
-export interface ConcertListProps {
-  concerts: Concert[];
-  schedules: UserSchedule[];
-  selectedDate: Date;
-}
-
 // 찜한 아티스트
 export interface LikedArtist {
   artistName: string;
