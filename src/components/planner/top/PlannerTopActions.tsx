@@ -1,8 +1,7 @@
 "use client";
-
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon, SaveIcon } from "lucide-react";
+import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon } from "lucide-react";
 import AddScheduleDialog from "../dialogs/AddScheduleDialog";
 import InviteMemberDialog from "../dialogs/InviteMemberDialog";
 import LinkShareDialog from "../dialogs/LinkShareDialog";
@@ -12,8 +11,6 @@ import {
   PlannerShareLink,
   ScheduleDetail,
 } from "@/types/planner";
-import { createPlanShareLink } from "@/lib/api/planner/planner.client";
-import { getShareBaseUrl } from "@/utils/helpers/domain";
 
 interface PlannerTopActionsProps {
   planId: string;
@@ -30,39 +27,9 @@ export default function PlannerTopActions({
   role,
   shareLink,
 }: PlannerTopActionsProps) {
-  const [isPending, startTransition] = useTransition();
-
   const [showAdd, setShowAdd] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showShare, setShowShare] = useState(false);
-
-  // 공유링크 state
-  const [plannerShareLink, setPlannerShareLink] = useState<PlannerShareLink>(shareLink);
-
-  const handleSave = () => {
-    // TODO : 저장 로직 구현
-  };
-
-  // 공유 링크 생성 핸들러
-  const handleCreateShareLink = () => {
-    startTransition(async () => {
-      try {
-        const data = await createPlanShareLink(planId);
-        const baseUrl = getShareBaseUrl(plannerShareLink.domain);
-        setPlannerShareLink({
-          ...plannerShareLink,
-          url: `${baseUrl}/planner/share?code=${data.shareToken}`,
-        });
-      } catch (error) {
-        setPlannerShareLink({
-          ...plannerShareLink,
-          url: "",
-          status:
-            error instanceof Error ? error.message : "공유 링크를 불러오는 중 오류가 발생했습니다.",
-        });
-      }
-    });
-  };
 
   return (
     <>
@@ -91,10 +58,6 @@ export default function PlannerTopActions({
                 <Share2Icon className="h-4 w-4" />
                 <span className="text-sm">공유하기</span>
               </Button>
-              <Button onClick={handleSave} variant="outline" className="flex-1">
-                <SaveIcon className="h-4 w-4" />
-                <span className="text-sm">저장하기</span>
-              </Button>
             </div>
           </div>
         </div>
@@ -110,12 +73,11 @@ export default function PlannerTopActions({
       />
       {/* 친구 초대하기 */}
       <InviteMemberDialog
+        planId={planId}
         open={showInvite}
         onOpenChange={setShowInvite}
         role={role}
-        isPending={isPending}
-        shareLink={plannerShareLink}
-        onCreateShareLink={handleCreateShareLink}
+        shareLink={shareLink}
       />
       {/* 링크 공유하기 */}
       <LinkShareDialog open={showShare} onOpenChange={setShowShare} />

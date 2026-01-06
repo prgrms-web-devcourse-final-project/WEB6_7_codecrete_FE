@@ -7,18 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useFormContext } from "react-hook-form";
-import { MatePostWrite } from "@/types/community/concert-mate";
+import { useFormContext, useWatch } from "react-hook-form";
 import { format, parseISO } from "date-fns";
+import { MatePostWrite } from "@/types/community/concert-mate";
+import { getConcertDetail } from "@/lib/api/concerts/concerts.client";
 
 export function MateDatePicker() {
-  // TODO : 지난 날짜는 선택 막기
   const [open, setOpen] = React.useState(false);
+  const [endDate, setEndDate] = React.useState<string | null>(null);
 
-  // 1. formState에서 errors 추출
-  const { setValue, watch } = useFormContext<MatePostWrite>();
+  const { setValue, control } = useFormContext<MatePostWrite>();
 
-  const meetingAt = watch("meetingAt");
+  const meetingAt = useWatch({ control, name: "meetingAt" });
+  const concertId = useWatch({ control, name: "concertId" });
 
   const [localTime, setLocalTime] = React.useState(
     meetingAt ? format(parseISO(meetingAt), "HH:mm") : "10:00"
@@ -32,6 +33,31 @@ export function MateDatePicker() {
     const combined = `${ymd}T${timePart}:00`;
     setValue("meetingAt", combined);
   };
+
+  // 콘서트 날짜 불러오기
+  React.useEffect(() => {
+    if (!concertId || concertId === 0) return;
+
+    const fetchDetail = async () => {
+      const data = await getConcertDetail({ concertId: concertId.toString() });
+      setEndDate(data?.endDate || null);
+    };
+    fetchDetail();
+  }, [concertId]);
+
+  // 날짜 막기
+  const isDateDisabled = React.useCallback(
+    (date: Date) => {
+      // 오늘 이전 막기
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (date < today) return true;
+      // 콘서트 이후 막기
+      if (endDate && date > new Date(endDate)) return true;
+      return false;
+    },
+    [endDate]
+  );
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -52,6 +78,7 @@ export function MateDatePicker() {
               mode="single"
               selected={currentDate}
               captionLayout="dropdown"
+              disabled={isDateDisabled}
               onSelect={(date) => {
                 update(date, localTime);
                 setOpen(false);

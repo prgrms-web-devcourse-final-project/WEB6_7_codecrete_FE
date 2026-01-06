@@ -15,6 +15,7 @@ export type ConcertDetail = {
   ticketTime: string | null;
   ticketEndTime: string | null;
   viewCount: number;
+  concertArtists: number[];
 };
 
 // 공연 상세 정보 아이템

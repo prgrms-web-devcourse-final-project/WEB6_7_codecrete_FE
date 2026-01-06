@@ -5,8 +5,17 @@ import { Button } from "@/components/ui/button";
 import { MapIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import PlannerSidebarContents from "./PlannerSidebarContents";
+import { PlannerParticipant, ScheduleDetail } from "@/types/planner";
 
-export default function MobilePlannerSidebar() {
+interface MobilePlannerSidebarProps {
+  participants: PlannerParticipant[];
+  schedules: ScheduleDetail[];
+}
+
+export default function MobilePlannerSidebar({
+  participants,
+  schedules,
+}: MobilePlannerSidebarProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   return (
     <>
@@ -22,12 +31,12 @@ export default function MobilePlannerSidebar() {
               <span className="sr-only">지도 및 정보 보기</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[85vh] rounded-t-[20px] px-5 sm:px-6">
-            <SheetHeader className="mb-6 text-left">
-              <SheetTitle>공연 정보 및 지도</SheetTitle>
+          <SheetContent side="bottom" className="h-dvh gap-0">
+            <SheetHeader className="border-border border-b sm:px-6">
+              <SheetTitle>플래너 지도 및 정보 보기</SheetTitle>
             </SheetHeader>
-            <div className="h-[calc(100%-80px)] overflow-y-auto pb-10">
-              <PlannerSidebarContents />
+            <div className="scrollbar-hide h-[calc(100%-80px)] overflow-y-auto p-6">
+              <PlannerSidebarContents participants={participants} schedules={schedules} />
             </div>
           </SheetContent>
         </Sheet>

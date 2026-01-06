@@ -10,6 +10,7 @@ import ProfileNoImage from "@/components/common/ProfileNoImage";
 export default async function MateListCard({ post }: { post: Post }) {
   // TODO : 유저프로필사진 추가 : userId 기반으로 조회 가능한 API 생성 예정 / nickname 부분도 교체 예정
   // const userInfoRes = await getUsersMe();
+  // TODO : closed, 활동 태그 추가 시도
   const concertInfoRes = await getConcertDetail({ concertId: String(post.concertId) });
 
   const formattedDate = format(new Date(post.createdDate), "yyyy-MM-dd");
@@ -55,7 +56,7 @@ export default async function MateListCard({ post }: { post: Post }) {
               </p>
             </div>
           </div>
-          <p className="text-text-sub text-smㄴ line-clamp-4">{post.content}</p>
+          <p className="text-text-sub line-clamp-4 text-sm">{post.content}</p>
         </div>
       </Link>
       <MateListBtn postId={post.postId} />

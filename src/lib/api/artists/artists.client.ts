@@ -79,3 +79,19 @@ export async function deleteLikeArtist(artistId: number): Promise<boolean> {
     return false;
   }
 }
+
+// 아티스트 좋아요 여부
+export async function getIsLikedArtist(artistId: number): Promise<boolean> {
+  try {
+    const res = await ClientApi(`/api/v1/artists/likes/${artistId}`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      return false;
+    }
+    const data = await res.json();
+    return data.data.isLiked;
+  } catch {
+    return false;
+  }
+}

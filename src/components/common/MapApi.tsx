@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
+import { Map, MapMarker } from "react-kakao-maps-sdk";
 
 export default function MapApi({
   coords,
@@ -12,19 +12,9 @@ export default function MapApi({
 }) {
   const [coord, setCoord] = useState<{ lat: number; lon: number }>({ lat: 0, lon: 0 });
 
-  const [loading, error] = useKakaoLoader({
-    appkey: process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY!,
-    libraries: ["services", "clusterer"],
-  });
-
   useEffect(() => {
     setCoord(coords);
   }, [coords]);
-
-  if (loading) return <div>지도 로딩중...</div>;
-  if (error) {
-    return <div>지도를 불러올 수 없습니다.</div>;
-  }
 
   return (
     <Map

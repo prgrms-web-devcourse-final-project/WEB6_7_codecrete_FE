@@ -3,11 +3,10 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import SearchInput from "@/components/concert-mate/SearchInput";
-import { cookies } from "next/headers";
+import { getAuthStatus } from "@/lib/api/auth/auth.server";
 
 export default async function MateListIntro() {
-  const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.has("ACCESS_TOKEN");
+  const isLoggedIn = await getAuthStatus();
 
   return (
     <section className="intro bg-bg-sub px-15 py-16">

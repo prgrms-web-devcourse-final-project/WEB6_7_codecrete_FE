@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import {
   ArrowRightIcon,
   BellIcon,
@@ -8,6 +8,7 @@ import {
   CheckIcon,
   CopyIcon,
   ExternalLink,
+  Loader2Icon,
   MessageSquareIcon,
   Share2Icon,
   TicketIcon,
@@ -62,6 +63,9 @@ export default function QuickActionsSection({
   // 링크 이동
   const router = useRouter();
 
+  // 플래너 생성 트랜지션
+  const [isCreatingPlan, startPlanCreation] = useTransition();
+
   // 링크 공유하기 Input
   const shareInputRef = useRef<HTMLInputElement>(null);
 
@@ -110,42 +114,44 @@ export default function QuickActionsSection({
   };
 
   // 플래너 생성 핸들러
-  const handleCreateNewPlan = async () => {
-    if (!concertId) {
-      toast.error("선택된 공연이 없습니다.");
-      return;
-    }
-    if (!plannerTitle) {
-      toast.error("플래너 제목을 입력해주세요.");
-      return;
-    }
-    if (!plannerDate) {
-      toast.error("플래너 날짜를 선택해주세요.");
-      return;
-    }
+  const handleCreateNewPlan = () => {
+    startPlanCreation(async () => {
+      if (!concertId) {
+        toast.error("선택된 공연이 없습니다.");
+        return;
+      }
+      if (!plannerTitle) {
+        toast.error("플래너 제목을 입력해주세요.");
+        return;
+      }
+      if (!plannerDate) {
+        toast.error("플래너 날짜를 선택해주세요.");
+        return;
+      }
 
-    // 공연 당일 확인
-    const concertStart = getConcertStartDate(concertStartDate!);
-    if (isSameDay(plannerDate, concertStart)) {
-      toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
-      return;
-    }
+      // 공연 당일 확인
+      const concertStart = getConcertStartDate(concertStartDate!);
+      if (isSameDay(plannerDate, concertStart)) {
+        toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
+        return;
+      }
 
-    const data = await createNewPlan({
-      concertId: concertId,
-      title: plannerTitle.trim(),
-      planDate: dateToISOString(plannerDate),
+      const data = await createNewPlan({
+        concertId: concertId,
+        title: plannerTitle.trim(),
+        planDate: dateToISOString(plannerDate),
+      });
+
+      if (!data) {
+        toast.error("플래너 생성에 실패했습니다.");
+        return;
+      }
+
+      toast.success("플래너가 생성되었습니다.");
+      setPlannerDialogOpen(false);
+
+      router.push(`/planner/${data.data.id}`);
     });
-
-    if (!data) {
-      toast.error("플래너 생성에 실패했습니다.");
-      return;
-    }
-
-    toast.success("플래너가 생성되었습니다.");
-    setPlannerDialogOpen(false);
-
-    router.push(`/planner/${data.data.id}`);
   };
 
   // 복사
@@ -341,7 +347,16 @@ export default function QuickActionsSection({
             <Button variant="outline" onClick={handleClosePlannerModal}>
               취소
             </Button>
-            <Button onClick={handleCreateNewPlan}>만들기</Button>
+            <Button disabled={isCreatingPlan} onClick={handleCreateNewPlan}>
+              {isCreatingPlan ? (
+                <>
+                  <Loader2Icon className="animate-spin" />
+                  생성 중...
+                </>
+              ) : (
+                "만들기"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

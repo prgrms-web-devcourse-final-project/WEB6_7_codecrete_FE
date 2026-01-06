@@ -1,10 +1,10 @@
 "use client";
 
-import { CalendarClockIcon, CalendarPlus2, ExternalLink } from "lucide-react";
+import { CalendarClockIcon, CalendarPlus2, ExternalLink, Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { User } from "@/types/user";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
   Dialog,
@@ -55,6 +55,11 @@ export default function ConcertHeaderBtn({
   const [plannerTitle, setPlannerTitle] = useState<string>("");
   const [plannerDate, setPlannerDate] = useState<Date | undefined>(undefined);
 
+  // 플래너 생성 트랜지션
+  const [isCreatingPlan, startPlanCreation] = useTransition();
+  // 티켓팅 일정 등록용
+  const [isUpdatingTicketing, startTicketingUpdate] = useTransition();
+
   // 모달 열기 핸들러
   const handleOpenTicketModal = () => {
     setTicketDialogOpen(true);
@@ -79,100 +84,104 @@ export default function ConcertHeaderBtn({
   };
 
   // 플래너 생성 핸들러
-  const handleCreateNewPlan = async () => {
-    if (!concertDetail?.concertId) {
-      toast.error("선택된 공연이 없습니다.");
-      return;
-    }
-    if (!plannerTitle) {
-      toast.error("플래너 제목을 입력해주세요.");
-      return;
-    }
-    if (!plannerDate) {
-      toast.error("플래너 날짜를 선택해주세요.");
-      return;
-    }
-
-    // 공연 당일 확인
-    const concertStart = getConcertStartDate(concertDetail.startDate);
-    if (isSameDay(plannerDate, concertStart)) {
-      toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
-      return;
-    }
-
-    const data = await createNewPlan({
-      concertId: concertDetail.concertId,
-      title: plannerTitle.trim(),
-      planDate: dateToISOString(plannerDate),
-    });
-
-    if (!data) {
-      toast.error("플래너 생성에 실패했습니다.");
-      return;
-    }
-
-    toast.success("플래너가 생성되었습니다.");
-    setPlannerDialogOpen(false);
-
-    router.push(`/planner/${data.data.id}`);
-  };
-
-  // 어드민 - 티켓팅 일정 등록 핸들러
-  const handlePatchTicketing = async () => {
-    if (!concertDetail?.concertId) {
-      toast.error("콘서트 정보가 올바르지 않습니다.");
-      return;
-    }
-    if (!startTicketDate || !endTicketDate) {
-      toast.error("시작 및 종료 티켓팅 일정을 모두 선택해주세요.");
-      return;
-    }
-
-    // 날짜와 시간을 합쳐서 완전한 DateTime 생성
-    const startDateTime = new Date(startTicketDate);
-    const [startHour, startMinute] = startTime.split(":").map(Number);
-    startDateTime.setHours(startHour, startMinute, 0);
-
-    const endDateTime = new Date(endTicketDate);
-    const [endHour, endMinute] = endTime.split(":").map(Number);
-    endDateTime.setHours(endHour, endMinute, 0);
-
-    if (startDateTime >= endDateTime) {
-      toast.error("티켓팅 시작 일시는 종료 일시보다 앞서야 합니다.");
-      return;
-    }
-
-    try {
-      // 한국 시간을 그대로 유지하면서 ISO 형식으로 변환
-      const formatToKSTISOString = (date: Date): string => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        const hours = String(date.getHours()).padStart(2, "0");
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-        return `${year}-${month}-${day}T${hours}:${minutes}:00`;
-      };
-
-      const result = await patchTicketTimeSet({
-        concertId: concertDetail.concertId,
-        ticketTime: formatToKSTISOString(startDateTime),
-        ticketEndTime: formatToKSTISOString(endDateTime),
-      });
-
-      if (result.resultCode === "ERROR") {
-        toast.error(result.msg || "티켓팅 일정 저장에 실패했습니다.");
+  const handleCreateNewPlan = () => {
+    startPlanCreation(async () => {
+      if (!concertDetail?.concertId) {
+        toast.error("선택된 공연이 없습니다.");
+        return;
+      }
+      if (!plannerTitle) {
+        toast.error("플래너 제목을 입력해주세요.");
+        return;
+      }
+      if (!plannerDate) {
+        toast.error("플래너 날짜를 선택해주세요.");
         return;
       }
 
-      toast.success("티켓팅 일정이 저장되었습니다.");
-      setTicketingDialogOpen(false);
+      // 공연 당일 확인
+      const concertStart = getConcertStartDate(concertDetail.startDate);
+      if (isSameDay(plannerDate, concertStart)) {
+        toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
+        return;
+      }
 
-      // 페이지 데이터 새로고침
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to patch ticketing time:", error);
-      toast.error("티켓팅 일정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
-    }
+      const data = await createNewPlan({
+        concertId: concertDetail.concertId,
+        title: plannerTitle.trim(),
+        planDate: dateToISOString(plannerDate),
+      });
+
+      if (!data) {
+        toast.error("플래너 생성에 실패했습니다.");
+        return;
+      }
+
+      toast.success("플래너가 생성되었습니다.");
+      setPlannerDialogOpen(false);
+
+      router.push(`/planner/${data.data.id}`);
+    });
+  };
+
+  // 어드민 - 티켓팅 일정 등록 핸들러
+  const handlePatchTicketing = () => {
+    startTicketingUpdate(async () => {
+      if (!concertDetail?.concertId) {
+        toast.error("콘서트 정보가 올바르지 않습니다.");
+        return;
+      }
+      if (!startTicketDate || !endTicketDate) {
+        toast.error("시작 및 종료 티켓팅 일정을 모두 선택해주세요.");
+        return;
+      }
+
+      // 날짜와 시간을 합쳐서 완전한 DateTime 생성
+      const startDateTime = new Date(startTicketDate);
+      const [startHour, startMinute] = startTime.split(":").map(Number);
+      startDateTime.setHours(startHour, startMinute, 0);
+
+      const endDateTime = new Date(endTicketDate);
+      const [endHour, endMinute] = endTime.split(":").map(Number);
+      endDateTime.setHours(endHour, endMinute, 0);
+
+      if (startDateTime >= endDateTime) {
+        toast.error("티켓팅 시작 일시는 종료 일시보다 앞서야 합니다.");
+        return;
+      }
+
+      try {
+        // 한국 시간을 그대로 유지하면서 ISO 형식으로 변환
+        const formatToKSTISOString = (date: Date): string => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          const hours = String(date.getHours()).padStart(2, "0");
+          const minutes = String(date.getMinutes()).padStart(2, "0");
+          return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+        };
+
+        const result = await patchTicketTimeSet({
+          concertId: concertDetail.concertId,
+          ticketTime: formatToKSTISOString(startDateTime),
+          ticketEndTime: formatToKSTISOString(endDateTime),
+        });
+
+        if (result.resultCode === "ERROR") {
+          toast.error(result.msg || "티켓팅 일정 저장에 실패했습니다.");
+          return;
+        }
+
+        toast.success("티켓팅 일정이 저장되었습니다.");
+        setTicketingDialogOpen(false);
+
+        // 페이지 데이터 새로고침
+        router.refresh();
+      } catch (error) {
+        console.error("Failed to patch ticketing time:", error);
+        toast.error("티켓팅 일정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    });
   };
 
   return (
@@ -290,7 +299,16 @@ export default function ConcertHeaderBtn({
             <Button variant="outline" onClick={handleClosePlannerModal}>
               취소
             </Button>
-            <Button onClick={handleCreateNewPlan}>만들기</Button>
+            <Button disabled={isCreatingPlan} onClick={handleCreateNewPlan}>
+              {isCreatingPlan ? (
+                <>
+                  <Loader2Icon className="animate-spin" />
+                  생성 중...
+                </>
+              ) : (
+                "플래너 만들기"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -403,7 +421,16 @@ export default function ConcertHeaderBtn({
             <Button variant="outline" onClick={handleCloseTicketingModal}>
               취소
             </Button>
-            <Button onClick={handlePatchTicketing}>등록</Button>
+            <Button disabled={isUpdatingTicketing} onClick={handlePatchTicketing}>
+              {isUpdatingTicketing ? (
+                <>
+                  <Loader2Icon className="animate-spin" />
+                  등록 중...
+                </>
+              ) : (
+                "티켓팅 일정 등록"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

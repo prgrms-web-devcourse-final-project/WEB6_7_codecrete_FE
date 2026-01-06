@@ -19,6 +19,7 @@ import { getConcertStartDate, isSameDay, dateToISOString } from "@/utils/helpers
 
 export default function PlannerCreate() {
   const router = useRouter();
+  const [isCreatingPlan, startPlanCreation] = useTransition();
   const [isPending, startTransition] = useTransition();
 
   // 플래너 생성 모달 상태
@@ -141,47 +142,43 @@ export default function PlannerCreate() {
   }, [plannerDialogOpen, router]);
 
   // 플래너 생성 핸들러
-  const handleCreateNewPlan = async () => {
-    if (!selectedConcert?.id) {
-      toast.error("선택된 공연이 없습니다.");
-      return;
-    }
-    if (!plannerTitle) {
-      toast.error("플래너 제목을 입력해주세요.");
-      return;
-    }
-    if (!plannerDate) {
-      toast.error("플래너 날짜를 선택해주세요.");
-      return;
-    }
+  const handleCreateNewPlan = () => {
+    startPlanCreation(async () => {
+      if (!selectedConcert?.id) {
+        toast.error("선택된 공연이 없습니다.");
+        return;
+      }
+      if (!plannerTitle) {
+        toast.error("플래너 제목을 입력해주세요.");
+        return;
+      }
+      if (!plannerDate) {
+        toast.error("플래너 날짜를 선택해주세요.");
+        return;
+      }
 
-    // 공연 당일 확인
-    const concertStart = getConcertStartDate(concertDetail?.startDate || "");
-    if (isSameDay(plannerDate, concertStart)) {
-      toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
-      return;
-    }
+      // 공연 당일 확인
+      const concertStart = getConcertStartDate(concertDetail?.startDate || "");
+      if (isSameDay(plannerDate, concertStart)) {
+        toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
+        return;
+      }
 
-    try {
-      startTransition(async () => {
-        try {
-          const data = await createNewPlan({
-            concertId: selectedConcert.id.toString(),
-            title: plannerTitle.trim(),
-            planDate: dateToISOString(plannerDate),
-          });
-
-          // 성공 후 링크 이동
-          toast.success("플래너가 생성되었습니다.");
-          router.push(`/planner/${data.data.id}`);
-        } catch (error) {
-          console.error(error);
-        }
+      const data = await createNewPlan({
+        concertId: selectedConcert.id.toString(),
+        title: plannerTitle.trim(),
+        planDate: dateToISOString(plannerDate),
       });
-    } catch (error) {
-      console.error("플래너 생성 오류:", error);
-      toast.error("플래너 생성에 실패했습니다.");
-    }
+
+      if (!data) {
+        toast.error("플래너 생성에 실패했습니다.");
+        return;
+      }
+
+      // 성공 후 링크 이동
+      toast.success("플래너가 생성되었습니다.");
+      router.push(`/planner/${data.data.id}`);
+    });
   };
 
   return (
@@ -315,9 +312,9 @@ export default function PlannerCreate() {
             </Button>
             <Button
               onClick={handleCreateNewPlan}
-              disabled={!plannerTitle.trim() || !plannerDate || isPending}
+              disabled={!plannerTitle.trim() || !plannerDate || isCreatingPlan}
             >
-              {isPending ? (
+              {isCreatingPlan ? (
                 <>
                   <Loader2Icon className="mr-2 size-4 animate-spin" />
                   생성 중...

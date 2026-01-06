@@ -6,7 +6,7 @@ import SearchIntro from "@/components/search/SearchIntro";
 import SearchNavigation from "@/components/search/SearchNavigation";
 import { Suspense } from "react";
 
-export default function SearchLayout({ children }: { children: React.ReactNode }) {
+export default async function SearchLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <BreadcrumbNavbar

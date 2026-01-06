@@ -1,79 +1,143 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ReviewDetailData } from "@/types/community/concert-review";
+import { useEffect, useState } from "react";
+import { getPostLikeCount, togglePostLike } from "@/lib/api/community/community.client";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
 
-type ReviewPostBody = {
-  showBadge: boolean;
-};
+export default function ReviewPostBody({
+  reviewDetail,
+  initialIsLiked,
+}: {
+  reviewDetail: ReviewDetailData;
+  initialIsLiked: boolean;
+}) {
+  const [likeCount, setLikeCount] = useState<number | null>(null);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [isLikePending, setIsLikePending] = useState(false);
 
-export default function ReviewPostBody({ showBadge }: ReviewPostBody) {
-  /**
-   * TODO:
-   * - 리뷰 본문 데이터를 API 연동 후 props로 전달하도록 변경
-   * - 현재는 퍼블리싱을 위한 하드코딩 텍스트 상태
-   */
+  useEffect(() => {
+    setIsLiked(initialIsLiked);
+  }, [initialIsLiked]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchLikeCount = async () => {
+      try {
+        const count = await getPostLikeCount(reviewDetail.post.postId);
+
+        if (!cancelled) {
+          setLikeCount(count);
+        }
+      } catch (e) {
+        console.error(e);
+        if (!cancelled) {
+          setLikeCount(0);
+        }
+      }
+    };
+
+    fetchLikeCount();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reviewDetail.post.postId]);
+
+  const handleToggleLike = async () => {
+    const prevIsLiked = isLiked;
+    const prevLikeCount = likeCount;
+
+    if (isLikePending) return;
+    setIsLikePending(true);
+    try {
+      await togglePostLike(reviewDetail.post.postId);
+
+      const nextIsLiked = !prevIsLiked;
+      setIsLiked(nextIsLiked);
+      setLikeCount((prev) => (prev === null ? prev : prev + (nextIsLiked ? 1 : -1)));
+
+      toast.success(nextIsLiked ? "좋아요를 눌렀습니다." : "좋아요가 취소되었습니다.");
+    } catch (e) {
+      setIsLiked(prevIsLiked);
+      setLikeCount(prevLikeCount);
+      toast.error(e instanceof Error ? e.message : "좋아요 처리 중 오류가 발생했습니다.");
+    } finally {
+      setIsLikePending(false);
+    }
+  };
+
   return (
     <>
-      <section className="flex flex-col gap-4">
-        {/**
-         * TODO:
-         * - 리뷰 본문(content) API 데이터로 교체
-         * - Markdown 형식으로 내려오는 경우 렌더링 방식 결정 필요
-         */}
-        <p>
-          이번 공연은 기대 이상이었습니다. 무대 구성부터 사운드, 관객 동선까지 전반적으로 잘 설계된
-          공연이었고, 처음 콘서트를 관람하는 분들도 부담 없이 즐길 수 있는 분위기였습니다.
-        </p>
+      <section className="flex flex-col gap-10 py-8">
+        <p className="whitespace-pre-line">{reviewDetail.post.content}</p>
 
-        {/**
-         * TODO:
-         * - 본문 내 소제목도 데이터 기반으로 관리할지 여부 논의
-         */}
-        <h2 className="mt-6 text-base font-medium">세트리스트 하이라이트</h2>
+        {/* 이미지 캐러셀 */}
+        {reviewDetail.imageUrls?.length > 0 && (
+          <div className="mx-auto w-full max-w-[800px]">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {reviewDetail.imageUrls.map((src, idx) => (
+                  <CarouselItem key={idx}>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-gray-100">
+                      <Image
+                        src={src}
+                        alt={`리뷰 이미지 ${idx + 1}`}
+                        className="h-full w-full object-cover"
+                        sizes="(max-width: 768px) 100vw, 800px"
+                        fill
+                        onError={(e) => {
+                          e.currentTarget.src = "/ConcertPoster.png";
+                        }}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
 
-        <p>
-          공연 초반에는 신나는 곡들로 분위기를 빠르게 끌어올렸고, 중반부에는 감성적인 무대로
-          몰입도를 높였습니다. 앙코르 무대에서는 대표곡이 연달아 이어지며 현장의 열기가 최고조에
-          달했습니다.
-        </p>
-
-        {/**
-         * TODO:
-         * - 공연 이미지 URL API 연동
-         * - 이미지 여러 장일 경우 캐러셀 적용 여부 검토
-         * - 이미지 로딩 실패 시 fallback UI 처리
-         */}
-        <div className="flex h-100 items-center justify-center bg-gray-300">
-          <span className="text-text-sub">공연 현장 사진</span>
-        </div>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+        )}
       </section>
 
       <Separator />
 
-      {/**
-       * TODO:
-       * - 좋아요(like) 기능 API 연동
-       * - 로그인 여부에 따른 클릭 제한 처리
-       * - 이미 좋아요한 경우 상태 표시 (active / filled icon)
-       */}
       <div className="flex justify-between">
         <div>
-          <Button variant={"outline"}>
-            <Heart /> 124
+          <Button
+            variant="outline"
+            onClick={handleToggleLike}
+            disabled={likeCount === null || isLikePending}
+            className="flex items-center gap-2"
+          >
+            <Heart
+              className={twMerge(
+                "h-4 w-4 transition-all duration-200 active:scale-125",
+                isLiked ? "scale-110 fill-red-500 text-red-500" : "text-gray-500"
+              )}
+            />
+            {likeCount === null ? (
+              <span className="ml-2 inline-block h-4 w-6 animate-pulse rounded bg-gray-200" />
+            ) : (
+              <span className="ml-2">{likeCount}</span>
+            )}
           </Button>
         </div>
-
-        {/**
-         * 동행 구인 페이지 전용
-         * - props로 true 전달
-         */}
-        {showBadge && (
-          <Badge className={twMerge(`bg-point-main text-text-point-main mr-2 text-sm`)}>
-            closed
-          </Badge>
-        )}
       </div>
       <Separator />
     </>

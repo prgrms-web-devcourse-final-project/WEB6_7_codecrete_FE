@@ -12,7 +12,7 @@ export interface User {
 }
 
 // 다른 사람 프로필
-export interface OtherUser {
+export interface UserInfo {
   id: number;
   nickname: string;
   profileImageUrl: string;

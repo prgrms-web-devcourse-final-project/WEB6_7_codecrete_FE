@@ -19,7 +19,14 @@ import { ScheduleDetail } from "@/types/planner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { updatePlanSchedule } from "@/lib/api/planner/schedule.client";
-import { formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
+import { formatTimeToKoreanAMPM, toMinutePrecision } from "@/utils/helpers/formatters";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EditScheduleDialogProps {
   planId: string;
@@ -42,15 +49,35 @@ export default function EditScheduleDialog({
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const title = formData.get("scheduleTitle") as string;
-    const notes = formData.get("scheduleNotes") as string;
+    let title = "";
+    let notes = "";
+    let startAt = "";
+    let duration = 60;
 
-    // 제목과 메모만 업데이트
-    const scheduleData = {
-      ...schedule,
-      title,
-      details: notes,
-    };
+    let scheduleData = schedule;
+    if (schedule.isMainEvent) {
+      // 메인 이벤트(공연)인 경우, 시작 시간과 지속시간만 업데이트
+      startAt = formData.get("scheduleStartTime") as string;
+      duration = Number(formData.get("scheduleDuration"));
+      notes = formData.get("scheduleNotes") as string;
+
+      scheduleData = {
+        ...scheduleData,
+        startAt,
+        duration,
+        details: notes,
+      };
+    } else {
+      // 일반 일정인 경우, 제목과 메모만 업데이트
+      title = formData.get("scheduleTitle") as string;
+      notes = formData.get("scheduleNotes") as string;
+
+      scheduleData = {
+        ...scheduleData,
+        title,
+        details: notes,
+      };
+    }
 
     startTransition(async () => {
       try {
@@ -81,19 +108,73 @@ export default function EditScheduleDialog({
           <FieldGroup className="max-h-[60vh] gap-4 overflow-y-auto p-4">
             {/* 메인 이벤트(공연)는 읽기 전용 */}
             {schedule.isMainEvent && (
-              <div className="bg-muted/50 rounded-lg border p-4">
-                <h4 className="text-lg font-bold">{schedule.title}</h4>
-                <div className="text-muted-foreground mt-2 space-y-1 text-sm">
-                  <p className="flex items-center gap-2">
-                    <MapPinIcon className="size-4" />
-                    {schedule.concertPlaceName}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <ClockIcon className="size-4" />
-                    {formatTimeToKoreanAMPM(schedule.startAt)}
-                  </p>
+              <>
+                <div className="bg-muted/50 rounded-lg border p-4">
+                  <h4 className="text-lg font-bold">{schedule.title}</h4>
+                  <div className="text-muted-foreground mt-2 space-y-1 text-sm">
+                    <p className="flex items-center gap-2">
+                      <MapPinIcon className="size-4" />
+                      {schedule.concertPlaceName}
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <ClockIcon className="size-4" />
+                      {formatTimeToKoreanAMPM(schedule.startAt)}
+                    </p>
+                  </div>
                 </div>
-              </div>
+                {/* 콘서트 시간 */}
+                <div className="flex gap-4">
+                  <Field className="flex-1">
+                    <Label htmlFor="scheduleStartTime" className="gap-0.5">
+                      시작 시간<span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="time"
+                      id="scheduleStartTime"
+                      name="scheduleStartTime"
+                      step="60"
+                      defaultValue={toMinutePrecision("18:00")}
+                      min={"00:00"}
+                      max={"23:59"}
+                    />
+                  </Field>
+                  <Field className="flex-1">
+                    <Label htmlFor="scheduleDuration" className="gap-0.5">
+                      예상 소요시간
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      name="scheduleDuration"
+                      defaultValue={schedule.duration?.toString() ?? "60"}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="소요 시간" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30">30분</SelectItem>
+                        <SelectItem value="60">1시간</SelectItem>
+                        <SelectItem value="90">1시간 30분</SelectItem>
+                        <SelectItem value="120">2시간</SelectItem>
+                        <SelectItem value="150">2시간 30분</SelectItem>
+                        <SelectItem value="180">3시간</SelectItem>
+                        <SelectItem value="210">3시간 30분</SelectItem>
+                        <SelectItem value="240">4시간</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                </div>
+                {/* 메모 */}
+                <Field>
+                  <Label htmlFor="scheduleNotes">상세 정보</Label>
+                  <Textarea
+                    id="scheduleNotes"
+                    name="scheduleNotes"
+                    placeholder="메모를 입력하세요"
+                    className="h-24 resize-none"
+                    defaultValue={schedule.details}
+                  />
+                </Field>
+              </>
             )}
 
             {/* 일반 일정 정보 표시 */}
@@ -167,18 +248,16 @@ export default function EditScheduleDialog({
                 취소
               </Button>
             </DialogClose>
-            {!schedule.isMainEvent && (
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                    수정 중...
-                  </>
-                ) : (
-                  "수정 완료"
-                )}
-              </Button>
-            )}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  수정 중...
+                </>
+              ) : (
+                "수정 완료"
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -22,11 +22,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 const tabTriggerClass =
   "data-[state=active]:bg-primary dark:data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:data-[state=active]:text-primary-foreground dark:data-[state=active]:border-transparent h-auto py-2";
 
 export default function StartLocationCard({ myLocation }: { myLocation: UserPlace | null }) {
+  const router = useRouter();
+
   const [location, setLocation] = useState<UserPlace | null>(myLocation);
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,6 +62,8 @@ export default function StartLocationCard({ myLocation }: { myLocation: UserPlac
       console.error(error);
       toast.error("위치 정보를 저장하는데 실패했습니다.");
     } finally {
+      // 서버 컴포넌트 데이터 재요청
+      router.refresh();
       setLoading(false);
     }
   };
@@ -90,6 +95,8 @@ export default function StartLocationCard({ myLocation }: { myLocation: UserPlac
       console.error(error);
       toast.error("장소 정보를 저장하는데 실패했습니다.");
     } finally {
+      // 서버 컴포넌트 데이터 재요청
+      router.refresh();
       setLoading(false);
     }
   };
@@ -103,6 +110,9 @@ export default function StartLocationCard({ myLocation }: { myLocation: UserPlac
     } catch (error) {
       console.error(error);
       toast.error("출발지 삭제에 실패했습니다.");
+    } finally {
+      // 서버 컴포넌트 데이터 재요청
+      router.refresh();
     }
   };
 

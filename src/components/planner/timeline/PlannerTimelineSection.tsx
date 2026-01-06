@@ -41,8 +41,9 @@ export default async function PlannerTimelineSection({
         <div className="before:bg-bg-sub relative space-y-6 before:absolute before:top-0 before:left-4 before:h-full before:w-0.5 lg:space-y-8 lg:before:left-8">
           <div className="relative space-y-6 lg:space-y-8">
             <StartLocationCard myLocation={myLocation} />
-            {showRoute && (
+            {showRoute && myLocation && (
               <RouteCard
+                key={`${firstSchedule.id}-route`}
                 start={{
                   lat: myLocation.lat,
                   lon: myLocation.lon,

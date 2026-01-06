@@ -17,6 +17,7 @@ import {
   getTicketOfficesByConcertId,
 } from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
+import ConcertChatButton from "./ConcertChatButton";
 
 export default async function ConcertHeader({ concertId }: { concertId: string }) {
   const [concertDetail, concertTicketing, isAuthenticated] = await Promise.all([
@@ -70,11 +71,14 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
                 <p className="text-text-sub text-xl">{concertDetail.description}</p>
               </div>
             </div>
-            <ConcertLikeButton
-              concertId={concertDetail.concertId}
-              isAuthenticated={isAuthenticated}
-              isLiked={isLikedConcert?.isLike}
-            />
+            <div className="flex gap-2">
+              <ConcertChatButton concertId={concertDetail.concertId} />
+              <ConcertLikeButton
+                concertId={concertDetail.concertId}
+                isAuthenticated={isAuthenticated}
+                isLiked={isLikedConcert?.isLike}
+              />
+            </div>
           </div>
           <div className="border-border grid grid-cols-2 gap-x-4 gap-y-6 border-y py-8">
             <ConcertHeaderInfo

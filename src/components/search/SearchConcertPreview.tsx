@@ -1,18 +1,18 @@
 import Link from "next/link";
 import SearchConcertCard from "@/components/search/SearchConcertCard";
-import { getSearchConcerts } from "@/lib/api/search/search.server";
 import { SpotlightIcon } from "lucide-react";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "../ui/empty";
-import { getAuthStatus } from "@/lib/api/auth/auth.server";
+import { ConcertDataWithLiked } from "@/types/concerts";
 
-export default async function SearchConcertPreview({ keyword }: { keyword: string }) {
-  const isAuthenticated = await getAuthStatus();
-  const concerts = await getSearchConcerts({
-    keyword,
-    isAuthenticated,
-    size: 8,
-  });
-
+export default async function SearchConcertPreview({
+  keyword,
+  concerts,
+  isAuthenticated,
+}: {
+  keyword: string;
+  concerts: ConcertDataWithLiked[];
+  isAuthenticated: boolean;
+}) {
   if (concerts.length === 0) {
     return (
       <div className="mx-auto flex w-full max-w-400 flex-col gap-8">

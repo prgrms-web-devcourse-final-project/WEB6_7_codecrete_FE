@@ -84,10 +84,17 @@ async function handleGuestOnlyRoute(
 
 function isAuthRequiredPath(pathname: string) {
   const isStaticPath = AUTH_REQUIRED_PATHS.some((p) => pathname.startsWith(p));
-  // /concerts/로 시작하고 /chat으로 끝나는 패턴 추가
+
+  // 채팅은 로그인 필수
   const isChatPath = pathname.startsWith("/concerts/") && pathname.endsWith("/chat");
 
-  return isStaticPath || isChatPath;
+  // 리뷰 작성/수정은 로그인 필수
+  const isReviewWriteOrEditPath =
+    pathname.startsWith("/concerts/") &&
+    pathname.includes("/review/") &&
+    (pathname.endsWith("/write") || pathname.endsWith("/edit"));
+
+  return isStaticPath || isChatPath || isReviewWriteOrEditPath;
 }
 
 function isGuestOnlyPath(pathname: string) {

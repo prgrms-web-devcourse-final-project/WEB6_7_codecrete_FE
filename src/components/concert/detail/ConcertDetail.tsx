@@ -10,7 +10,13 @@ import {
 } from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
 
-export default async function ConcertDetail({ concertId }: { concertId: string }) {
+export default async function ConcertDetail({
+  concertId,
+  isLoggedIn,
+}: {
+  concertId: string;
+  isLoggedIn: boolean;
+}) {
   const [concertDetail, concertVenue, concertTicketing, isAuthenticated] = await Promise.all([
     getConcertDetail({ concertId }),
     getConcertVenueInfo({ concertId }),
@@ -37,7 +43,7 @@ export default async function ConcertDetail({ concertId }: { concertId: string }
             alt={concertDetail?.name}
           />
           <ConcertDetailVenue concertVenue={concertVenue.data} />
-          <ConcertDetailReview concertId={concertId} />
+          <ConcertDetailReview concertId={concertId} isLoggedIn={isLoggedIn} />
         </div>
 
         <div className="right relative flex-1">

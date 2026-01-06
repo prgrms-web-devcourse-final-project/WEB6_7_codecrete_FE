@@ -1,4 +1,4 @@
-import { PlanDetail, PlannerListWithDetails } from "@/types/planner";
+import { PlanDetail, PlanList, PlannerListWithDetails, PlannerParticipant } from "@/types/planner";
 import ServerApi from "@/utils/helpers/serverApi";
 import { getConcertDetail } from "../concerts/concerts.server";
 import { notFound } from "next/navigation";
@@ -41,9 +41,10 @@ export const getPlanList = async (): Promise<PlannerListWithDetails[]> => {
       throw new Error(`API 요청 실패: ${res.status}`);
     }
     const data = await res.json();
+    const planList = data.data;
 
-    const planListWithConcertDetails = await Promise.all(
-      data.data.map(async (plan: PlanDetail) => {
+    const planListWithConcertDetails: PlannerListWithDetails[] = await Promise.all(
+      planList.map(async (plan: PlanList) => {
         try {
           const concertDetail = await getConcertDetail({ concertId: plan.concertId.toString() });
           const planDetail = await getPlanDetail(plan.id.toString());
@@ -94,4 +95,22 @@ export const getSharedPlan = async (shareToken: string): Promise<PlanDetail | nu
 
   const data = await res.json();
   return data.data;
+};
+
+// 플래너 참가자 목록 조회
+export const getPlanParticipants = async (planId: string): Promise<PlannerParticipant[]> => {
+  try {
+    const res = await ServerApi(`/api/v1/plans/${planId}/participants`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.data.participants;
+  } catch (error) {
+    console.error("Error fetching participants:", error);
+    throw error;
+  }
 };
