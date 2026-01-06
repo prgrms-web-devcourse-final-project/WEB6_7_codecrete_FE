@@ -575,9 +575,9 @@ export default function AddScheduleDialog({
             {/* 장소 검색 */}
             {scheduleType !== "TRANSPORT" && (
               <>
+                {/* 기존 일정이 있으면 선택 옵션 제공 */}
                 <Field>
                   <Label htmlFor="scheduleLocation">일정 선택</Label>
-                  {/* 기존 일정이 있으면 선택 옵션 제공 */}
                   {regularScheduleCandidates.length > 0 && (
                     <Select
                       value={selectedRegularScheduleId || "new"}
