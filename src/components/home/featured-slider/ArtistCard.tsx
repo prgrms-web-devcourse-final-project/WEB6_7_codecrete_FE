@@ -52,12 +52,9 @@ export default function ArtistCard({
         </Avatar>
 
         {/* 아티스트 정보 */}
-        <div className="space-y-0.5">
-          <h3 className="text-text-main text-base font-bold md:text-lg">
-            {artist.nameKo ?? artist.artistName}
-          </h3>
-          <p className="text-text-sub text-xs font-semibold md:text-sm">{artist.genres}</p>
-        </div>
+        <h3 className="text-text-main text-base font-bold md:text-lg">
+          {artist.nameKo ?? artist.artistName}
+        </h3>
 
         {/* 팔로워 수 */}
         <div className="text-text-sub flex items-center gap-1.5 text-xs font-semibold md:text-sm">
