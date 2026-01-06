@@ -17,11 +17,20 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 
-export default function ReviewPostBody({ reviewDetail }: { reviewDetail: ReviewDetailData }) {
+export default function ReviewPostBody({
+  reviewDetail,
+  initialIsLiked,
+}: {
+  reviewDetail: ReviewDetailData;
+  initialIsLiked: boolean;
+}) {
   const [likeCount, setLikeCount] = useState<number | null>(null);
-  // TODO: 해당 글에 대한 좋아요 상태 API로 불러오기
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isLikePending, setIsLikePending] = useState(false);
+
+  useEffect(() => {
+    setIsLiked(initialIsLiked);
+  }, [initialIsLiked]);
 
   useEffect(() => {
     let cancelled = false;

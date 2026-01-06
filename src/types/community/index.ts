@@ -39,3 +39,10 @@ export type LikeToggleResponse = {
   msg: string;
   data: string | null;
 };
+
+export type LikeMeResponse = {
+  status: number;
+  resultCode: string;
+  msg: string;
+  data: boolean;
+};

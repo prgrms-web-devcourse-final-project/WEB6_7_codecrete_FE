@@ -1,4 +1,4 @@
-import { CommunityCategory, PostListResponse } from "@/types/community";
+import { CommunityCategory, LikeMeResponse, PostListResponse } from "@/types/community";
 import ServerApi from "@/utils/helpers/serverApi";
 
 /**
@@ -32,3 +32,34 @@ export const getPostsList = async ({
     return null;
   }
 };
+
+// 게시글 좋아요 여부
+export async function getPostLikeMe(postId: number): Promise<boolean> {
+  try {
+    const res = await ServerApi(`/api/v1/posts/${postId}/likes/me`, {
+      method: "GET",
+    });
+
+    // 로그인 안 한 경우 → 좋아요 안 한 상태로 취급
+    if (res.status === 401) {
+      return false;
+    }
+
+    if (!res.ok) {
+      console.error("getPostLikeMe failed:", res.status);
+      return false;
+    }
+
+    const json = (await res.json()) as LikeMeResponse;
+
+    if (json.resultCode !== "OK") {
+      console.warn("Unexpected resultCode:", json.resultCode);
+      return false;
+    }
+
+    return json.data;
+  } catch (e) {
+    console.error("getPostLikeMe error:", e);
+    return false;
+  }
+}
