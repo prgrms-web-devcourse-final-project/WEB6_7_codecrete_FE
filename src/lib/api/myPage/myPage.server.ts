@@ -1,17 +1,9 @@
 import { ResponseData } from "@/types/api";
 import { Concert } from "@/types/home";
+import { LikedArtist } from "@/types/my-page";
 import { PAGE_SIZE } from "@/utils/helpers/constants";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 import ServerApi from "@/utils/helpers/serverApi";
-
-// TODO : 임시로 타입 정의 나중에 삭제 필요
-type Artist = {
-  artistId: number;
-  artistName: string;
-  nameKo: string;
-  imageUrl: string;
-  isLiked: boolean;
-};
 
 /**
  * 찜한 공연 목록 조회
@@ -63,7 +55,7 @@ export const getLikedConcertCount = async (): Promise<ResponseData<number | null
   }
 };
 
-export const getLikedArtistList = async (): Promise<ResponseData<Artist[] | null>> => {
+export const getLikedArtistList = async (): Promise<ResponseData<LikedArtist[] | null>> => {
   try {
     const res = await ServerApi(`/api/v1/artists/likes`, {
       method: "GET",
@@ -71,8 +63,11 @@ export const getLikedArtistList = async (): Promise<ResponseData<Artist[] | null
     if (!res.ok) {
       throw new Error("찜한 아티스트 목록을 불러오는데 실패했습니다.");
     }
-    const data = await res.json();
-    return data;
+    const data = (await res.json()) as ResponseData<LikedArtist[] | null>;
+    const forced: ResponseData<LikedArtist[] | null> = Array.isArray(data?.data)
+      ? { ...data, data: data.data.map((artist) => ({ ...artist, isLiked: true })) }
+      : data;
+    return forced;
   } catch (error) {
     console.error("Error fetching liked artist list:", error);
     return createEmptyResponse("찜한 아티스트 목록을 가져오는데 실패했습니다");

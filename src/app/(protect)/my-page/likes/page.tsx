@@ -1,5 +1,7 @@
-import MyPageLikedArtistList from "@/components/my-page/MyPageLikedArtistList";
-import MyPageLikedConcertList from "@/components/my-page/MyPageLikedConcertList";
+import MyPageLikedArtistList from "@/components/my-page/likes/MyPageLikedArtistList";
+import MyPageLikedConcertList from "@/components/my-page/likes/MyPageLikedConcertList";
+import { Separator } from "@/components/ui/separator";
+
 import {
   getLikedArtistList,
   getLikedConcertCount,
@@ -16,18 +18,21 @@ export default async function Page() {
   const likedConcertsCount = await getLikedConcertCount();
 
   return (
-    <div className="my-15 space-y-20 px-15">
-      <section>
-        <MyPageLikedArtistList initialList={likedArtists.data} />
-      </section>
-      {likedConcerts.data && (
-        <section>
-          <MyPageLikedConcertList
-            initialList={likedConcerts.data}
-            totalCount={likedConcertsCount.data || 0}
-          />
+    <div className="my-15 space-y-20 px-5 lg:px-15">
+      <div className="mx-auto max-w-400 space-y-20">
+        <section className="space-y-8">
+          <MyPageLikedArtistList initialList={likedArtists.data} />
         </section>
-      )}
+        <Separator />
+        {likedConcerts.data && (
+          <section className="space-y-8">
+            <MyPageLikedConcertList
+              initialList={likedConcerts.data}
+              totalCount={likedConcertsCount.data || 0}
+            />
+          </section>
+        )}
+      </div>
     </div>
   );
 }
