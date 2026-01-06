@@ -10,6 +10,11 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type SignInFormValues, signInSchema } from "@/lib/zod/auth";
 import FieldError from "@/components/auth/FieldError";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useEffect } from "react";
+
+const SAVED_EMAIL_KEY = "remember_email";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -17,20 +22,37 @@ export default function SignInForm() {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
       password: "",
+      rememberEmail: false,
     },
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY);
+    if (savedEmail) {
+      setValue("email", savedEmail);
+      setValue("rememberEmail", true);
+    }
+  }, [setValue]);
+
   const onSubmit = async (data: SignInFormValues) => {
     try {
       await login(data.email, data.password);
+
+      if (data.rememberEmail) {
+        localStorage.setItem(SAVED_EMAIL_KEY, data.email);
+      } else {
+        localStorage.removeItem(SAVED_EMAIL_KEY);
+      }
+
       toast.success("로그인이 완료됐습니다.");
       router.push("/home");
       router.refresh();
@@ -79,17 +101,27 @@ export default function SignInForm() {
         />
       </div>
 
-      {/*TODO: 아이디 저장 및 비밀번호 찾기는 시간 되면 나중에 구현*/}
-      {/*<div className="idSave flex justify-between">*/}
-      {/*  <div className="flex items-center gap-2">*/}
-      {/*    <Checkbox className="cursor-pointer" />*/}
-      {/*    <Label>아이디 저장</Label>*/}
-      {/*  </div>*/}
-      {/*  /!* TODO: 비밀번호 찾기 *!/*/}
-      {/*  /!* <Link href="/sign-up" className="text-text-sub cursor-pointer hover:text-text-main">*/}
-      {/*          비밀번호를 잊으셨나요?*/}
-      {/*        </Link> *!/*/}
-      {/*</div>*/}
+      <div className="idSave flex justify-between">
+        <div className="flex items-center gap-2">
+          <Controller
+            name="rememberEmail"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id="rememberEmail"
+                className="cursor-pointer"
+                checked={field.value}
+                onCheckedChange={(checked) => field.onChange(Boolean(checked))}
+              />
+            )}
+          />
+          <Label htmlFor="rememberEmail">아이디 저장</Label>
+        </div>
+        {/* TODO: 비밀번호 찾기 */}
+        {/* <Link href="/sign-up" className="text-text-sub cursor-pointer hover:text-text-main">
+                비밀번호를 잊으셨나요?
+              </Link> */}
+      </div>
 
       <Button
         className="signInButton cursor-pointer"
