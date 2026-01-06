@@ -38,7 +38,12 @@ export default async function ReviewPostComments({ postId }: { postId: string })
 
   return (
     <div className={"flex flex-col gap-6"}>
-      <CommentInput isLoggedIn={isLoggedIn} totalComments={totalComments} postId={postId} />
+      <CommentInput
+        isLoggedIn={isLoggedIn}
+        currentUser={currentUser}
+        totalComments={totalComments}
+        postId={postId}
+      />
       <CommentItem res={res} comments={enrichedComments} postId={postId} />
     </div>
   );

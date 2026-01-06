@@ -9,16 +9,14 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { createComment } from "@/lib/api/community/community.client";
 import { useRouter } from "next/navigation";
+import { CommentInputProps } from "@/types/community";
 
 export default function CommentInput({
   isLoggedIn,
+  currentUser,
   totalComments,
   postId,
-}: {
-  isLoggedIn: boolean;
-  totalComments: number;
-  postId: string;
-}) {
+}: CommentInputProps) {
   /**
    * TODO:
    * - 최대 글자 수 제한 및 안내 문구 추가 여부 검토
@@ -45,7 +43,7 @@ export default function CommentInput({
         toast.success("댓글이 성공적으로 등록되었습니다!");
         setComment("");
         /**
-         * TODO:
+         * // TODO:
          * - 댓글 작성 성공 시 리프레시 처리 대신
          * - createComment를 통해 반환 받은 data를 보여주는 방법 사용해보기
          */
@@ -77,7 +75,7 @@ export default function CommentInput({
       <div className={"flex justify-between"}>
         <h3 className={"text-xl font-bold"}>댓글 ({totalComments})</h3>
         {/**
-           * TODO:
+           * // TODO:
            * - 댓글 정렬
            <SortSelect />
            */}
@@ -85,7 +83,7 @@ export default function CommentInput({
       {isLoggedIn ? (
         <div className={"flex gap-4"}>
           <Avatar className={"h-10 w-10"}>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage src={currentUser?.profileImageUrl} alt="@shadcn" />
             <AvatarFallback>
               <ProfileNoImage size="xs" />
             </AvatarFallback>

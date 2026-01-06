@@ -12,22 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
 import LoadMoreBtn from "@/components/common/LoadMoreBtn";
-import { CommentAddUser, CommentResponse } from "@/types/community";
+import { CommentItemProps } from "@/types/community";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { format } from "date-fns";
 import { deleteComment } from "@/lib/api/community/community.client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export default function CommentItem({
-  res,
-  comments,
-  postId,
-}: {
-  res: CommentResponse | null;
-  comments: CommentAddUser[] | undefined;
-  postId: string;
-}) {
+export default function CommentItem({ res, comments, postId }: CommentItemProps) {
   /**
    * TODO:
    * - 댓글 목록 map 로직은 상위 컴포넌트로 이동
@@ -131,7 +123,7 @@ export default function CommentItem({
                   <p>{comment.content}</p>
 
                   {/**
-                   * TODO: 댓글 좋아요 구현
+                   * // TODO: 댓글 좋아요 구현
                    * - 좋아요 API 연동 및 토글 상태 처리
                    * - 이미 좋아요한 경우 아이콘 상태 변경
                     <div className="text-text-sub flex items-center gap-1 text-xs">

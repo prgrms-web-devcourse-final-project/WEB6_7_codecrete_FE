@@ -1,3 +1,5 @@
+import { User } from "@/types/user";
+
 export interface PostListResponse {
   content: Post[];
   page: number;
@@ -73,4 +75,17 @@ export type LikeMeResponse = {
   resultCode: string;
   msg: string;
   data: boolean;
+};
+
+export type CommentInputProps = {
+  isLoggedIn: boolean;
+  currentUser: User | null;
+  totalComments: number;
+  postId: string;
+};
+
+export type CommentItemProps = {
+  res: CommentResponse | null;
+  comments: CommentAddUser[] | undefined;
+  postId: string;
 };
