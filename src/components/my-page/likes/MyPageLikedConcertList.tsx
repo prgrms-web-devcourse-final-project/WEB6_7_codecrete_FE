@@ -29,7 +29,7 @@ export default function MyPageLikedConcertList({
   initialList,
   totalCount,
 }: {
-  initialList: Concert[];
+  initialList: Concert[] | null;
   totalCount: number;
 }) {
   const [concertsList, setConcertsList] = useState(initialList);
@@ -186,12 +186,12 @@ export default function MyPageLikedConcertList({
     return pages;
   };
 
-  if (totalCount === 0) {
+  if (totalCount === 0 || !concertsList || concertsList.length === 0) {
     return (
       <>
         <div className="flex justify-between">
-          <h3 className="text-xl font-bold">찜한 아티스트</h3>
-          <p className="text-text-sub text-sm">총 0명</p>
+          <h3 className="text-xl font-bold">찜한 공연</h3>
+          <p className="text-text-sub text-sm">총 0개</p>
         </div>
         <div className="py-40">
           <Empty>
