@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { format } from "date-fns";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import MateListBtn from "@/components/concert-mate/list/MateListBtn";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { MateListCardProps } from "@/types/community/concert-mate";
+import { format } from "date-fns";
 
 export default async function MateListCard({
   post,
@@ -36,9 +36,7 @@ export default async function MateListCard({
               <strong className="text-text-main text-lg">
                 {user?.nickname || "알 수 없는 사용자"}
               </strong>
-              <div className="flex items-center gap-2">
-                <p className="text-text-sub text-sm">{formattedDate}</p>
-              </div>
+              <p className="text-text-sub text-sm">{formattedDate}</p>
             </div>
           </div>
         </div>

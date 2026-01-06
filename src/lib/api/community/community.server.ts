@@ -44,6 +44,7 @@ export const getPostsList = async ({
  *
  * @param {string} postId - 게시글 ID
  * @returns {Promise<CommentResponse | null>} - 커뮤니티 글 목록 또는 null
+ * // TODO : page 1 당 20개 너무 많음, 요청 후 수정 필요
  */
 export const getCommentsList = async ({
   postId,

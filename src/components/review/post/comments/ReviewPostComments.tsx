@@ -15,9 +15,9 @@ export default async function ReviewPostComments({ postId }: { postId: string })
 
   const isLoggedIn = await getAuthStatus();
 
-  // TODO : page 수정
-  const res = await getCommentsList({ postId: postIdNum, page: 1 });
+  const res = await getCommentsList({ postId: postIdNum });
   const comments = res?.content || [];
+  const totalPages = res?.totalPages || 0;
 
   const currentUser = isLoggedIn ? await getUsersMe() : null;
   const currentUserId = currentUser?.id;
@@ -50,7 +50,7 @@ export default async function ReviewPostComments({ postId }: { postId: string })
         totalComments={totalComments}
         postId={postId}
       />
-      <CommentItem res={res} comments={enrichedComments} postId={postId} />
+      <CommentItem comments={enrichedComments} postId={postId} totalPages={totalPages} />
     </div>
   );
 }
