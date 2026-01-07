@@ -21,8 +21,8 @@ export default function UpcomingSlider({ concerts }: UpcomingSliderProps) {
       <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
         {/* 헤더 */}
         <SliderHeader
-          title="🎫 예매일 임박! 콘서트 모음"
-          description="티켓팅 광탈하고 울지 말고 미리미리 예매하자구요"
+          title="🎫 공연일 임박! 콘서트 모음"
+          description="놓치기 전에 캘린더에 저장하고 플래너로 준비 끝!"
           onPrev={() => swiperInstance?.slidePrev()}
           onNext={() => swiperInstance?.slideNext()}
           className="mx-auto w-full max-w-400"
