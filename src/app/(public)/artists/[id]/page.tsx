@@ -22,7 +22,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         items={[
           { label: "홈", href: "/" },
           { label: "아티스트 목록", href: "/artists" },
-          { label: artist.artistName },
+          { label: artist.nameKo ?? artist.artistName },
         ]}
       />
       <ArtistDetailProfile artist={artist} artistId={Number(id)} initialIsLiked={initialIsLiked} />

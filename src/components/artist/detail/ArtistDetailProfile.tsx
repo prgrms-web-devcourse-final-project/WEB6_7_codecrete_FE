@@ -7,6 +7,7 @@ import FollowButton from "@/components/artist/detail/FollowButton";
 import { useState } from "react";
 import { toggleArtistLike } from "@/lib/api/artists/artists.server";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export default function ArtistDetailProfile({
   artist,
@@ -51,7 +52,7 @@ export default function ArtistDetailProfile({
         <div className="bg-text-sub relative h-30 w-30 overflow-hidden rounded-full">
           <Image
             src={artist.profileImageUrl}
-            alt={artist.artistName}
+            alt={artist.nameKo ?? artist.artistName}
             sizes={"120px"}
             fill
             className="object-cover"
@@ -61,12 +62,14 @@ export default function ArtistDetailProfile({
         <div className={"flex flex-1 flex-col gap-6"}>
           <div className={"flex justify-between gap-4"}>
             <div className={"flex flex-col gap-4"}>
-              <h2 className={"text-4xl font-bold"}>{artist.artistName}</h2>
-              {/*<div className={"flex gap-3"}>*/}
-              {/*  <Badge className={"bg-text-point-sub text-text-main text-sm"}>솔로 아티스트</Badge>*/}
-              {/*  <Badge className={"bg-text-point-sub text-text-main text-sm"}>팝</Badge>*/}
-              {/*  <Badge className={"bg-text-point-sub text-text-main text-sm"}>R&B</Badge>*/}
-              {/*</div>*/}
+              <h2 className={"text-4xl font-bold"}>{artist.nameKo ?? artist.artistName}</h2>
+              <div className={"flex gap-3"}>
+                {artist.artistGroup && (
+                  <Badge className={"bg-text-point-sub text-text-main text-sm"}>
+                    {artist.artistGroup}
+                  </Badge>
+                )}
+              </div>
             </div>
             <FollowButton isLiked={isLiked} disabled={isLoading} onClick={handleLikeClick} />
           </div>

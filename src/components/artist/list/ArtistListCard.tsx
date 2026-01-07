@@ -46,7 +46,7 @@ function ArtistListCard({ artist }: { artist: ArtistListContent }) {
       <div className="border-border/60 relative aspect-square overflow-hidden rounded-lg border">
         <Image
           src={imgSrc}
-          alt={artist.artistName}
+          alt={artist.nameKo ?? artist.artistName}
           fill
           sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw"
           className="object-cover"
@@ -75,7 +75,7 @@ function ArtistListCard({ artist }: { artist: ArtistListContent }) {
           )}
         </Button>
       </div>
-      <strong className="line-clamp-1 text-2xl">{artist.artistName}</strong>
+      <strong className="line-clamp-1 text-2xl">{artist.nameKo ?? artist.artistName}</strong>
     </Link>
   );
 }
