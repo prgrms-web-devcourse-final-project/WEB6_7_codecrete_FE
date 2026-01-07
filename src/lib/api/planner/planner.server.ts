@@ -48,11 +48,13 @@ export const getPlanList = async (): Promise<PlannerListWithDetails[]> => {
         try {
           const concertDetail = await getConcertDetail({ concertId: plan.concertId.toString() });
           const planDetail = await getPlanDetail(plan.id.toString());
+          const participants = await getPlanParticipants(plan.id.toString());
 
           return {
             ...plan,
             concertDetail,
             planDetail,
+            participants,
           };
         } catch (error) {
           console.error(`Error fetching ticket info for concert ${plan.id}:`, error);

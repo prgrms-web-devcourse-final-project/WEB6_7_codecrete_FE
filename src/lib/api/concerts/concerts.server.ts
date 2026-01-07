@@ -233,3 +233,57 @@ export const getSimilarConcerts = async ({
     return createEmptyResponse("콘서트 목록을 가져오는데 실패했습니다");
   }
 };
+
+// 아티스트의 아이디로 공연 목록 가져오기
+export const getConcertsByArtistId = async ({
+  artistId,
+  type = "all",
+  page,
+  size = 12,
+}: {
+  artistId: number;
+  type?: "all" | "upcoming" | "past";
+  page: number;
+  size?: number;
+}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
+  try {
+    const res = await ServerApi(
+      `/api/v1/concerts/artistList?artistId=${artistId}&type=${type}&page=${page}&size=${size}`,
+      {
+        method: "GET",
+      }
+    );
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return createEmptyResponse(`API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+
+    const concertsWithTicketLinks = await Promise.all(
+      data.data.map(async (concert: Concert) => {
+        try {
+          const ticketOffices = await getTicketOfficesByConcertId({ concertId: concert.id });
+
+          const firstOffice = ticketOffices?.[0];
+
+          return {
+            ...concert,
+            ticketOfficeName: firstOffice?.ticketOfficeName,
+            ticketOfficeUrl: firstOffice?.ticketOfficeUrl,
+          };
+        } catch (error) {
+          console.error(`Error fetching ticket info for concert ${concert.id}:`, error);
+          return concert;
+        }
+      })
+    );
+
+    return {
+      ...data,
+      data: concertsWithTicketLinks,
+    };
+  } catch (error) {
+    console.error("Error fetching concerts by artist ID:", error);
+    return createEmptyResponse("아티스트의 공연 목록을 가져오는데 실패했습니다");
+  }
+};

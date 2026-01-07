@@ -1,3 +1,10 @@
+import { ConcertWithTicket as HomeConcertWithTicket } from "../home";
+
+// 마이페이지에서 사용할 콘서트 타입 (찜한 공연과 아티스트 공연 구분)
+export type ConcertWithTicket = HomeConcertWithTicket & {
+  isLikedArtistConcert?: boolean;
+};
+
 // 콘서트 타입
 export interface Concert {
   id: string;
@@ -30,13 +37,7 @@ export interface EventContextType {
   events: Record<string, number>;
   schedules: Record<string, number>;
   onDateClick?: (date: Date) => void;
-}
-
-// 콘서트 리스트 컴포넌트 props 타입
-export interface ConcertListProps {
-  concerts: Concert[];
-  schedules: UserSchedule[];
-  selectedDate: Date;
+  concertsByDate?: Record<string, ConcertWithTicket[]>;
 }
 
 // 찜한 아티스트
@@ -46,4 +47,9 @@ export interface LikedArtist {
   imageUrl: string;
   nameKo: string;
   isLiked: boolean;
+}
+
+// 찜한 아티스트의 공연 정보 포함 타입
+export interface LikedArtistWithConcerts extends LikedArtist {
+  concerts: ConcertWithTicket[];
 }

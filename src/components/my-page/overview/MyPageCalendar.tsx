@@ -1,15 +1,14 @@
 "use client";
-
-import { createContext, useContext, useState } from "react";
-import { Calendar } from "../ui/calendar";
+import { createContext, useContext, useMemo, useState } from "react";
+import { Calendar } from "../../ui/calendar";
 import { twMerge } from "tailwind-merge";
 import { DayProps, MonthCaptionProps, useDayPicker } from "react-day-picker";
-import { Button } from "../ui/button";
-import { concertEvents, getConcertsByDate } from "@/data/concertData";
+import { Button } from "../../ui/button";
 import { EventContextType } from "@/types/my-page";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import MyPageCalendarList from "./MyPageCalendarList";
-import { getSchedulesByDate, scheduleEvents } from "@/data/userSchedules";
+import { ConcertWithTicket } from "@/types/my-page";
+import { PlannerListWithDetails } from "@/types/planner";
 
 const EventContext = createContext<EventContextType>({
   events: {},
@@ -72,13 +71,17 @@ const CustomCaption = (props: MonthCaptionProps) => {
 // 커스텀 날짜 버튼 컴포넌트
 const CustomDay = (props: DayProps) => {
   const { day, modifiers } = props;
-  const { events, schedules, onDateClick } = useContext(EventContext);
+  const { schedules, onDateClick, concertsByDate } = useContext(EventContext);
 
   const dateKey = `${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`;
   const dayNumber = day.date.getDate();
 
-  const eventCount = events[dateKey] || 0; // 콘서트 일정 개수
   const scheduleCount = schedules[dateKey] || 0; // 플래너 일정 개수 (필요시 데이터 연동)
+
+  // 해당 날짜의 콘서트 구분 (찜한 공연 / 아티스트 공연)
+  const concertsOnDate = concertsByDate?.[dateKey] || [];
+  const likedConcertCount = concertsOnDate.filter((c) => !c.isLikedArtistConcert).length;
+  const artistConcertCount = concertsOnDate.filter((c) => c.isLikedArtistConcert).length;
 
   return (
     <td className="border-r last:border-0">
@@ -103,15 +106,30 @@ const CustomDay = (props: DayProps) => {
       >
         <strong className="text-point-main text-sm font-normal">{dayNumber}</strong>
         {modifiers.today && <span className="text-text-sub text-xs">Today</span>}
-        {/* 이벤트 점 */}
-        {eventCount > 0 && (
+        {/* 찜한 공연 점 (빨간색) */}
+        {likedConcertCount > 0 && (
           <div className="flex items-center gap-1">
             <div className="flex gap-1">
-              {Array.from({ length: Math.min(eventCount, 3) }).map((_, i) => (
+              {Array.from({ length: Math.min(likedConcertCount, 3) }).map((_, i) => (
                 <span key={i} className="bg-point-main size-2 rounded-full" />
               ))}
             </div>
-            {eventCount > 3 && <span className="text-text-sub text-xs">+{eventCount - 3}</span>}
+            {likedConcertCount > 3 && (
+              <span className="text-text-sub text-xs">+{likedConcertCount - 3}</span>
+            )}
+          </div>
+        )}
+        {/* 아티스트 공연 점 */}
+        {artistConcertCount > 0 && (
+          <div className="flex items-center gap-1">
+            <div className="flex gap-1">
+              {Array.from({ length: Math.min(artistConcertCount, 3) }).map((_, i) => (
+                <span key={i} className="border-point-main size-2 rounded-full border-2" />
+              ))}
+            </div>
+            {artistConcertCount > 3 && (
+              <span className="text-text-sub text-xs">+{artistConcertCount - 3}</span>
+            )}
           </div>
         )}
         {/* 플래너 점 */}
@@ -132,8 +150,78 @@ const CustomDay = (props: DayProps) => {
   );
 };
 
-export default function MyPageCalendar() {
+export default function MyPageCalendar({
+  concerts,
+  planners,
+}: {
+  concerts: ConcertWithTicket[];
+  planners: PlannerListWithDetails[];
+}) {
   const [date, setDate] = useState<Date | undefined>(new Date());
+
+  // 날짜 유틸: YYYY-MM-DD로 포맷 (로컬 기준)
+  const toYMD = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
+  // 안전한 파서: UTC 오프셋 문제를 피하기 위해 로컬 Date 생성
+  const parseYMD = (s: string) => {
+    const [y, m, d] = s.split("-").map((v) => parseInt(v, 10));
+    const dt = new Date();
+    dt.setFullYear(y);
+    dt.setMonth((m || 1) - 1);
+    dt.setDate(d || 1);
+    dt.setHours(0, 0, 0, 0);
+    return dt;
+  };
+
+  // 날짜별 콘서트 목록을 메모이즈 (시작~종료일 전체 포함)
+  const concertsByDate = useMemo(() => {
+    const map: Record<string, ConcertWithTicket[]> = {};
+    concerts.forEach((concert) => {
+      const start = parseYMD(concert.startDate);
+      const end = parseYMD(concert.endDate ?? concert.startDate);
+      const cur = new Date(start);
+      while (cur.getTime() <= end.getTime()) {
+        const key = toYMD(cur);
+        if (!map[key]) map[key] = [];
+        map[key].push(concert);
+        cur.setDate(cur.getDate() + 1);
+      }
+    });
+    return map;
+  }, [concerts]);
+
+  // 콘서트 날짜별 이벤트 카운트는 맵에서 길이로 산출
+  const concertEvents: Record<string, number> = useMemo(() => {
+    const acc: Record<string, number> = {};
+    for (const key in concertsByDate) {
+      acc[key] = concertsByDate[key].length;
+    }
+    return acc;
+  }, [concertsByDate]);
+
+  // 특정 날짜의 콘서트 목록 가져오기
+  const getConcertsByDate = (dateStr: string): ConcertWithTicket[] => {
+    return concertsByDate[dateStr] ?? [];
+  };
+
+  // 특정 날짜의 사용자 일정 가져오기
+  const getSchedulesByDate = (dateStr: string): PlannerListWithDetails[] => {
+    return planners?.filter((schedule) => schedule.planDate === dateStr) ?? [];
+  };
+
+  // 캘린더 표시용 - 일정이 있는 날짜
+  const scheduleEvents: Record<string, number> = planners.reduce(
+    (acc, schedule) => {
+      acc[schedule.planDate] = (acc[schedule.planDate] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   const selectedConcerts = date
     ? getConcertsByDate(
@@ -155,7 +243,12 @@ export default function MyPageCalendar() {
     <div className="flex-3 space-y-8">
       <section className="border-border w-full rounded-xl border p-8">
         <EventContext.Provider
-          value={{ events: concertEvents, schedules: scheduleEvents, onDateClick: handleDayClick }}
+          value={{
+            events: concertEvents,
+            schedules: scheduleEvents,
+            onDateClick: handleDayClick,
+            concertsByDate,
+          }}
         >
           <Calendar
             mode="single"
@@ -185,9 +278,9 @@ export default function MyPageCalendar() {
             }}
           />
           <ul className="*:text-text-main mt-5 flex gap-4 *:flex *:items-center *:gap-2 *:font-medium *:before:size-2 *:before:rounded-full">
-            <li className="before:bg-point-main">콘서트 일정</li>
+            <li className="before:bg-point-main">찜한 공연</li>
+            <li className="before:border-point-main before:border-2">찜한 아티스트 공연</li>
             <li className="before:bg-border">플래너 일정</li>
-            <li className="before:border-point-main before:border-2">선택한 날짜</li>
           </ul>
         </EventContext.Provider>
       </section>
