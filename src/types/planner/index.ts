@@ -107,6 +107,7 @@ export type PlannerListWithDetails = {
   totalDuration: number;
   concertDetail: ConcertDetail;
   planDetail: PlanDetail;
+  participants: PlannerParticipant[];
 };
 
 export type UserPlace = {

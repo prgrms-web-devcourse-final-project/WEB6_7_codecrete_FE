@@ -85,7 +85,7 @@ export type CommentInputProps = {
 };
 
 export type CommentItemProps = {
-  res: CommentResponse | null;
-  comments: CommentAddUser[] | undefined;
   postId: string;
+  comments: CommentAddUser[] | undefined;
+  totalPages: number;
 };

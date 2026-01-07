@@ -1,7 +1,7 @@
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { ReviewPostWrite } from "@/types/community/concert-review";
 
 // TODO: 별점은 커스텀 UI이므로 submit 실패 시(errors.rating) 자동 포커스가 불가함.
@@ -9,14 +9,15 @@ import { ReviewPostWrite } from "@/types/community/concert-review";
 
 export default function ReviewRatingSection() {
   const {
+    control,
     register,
     setValue,
     clearErrors,
     formState: { errors },
   } = useFormContext<ReviewPostWrite>();
 
-  const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const rating = useWatch({ control, name: "rating" }) ?? 0;
 
   const currentRating = hoverRating ?? rating;
 
@@ -48,7 +49,6 @@ export default function ReviewRatingSection() {
                   className="cursor-pointer"
                   aria-label={`${value}점`}
                   onClick={() => {
-                    setRating(value);
                     setValue("rating", value, { shouldValidate: true });
                     clearErrors("rating");
                   }}

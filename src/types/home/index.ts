@@ -19,6 +19,7 @@ export type Concert = {
 export type ConcertWithTicket = Concert & {
   ticketOfficeName?: string;
   ticketOfficeUrl?: string;
+  isLikedArtistConcert?: boolean;
 };
 
 export interface ThumbsSliderProps {

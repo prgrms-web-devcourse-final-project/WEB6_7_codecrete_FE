@@ -36,6 +36,7 @@ export type ReviewDetailData = {
   post: ReviewPost;
   rating: number;
   imageUrls: string[];
+  tags: string[];
 };
 
 export type RatingDistribution = Record<1 | 2 | 3 | 4 | 5, number>;
@@ -52,7 +53,7 @@ export type ReviewListItem = {
   title: string;
   content: string;
   rating: number;
-  likeCount: 0;
+  likeCount: number;
   tags: string[];
   createdDate: string;
 };

@@ -3,22 +3,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { HeartIcon, MessageCircleIcon, Star } from "lucide-react";
 import ProfileNoImage from "../common/ProfileNoImage";
 import { Button } from "../ui/button";
+import { LikedPostItemPage } from "@/types/my-page";
 
-export default function MyPageLikeList() {
+export default function MyPageLikeList({ likes }: { likes?: LikedPostItemPage[] }) {
   return (
     <div className="flex flex-col gap-4">
-      {Array.from({ length: 5 }).map((_, index) => (
+      {likes?.map((like) => (
         <Link
-          key={index}
+          key={like.postId}
           href="#"
           className="border-border flex cursor-pointer justify-between gap-4 rounded-xl border p-6"
         >
           <div className="flex justify-between">
             <Avatar className="size-10">
-              <AvatarImage
-                src="https://kopis.or.kr/_next/image?url=%2Fupload%2FpfmPoster%2FPF_PF281383_251211_125646.jpg&w=384&q=75"
-                alt="아티스트"
-              />
+              <AvatarImage src={like.user.profileImageUrl} alt={like.user.nickname} />
               <AvatarFallback>
                 <ProfileNoImage size="sm" />
               </AvatarFallback>
@@ -27,8 +25,10 @@ export default function MyPageLikeList() {
           <div className="flex-1 space-y-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
-                <strong className="text-text-main text-base font-semibold">다른사람</strong>
-                <p className="text-text-sub text-xs">2주 전</p>
+                <strong className="text-text-main text-base font-semibold">
+                  {like.user.nickname}
+                </strong>
+                <p className="text-text-sub text-xs">{}</p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">

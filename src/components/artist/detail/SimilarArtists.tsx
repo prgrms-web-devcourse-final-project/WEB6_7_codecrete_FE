@@ -17,7 +17,7 @@ export default function SimilarArtists({ relatedArtists }: { relatedArtists: Rel
                 <Image
                   fill
                   src={artist.imageUrl}
-                  alt={artist.artistName}
+                  alt={artist.nameKo ?? artist.artistName}
                   className="object-cover"
                   sizes="64px"
                 />
@@ -26,7 +26,7 @@ export default function SimilarArtists({ relatedArtists }: { relatedArtists: Rel
               )}
             </div>
             <div className={"flex flex-1 flex-col gap-1"}>
-              <ItemTitle>{artist.artistName}</ItemTitle>
+              <ItemTitle>{artist.nameKo ?? artist.artistName}</ItemTitle>
             </div>
             <div>
               <ChevronRight className={"text-text-sub opacity-60"} />

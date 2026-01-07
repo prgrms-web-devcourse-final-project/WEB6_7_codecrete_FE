@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
-import SearchInput from "@/components/concert-mate/SearchInput";
 import { getAuthStatus } from "@/lib/api/auth/auth.server";
 
 export default async function MateListIntro() {
@@ -25,7 +24,9 @@ export default async function MateListIntro() {
             </Link>
           )}
         </div>
+        {/* TODO : 검색 기능 구현
         <SearchInput className="w-[60%]" />
+        */}
       </div>
     </section>
   );

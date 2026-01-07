@@ -55,25 +55,29 @@ export default function ConcertDetailReview({
   }
 
   const { summary, reviews } = data;
-  const filledStarCount = Math.floor(summary.averageRating);
 
   return (
     <div className="review flex flex-col gap-6">
       <h2 className="text-text-main text-3xl font-bold">리뷰 게시판</h2>
-
       <div className={twMerge(`bg-bg-sub flex flex-col gap-6 rounded-xl p-6`)}>
         <div className="flex justify-between">
           <div className="flex gap-4">
             <strong className="text-4xl">{summary.averageRating.toFixed(1)}</strong>
             <div>
               <div className="flex gap-1" aria-label={`평점 ${summary.averageRating}점`}>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star
-                    key={index}
-                    className="h-5 w-5 text-yellow-400"
-                    fill={index < filledStarCount ? "currentColor" : "none"}
-                  />
-                ))}
+                {Array.from({ length: 5 }).map((_, index) => {
+                  const isFilled = index < Math.floor(summary.averageRating);
+
+                  return (
+                    <Star
+                      key={index}
+                      size={20}
+                      className={
+                        isFilled ? "fill-yellow-400 text-yellow-400" : "fill-gray-300 text-gray-300"
+                      }
+                    />
+                  );
+                })}
               </div>
               <p className="text-text-sub text-sm">리뷰 {summary.totalCount.toLocaleString()} 개</p>
             </div>
@@ -100,7 +104,7 @@ export default function ConcertDetailReview({
           {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => (
             <ConcertReviewCard key={review.postId} review={review} concertId={concertId} />
           ))}
-
+          {/*TODO: 리뷰 수 증가 시 페이지네이션 또는 무한 스크롤 고려*/}
           {!showAllReviews && reviews.length > 3 && (
             <div className="flex justify-center">
               <Button variant="ghost" size="sm" onClick={() => setShowAllReviews(true)}>

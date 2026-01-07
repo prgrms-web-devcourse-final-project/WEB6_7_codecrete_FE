@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -41,9 +42,8 @@ export default function MeetingPostHeader({
     normalizeDate(isModified ? postDetail.modifiedDate : postDetail.createdDate)
   );
 
-  // TODO: 아래 수정 주소는 동행구인 변경 주소로 변경해주세요
   const handleModify = () => {
-    router.push(`/concerts/${postDetail.concertId}/review/${postDetail.postId}/edit`);
+    router.push(`/concert-mate/${postDetail.postId}/edit`);
   };
 
   const handleDelete = async () => {
@@ -117,12 +117,17 @@ export default function MeetingPostHeader({
 
             <DropdownMenuContent className="w-40" align="end">
               <DropdownMenuGroup>
+                {/* closing 되면 완료하기 버튼 사라짐 */}
+                {isOpen && (
+                  <>
+                    <DropdownMenuItem onClick={handlerClosed}>구인마감</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem onClick={handleModify}>수정하기</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
                   삭제하기
                 </DropdownMenuItem>
-                {/* closing 되면 완료하기 버튼 사라짐 */}
-                {isOpen && <DropdownMenuItem onClick={handlerClosed}>완료하기</DropdownMenuItem>}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

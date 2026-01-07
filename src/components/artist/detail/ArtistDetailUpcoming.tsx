@@ -1,61 +1,52 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+"use client";
+
 import ArtistConcertItem from "@/components/artist/detail/ArtistConcertItem";
-import { SortSelect } from "@/components/common/SortSelect";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ConcertWithTicket } from "@/types/home";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
-// TODO: 나중에 api로 불러와서 데이터가 없는경우 로직도 추가 구현해야 함
+export default function ArtistDetailUpcoming({
+  upComingConcerts,
+}: {
+  upComingConcerts: ConcertWithTicket[] | null;
+}) {
+  const [showAll, setShowAll] = useState(false);
 
-export default function ArtistDetailUpcoming() {
+  const hasConcerts = upComingConcerts && upComingConcerts.length > 0;
+  const hasMoreThanThree = upComingConcerts && upComingConcerts.length > 3;
+  const visibleConcerts = (showAll ? upComingConcerts : upComingConcerts?.slice(0, 3)) ?? [];
   return (
     <section className={"bg-bg-sub px-15 py-16"}>
       <div className={"mx-auto flex max-w-400 flex-col gap-8"}>
         {/*헤더 및 분류 버튼 파트*/}
         <div className={"flex justify-between"}>
           <h2 className={"text-3xl font-bold"}>예정된 공연</h2>
-          <div className={"flex gap-3"}>
-            <Select>
-              <SelectTrigger size="default" className="bg-point-sub w-22">
-                <SelectValue placeholder="필터" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>정렬</SelectLabel>
-                  <SelectItem value="popular">인기순</SelectItem>
-                  <SelectItem value="name">이름순</SelectItem>
-                  <SelectItem value="date">날짜순</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <SortSelect />
+        </div>
+        {hasConcerts ? (
+          <div className="flex flex-col gap-4">
+            {visibleConcerts.map((concert) => (
+              <ArtistConcertItem key={concert.id} concert={concert} />
+            ))}
           </div>
-        </div>
-        {/*TODO: 나중에 바로 아래 div에서 api로 불러온 콘서트 목록 map으로 돌리기*/}
-        {/*콘서트 아이템 파트*/}
-        <div>
-          <ArtistConcertItem />
-        </div>
-        {/*콘서트 로더 버튼 파트*/}
-        <div className={"flex justify-center"}>
-          <Link href={"#"}>
+        ) : (
+          <div className="text-text-sub flex h-40 flex-col items-center justify-center gap-2">
+            <p className="text-sm">예정된 공연이 없습니다.</p>
+          </div>
+        )}
+        {hasMoreThanThree && (
+          <div className={"flex justify-center"}>
+            {/*콘서트 로더 버튼 파트*/}
             <Button
               size={"lg"}
               variant={"outline"}
               className={"border-border cursor-pointer border-2"}
               type={"button"}
+              onClick={() => setShowAll((prev) => !prev)}
             >
-              <span className={"font-bold"}>콘서트 더 보기</span>
+              <span className={"font-bold"}>{showAll ? "접기" : "전체 공연 보기"}</span>
             </Button>
-          </Link>
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

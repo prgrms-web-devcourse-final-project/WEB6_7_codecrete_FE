@@ -33,7 +33,7 @@ export const getSearchConcerts = async ({
       }
     );
     if (!res.ok) {
-      throw new Error("Failed to fetch search concerts");
+      return [];
     }
     const data = await res.json();
 
@@ -99,7 +99,7 @@ export const getSearchArtistsWithLiked = async ({
       body: JSON.stringify({ artistName }),
     });
     if (!res.ok) {
-      throw new Error("Failed to fetch search artists");
+      return [];
     }
 
     const data = await res.json();

@@ -44,13 +44,14 @@ export const getPostsList = async ({
  *
  * @param {string} postId - 게시글 ID
  * @returns {Promise<CommentResponse | null>} - 커뮤니티 글 목록 또는 null
+ * // TODO : page 1 당 20개 너무 많음, 요청 후 수정 필요
  */
 export const getCommentsList = async ({
   postId,
   page = 1,
 }: {
   postId: number;
-  page: number;
+  page?: number;
 }): Promise<CommentResponse | null> => {
   try {
     const res = await ServerApi(`/api/v1/posts/${postId}/comments?page=${page}`, {
@@ -101,3 +102,29 @@ export async function getPostLikeMe(postId: number): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * 게시글 좋아요 수 조회
+ *
+ * @param {string} postId - 게시글 ID
+ * @returns {Promise<string | null>} - 좋아요 갯수 또는 null
+ */
+export const getLikesCount = async ({ postId }: { postId: number }): Promise<string | null> => {
+  try {
+    const res = await ServerApi(`/api/v1/posts/${postId}/likes/count`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+
+    return data.data;
+  } catch (error) {
+    console.error("Error counting likes:", error);
+    return null;
+  }
+};

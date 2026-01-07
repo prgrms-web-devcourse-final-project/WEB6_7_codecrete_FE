@@ -3,6 +3,7 @@ import { ConcertDetail, ConcertVenueInfo, LikeConcert, TicketOffice } from "@/ty
 import { Concert, ConcertWithTicket } from "@/types/home";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 import ServerApi from "@/utils/helpers/serverApi";
+import { getArtistDetail, getArtistLikeStatus } from "../artists/artists.server";
 
 /**
  * 다가오는 공연 목록 가져오기
@@ -19,7 +20,7 @@ export const getUpcomingConcerts = async ({
   size?: number;
 } = {}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
   try {
-    const res = await ServerApi(`/api/v1/concerts/list/TICKETING?page=${page}&size=${size}`, {
+    const res = await ServerApi(`/api/v1/concerts/list/UPCOMING?page=${page}&size=${size}`, {
       method: "GET",
     });
 
@@ -81,8 +82,25 @@ export const getConcertDetail = async ({
     }
 
     const data = await res.json();
+    const concertArtists = Promise.all(
+      data.data.concertArtists.map(async (artistId: number) => {
+        try {
+          const artistDetail = await getArtistDetail(artistId);
+          const artistLiked = await getArtistLikeStatus(artistId);
+          if (!artistDetail) {
+            return null;
+          }
+          return { artistId, artist: { ...artistDetail, liked: artistLiked } };
+        } catch {
+          return { artistId };
+        }
+      })
+    );
 
-    return data.data;
+    return {
+      ...data.data,
+      concertArtists: await concertArtists,
+    };
   } catch (error) {
     console.error("Error fetching concert detail:", error);
     return null;
@@ -231,5 +249,59 @@ export const getSimilarConcerts = async ({
   } catch (error) {
     console.error("Error fetching upcoming concerts:", error);
     return createEmptyResponse("콘서트 목록을 가져오는데 실패했습니다");
+  }
+};
+
+// 아티스트의 아이디로 공연 목록 가져오기
+export const getConcertsByArtistId = async ({
+  artistId,
+  type = "all",
+  page,
+  size = 12,
+}: {
+  artistId: number;
+  type?: "all" | "upcoming" | "past";
+  page: number;
+  size?: number;
+}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
+  try {
+    const res = await ServerApi(
+      `/api/v1/concerts/artistList?artistId=${artistId}&type=${type}&page=${page}&size=${size}`,
+      {
+        method: "GET",
+      }
+    );
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return createEmptyResponse(`API 요청 실패: ${res.status}`);
+    }
+    const data = await res.json();
+
+    const concertsWithTicketLinks = await Promise.all(
+      data.data.map(async (concert: Concert) => {
+        try {
+          const ticketOffices = await getTicketOfficesByConcertId({ concertId: concert.id });
+
+          const firstOffice = ticketOffices?.[0];
+
+          return {
+            ...concert,
+            ticketOfficeName: firstOffice?.ticketOfficeName,
+            ticketOfficeUrl: firstOffice?.ticketOfficeUrl,
+          };
+        } catch (error) {
+          console.error(`Error fetching ticket info for concert ${concert.id}:`, error);
+          return concert;
+        }
+      })
+    );
+
+    return {
+      ...data,
+      data: concertsWithTicketLinks,
+    };
+  } catch (error) {
+    console.error("Error fetching concerts by artist ID:", error);
+    return createEmptyResponse("아티스트의 공연 목록을 가져오는데 실패했습니다");
   }
 };

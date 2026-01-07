@@ -78,6 +78,9 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   const handlePWVisible = () => setIsVisible((prevState) => !prevState);
   const handlePWCVisible = () => setIsVisibleConfirm((prevState) => !prevState);
 
+  // 로그인 소셜 타입 확인
+  const isSocial = userData.socialType === "KAKAO" || userData.socialType === "GOOGLE";
+
   // 이메일알림 및 다크모드 설정 상태 가져오기
   useEffect(() => {
     if (showEditDialog) {
@@ -190,7 +193,6 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   const isPasswordMatch = password === passwordConfirm;
 
   // 수정 사항 제출
-  // TODO : 수정 사항이 있는 경우에만 제출이 가능하도록 함
   const handleSubmit = async () => {
     if (!nickname.trim()) {
       toast.error("닉네임을 입력해주세요.");
@@ -208,13 +210,12 @@ export default function MyPageSetting({ userData }: { userData: User }) {
       : undefined;
 
     // 비밀번호 유효성 검사 (2)
-    // TODO : 비밀번호 변경 횟수 제한 기능
-    const isCurrentPasswordInputted = currentPassword.length > 0;
+    // TODO : 비밀번호 변경 횟수 제한 기능 추가 고려
     const isPasswordInputted = password.length > 0;
     const isConfirmInputted = passwordConfirm.length > 0;
 
-    if (isPasswordInputted || isConfirmInputted) {
-      if (!isCurrentPasswordInputted) {
+    if (!isSocial && (isPasswordInputted || isConfirmInputted)) {
+      if (!currentPassword) {
         toast.error("비밀번호를 변경하려면 현재 비밀번호를 입력해야 합니다.");
         return;
       }
@@ -236,36 +237,79 @@ export default function MyPageSetting({ userData }: { userData: User }) {
     }
 
     try {
-      const results = await Promise.all([
-        changeNickname({ nickname: nickname }),
-        changeProfileImage({ profileFile: profileFile }),
-        changeUsersSettings({
+      // 수정 사항이 있는 경우에만 제출이 가능
+      // 변경된 항목만 체크
+      const nickNameChanged = userData.nickname !== nickname;
+      const profileImageChanged = profileFile !== null;
+      const birthDateChanged =
+        (userData.birthdate ? new Date(userData.birthdate).getTime() : 0) !==
+        (date ? date.getTime() : 0);
+      const settingsChanged =
+        initialUsersSettings.current?.emailNotifications !== emailNotifications ||
+        initialUsersSettings.current?.darkMode !== darkMode;
+
+      if (nickNameChanged) {
+        const nicknameResult = await changeNickname({ nickname: nickname });
+        if (nicknameResult === null) {
+          toast.error("닉네임 변경에 실패했습니다.");
+          return;
+        }
+      }
+
+      if (profileImageChanged) {
+        const profileResult = await changeProfileImage({ profileFile: profileFile });
+        if (profileResult === null) {
+          toast.error("프로필 이미지 변경에 실패했습니다.");
+          return;
+        }
+      }
+
+      if (settingsChanged) {
+        const settingsResult = await changeUsersSettings({
           emailNotifications: emailNotifications,
           darkMode: darkMode,
-        }),
-        changeBirth({ birth: birth }),
-        isPasswordInputted
-          ? changePassword({ currentPassword: currentPassword, newPassword: password })
-          : Promise.resolve("no-change"),
-      ]);
+        });
+        if (settingsResult === null) {
+          toast.error("설정 변경에 실패했습니다.");
+          return;
+        }
+      }
 
-      const passwordResult = results[4];
-      if (isPasswordInputted && passwordResult === null) {
-        toast.error("현재 비밀번호가 일치하지 않습니다.");
+      if (birthDateChanged) {
+        const birthResult = await changeBirth({ birth: birth });
+        if (birthResult === null) {
+          toast.error("생년월일 변경에 실패했습니다.");
+          return;
+        }
+      }
+
+      if (!isSocial && isPasswordInputted) {
+        const passwordResult = await changePassword({
+          currentPassword: currentPassword,
+          newPassword: password,
+        });
+        if (passwordResult === null) {
+          toast.error("현재 비밀번호가 일치하지 않습니다.");
+          return;
+        }
+      }
+
+      if (
+        !nickNameChanged &&
+        !profileImageChanged &&
+        !settingsChanged &&
+        !birthDateChanged &&
+        !isPasswordInputted
+      ) {
+        toast.info("변경된 사항이 없습니다.");
         return;
       }
 
-      if (results.every((res) => res !== null)) {
-        toast.success("프로필 설정이 성공적으로 저장되었습니다.");
-
-        initialUsersSettings.current = { emailNotifications, darkMode };
-        setShowEditDialog(false);
-
-        router.refresh();
-        setPreviewImg("");
-      } else {
-        toast.error("일부 설정 저장에 실패했습니다.");
-      }
+      toast.success("프로필 설정이 성공적으로 저장되었습니다.");
+      initialUsersSettings.current = { emailNotifications, darkMode };
+      setShowEditDialog(false);
+      router.refresh();
+      setPreviewImg("");
     } catch (error) {
       console.error(error);
       toast.error("서버 통신 중 오류가 발생했습니다.");
@@ -312,93 +356,109 @@ export default function MyPageSetting({ userData }: { userData: User }) {
                 onChange={(e) => setNickname(e.target.value)}
               />
             </Field>
-            {/* TODO : 소셜 로그인은 비밀번호 변경 불가능 하도록 처리 */}
-            <Field>
-              <Label htmlFor="nickname">현재 비밀번호</Label>
-              <div className="relative space-y-1">
-                <Input
-                  type={isVisibleCurrent ? "text" : "password"}
-                  placeholder="현재 비밀번호를 입력하세요."
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value.replace(/\s/g, ""))}
-                  className="pr-9"
-                />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleCPWVisible}
-                  className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
-                >
-                  {isVisibleCurrent ? <EyeOffIcon /> : <EyeIcon />}
-                  <span className="sr-only">
-                    {isVisibleCurrent ? "Hide password" : "Show password"}
-                  </span>
-                </Button>
-                {currentPassword.length > 0 && (
-                  <p
-                    className={`text-xs ${isCurrentPasswordFormatValid ? "text-text-sub" : "text-red-500"}`}
-                  >
-                    {isCurrentPasswordFormatValid
-                      ? ""
-                      : "영문, 숫자, 특수문자 포함 8자 이상 입력하세요."}
-                  </p>
-                )}
-              </div>
-            </Field>
-            <Field>
-              <Label htmlFor="nickname">새 비밀번호</Label>
-              <div className="relative space-y-1">
-                <Input
-                  type={isVisible ? "text" : "password"}
-                  placeholder="새 비밀번호를 입력하세요."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value.replace(/\s/g, ""))}
-                  className="pr-9"
-                />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handlePWVisible}
-                  className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
-                >
-                  {isVisible ? <EyeOffIcon /> : <EyeIcon />}
-                  <span className="sr-only">{isVisible ? "Hide password" : "Show password"}</span>
-                </Button>
-                {password.length > 0 && (
-                  <p className={`text-xs ${isPasswordValid ? "text-text-sub" : "text-red-500"}`}>
-                    {isPasswordValid ? "" : "영문, 숫자, 특수문자 포함 8자 이상 입력하세요."}
-                  </p>
-                )}
-              </div>
-            </Field>
-            <Field>
-              <Label htmlFor="nickname">비밀번호 확인</Label>
-              <div className="relative space-y-1">
-                <Input
-                  type={isVisibleConfirm ? "text" : "password"}
-                  placeholder="비밀번호를 입력하세요."
-                  value={passwordConfirm}
-                  onChange={(e) => setPasswordConfirm(e.target.value.replace(/\s/g, ""))}
-                  className="pr-9"
-                />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handlePWCVisible}
-                  className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
-                >
-                  {isVisibleConfirm ? <EyeOffIcon /> : <EyeIcon />}
-                  <span className="sr-only">
-                    {isVisibleConfirm ? "Hide password" : "Show password"}
-                  </span>
-                </Button>
-                {passwordConfirm.length > 0 && (
-                  <p className={`text-xs ${isPasswordMatch ? "text-text-sub" : "text-red-500"}`}>
-                    {isPasswordMatch ? "" : "비밀번호가 일치하지 않습니다."}
-                  </p>
-                )}
-              </div>
-            </Field>
+            {isSocial ? (
+              <>
+                <Label htmlFor="nickname">비밀번호 수정</Label>
+                <div className="text-text-sub flex justify-center text-xs">
+                  <span>소셜 로그인은 비밀번호 변경이 불가합니다.</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <Field>
+                  <Label htmlFor="nickname">현재 비밀번호</Label>
+                  <div className="relative space-y-1">
+                    <Input
+                      type={isVisibleCurrent ? "text" : "password"}
+                      placeholder="현재 비밀번호를 입력하세요."
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value.replace(/\s/g, ""))}
+                      className="pr-9"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleCPWVisible}
+                      className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
+                    >
+                      {isVisibleCurrent ? <EyeOffIcon /> : <EyeIcon />}
+                      <span className="sr-only">
+                        {isVisibleCurrent ? "Hide password" : "Show password"}
+                      </span>
+                    </Button>
+                    {currentPassword.length > 0 && (
+                      <p
+                        className={`text-xs ${isCurrentPasswordFormatValid ? "text-text-sub" : "text-red-500"}`}
+                      >
+                        {isCurrentPasswordFormatValid
+                          ? ""
+                          : "영문, 숫자, 특수문자 포함 8자 이상 입력하세요."}
+                      </p>
+                    )}
+                  </div>
+                </Field>
+                <Field>
+                  <Label htmlFor="nickname">새 비밀번호</Label>
+                  <div className="relative space-y-1">
+                    <Input
+                      type={isVisible ? "text" : "password"}
+                      placeholder="새 비밀번호를 입력하세요."
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value.replace(/\s/g, ""))}
+                      className="pr-9"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handlePWVisible}
+                      className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
+                    >
+                      {isVisible ? <EyeOffIcon /> : <EyeIcon />}
+                      <span className="sr-only">
+                        {isVisible ? "Hide password" : "Show password"}
+                      </span>
+                    </Button>
+                    {password.length > 0 && (
+                      <p
+                        className={`text-xs ${isPasswordValid ? "text-text-sub" : "text-red-500"}`}
+                      >
+                        {isPasswordValid ? "" : "영문, 숫자, 특수문자 포함 8자 이상 입력하세요."}
+                      </p>
+                    )}
+                  </div>
+                </Field>
+                <Field>
+                  <Label htmlFor="nickname">비밀번호 확인</Label>
+                  <div className="relative space-y-1">
+                    <Input
+                      type={isVisibleConfirm ? "text" : "password"}
+                      placeholder="비밀번호를 입력하세요."
+                      value={passwordConfirm}
+                      onChange={(e) => setPasswordConfirm(e.target.value.replace(/\s/g, ""))}
+                      className="pr-9"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handlePWCVisible}
+                      className="text-text-sub focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
+                    >
+                      {isVisibleConfirm ? <EyeOffIcon /> : <EyeIcon />}
+                      <span className="sr-only">
+                        {isVisibleConfirm ? "Hide password" : "Show password"}
+                      </span>
+                    </Button>
+                    {passwordConfirm.length > 0 && (
+                      <p
+                        className={`text-xs ${isPasswordMatch ? "text-text-sub" : "text-red-500"}`}
+                      >
+                        {isPasswordMatch ? "" : "비밀번호가 일치하지 않습니다."}
+                      </p>
+                    )}
+                  </div>
+                </Field>
+              </>
+            )}
             <Field>
               <Label htmlFor="email">이메일 *</Label>
               <div className="relative space-y-1">

@@ -5,10 +5,17 @@ import MyPageSetting from "./MyPageSetting";
 import { format } from "date-fns";
 import { User } from "@/types/user";
 
-export default function MyPageHeader({ userData }: { userData: User }) {
+export default function MyPageHeader({
+  userData,
+  planListCount,
+}: {
+  userData: User;
+  planListCount: number;
+}) {
   const formattedDate = format(new Date(userData.createdDate), "yyyy-MM-dd");
+
   return (
-    <header className="bg-zinc-900 px-15 py-20">
+    <header className="bg-zinc-900 px-5 py-10 lg:px-15 lg:py-20">
       <div className="mx-auto flex max-w-400 gap-10">
         <div className="relative w-fit">
           <Avatar className="size-30">
@@ -35,8 +42,7 @@ export default function MyPageHeader({ userData }: { userData: User }) {
                 <CalendarClockIcon size={16} />
                 예정된 일정
               </strong>
-              {/* TODO : 추가 필요 */}
-              <p>8개</p>
+              <p>{planListCount}개</p>
             </li>
           </ul>
         </div>

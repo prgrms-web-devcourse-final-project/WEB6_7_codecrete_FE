@@ -11,25 +11,35 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
-import LoadMoreBtn from "@/components/common/LoadMoreBtn";
-import { CommentItemProps } from "@/types/community";
+import { CommentAddUser, CommentItemProps } from "@/types/community";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
-import { format } from "date-fns";
 import { deleteComment } from "@/lib/api/community/community.client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { formatDateKorean } from "@/utils/helpers/formatters";
+import CommentPagination from "@/components/review/post/comments/CommentPagination";
+import { useEffect, useState } from "react";
+import { getCommentsList } from "@/lib/api/concerts/concerts.client";
 
-export default function CommentItem({ res, comments, postId }: CommentItemProps) {
+export default function CommentItem({
+  postId,
+  comments: initialComments,
+  totalPages: initialTotalPages,
+}: CommentItemProps) {
   /**
    * TODO:
    * - 댓글 목록 map 로직은 상위 컴포넌트로 이동
    * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
-   * - 페이지네이션
-   * - 한 번에 보여줄 갯수 지정
    * - 글자수 제한
    */
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
 
+  const [comments, setComments] = useState(initialComments);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
+
+  // TODO : 댓글 수정 기능
   // const handlerEdit = () => {};
 
   const handlerDelete = async (targetCommentId: string) => {
@@ -53,6 +63,19 @@ export default function CommentItem({ res, comments, postId }: CommentItemProps)
     }
   };
 
+  // 페이지 바뀔 때마다 댓글 다시 가져오기
+  useEffect(() => {
+    const fetchComments = async () => {
+      const res = await getCommentsList({ postId: Number(postId), page: currentPage });
+      if (res) {
+        setComments((res.content as CommentAddUser[]) || []);
+        setTotalPages(res.totalPages || 0);
+      }
+    };
+
+    fetchComments();
+  }, [currentPage, postId]);
+
   // 댓글이 없을 때
   if (!comments || comments.length === 0) {
     return (
@@ -67,7 +90,8 @@ export default function CommentItem({ res, comments, postId }: CommentItemProps)
     <>
       {comments?.map((comment, index) => {
         const isLast = index === comments.length - 1;
-        const formattedDate = format(new Date(comment.createdDate), "yyyy-MM-dd");
+        const normalizeDate = (iso: string) => iso.split(".")[0];
+        const formattedDate = formatDateKorean(normalizeDate(comment.createdDate));
 
         return (
           <Item key={comment.commentId} className="p-0">
@@ -136,8 +160,7 @@ export default function CommentItem({ res, comments, postId }: CommentItemProps)
         );
       })}
 
-      {/* 임시 */}
-      <div className={"flex justify-center"}>{res?.hasNext && <LoadMoreBtn />}</div>
+      <CommentPagination totalPages={totalPages} />
     </>
   );
 }

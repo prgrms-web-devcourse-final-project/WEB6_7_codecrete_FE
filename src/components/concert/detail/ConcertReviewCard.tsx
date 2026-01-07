@@ -4,7 +4,7 @@ import { Heart, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { ReviewListItem } from "@/types/community/concert-review";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UserInfo } from "@/types/user";
 import { getUserInfo } from "@/lib/api/user/user.client";
 import { formatDistanceToNow } from "date-fns";
@@ -20,6 +20,7 @@ export default function ConcertReviewCard({
   const [author, setAuthor] = useState<UserInfo | null>(null);
   const [isAuthorLoading, setIsAuthorLoading] = useState(true);
 
+  // TODO: 추후 author 내용까지 한 번에 불러올 API로 교체 필요
   useEffect(() => {
     if (!review.userId) return;
     const fetchAuthor = async () => {
@@ -37,10 +38,12 @@ export default function ConcertReviewCard({
     fetchAuthor();
   }, [review.userId]);
 
-  const timeAgo = formatDistanceToNow(new Date(review.createdDate), {
-    addSuffix: true,
-    locale: ko,
-  });
+  const timeAgo = useMemo(() => {
+    return formatDistanceToNow(new Date(review.createdDate), {
+      addSuffix: true,
+      locale: ko,
+    }).replace(/^약\s/, "");
+  }, [review.createdDate]);
 
   return (
     <Link href={`/concerts/${concertId}/review/${review.postId}`} className="block">
@@ -66,15 +69,19 @@ export default function ConcertReviewCard({
                 )}
               </strong>
               <div className="flex items-center gap-2">
-                <div className="flex gap-0.5 text-yellow-400">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star
-                      key={index}
-                      size={14}
-                      fill={index < review.rating ? "currentColor" : "none"}
-                      className={index < review.rating ? "text-yellow-400" : "text-gray-300"}
-                    />
-                  ))}
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, index) => {
+                    const isFilled = index < review.rating;
+
+                    return (
+                      <Star
+                        key={index}
+                        size={14}
+                        fill="currentColor"
+                        className={isFilled ? "text-yellow-400" : "text-gray-300"}
+                      />
+                    );
+                  })}
                 </div>
                 <p className="text-text-sub text-xs">{timeAgo}</p>
               </div>

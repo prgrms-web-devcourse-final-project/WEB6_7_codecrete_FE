@@ -19,13 +19,17 @@ export type ArtistTopTrack = {
 };
 
 export type RelatedArtist = {
+  id: number;
   artistName: string;
+  nameKo: string;
   imageUrl: string | null;
   spotifyArtistId: string;
 };
 
 export interface ArtistDetail {
+  id: number;
   artistName: string;
+  nameKo: string;
   artistGroup: string | null;
   artistType: "SOLO" | "GROUP";
   profileImageUrl: string;

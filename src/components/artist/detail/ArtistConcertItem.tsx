@@ -1,69 +1,69 @@
-import { Clock4, Heart, MapPin, Ticket, Users } from "lucide-react";
+import { CalendarIcon, MapPinIcon, Ticket, TicketsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Item } from "@/components/ui/item";
+import { ConcertWithTicket } from "@/types/home";
+import Link from "next/link";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Image from "next/image";
+import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
+import { Card, CardContent } from "@/components/ui/card";
+import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/formatters";
 
-export default function ArtistConcertItem() {
+// TODO: 카드 hover 시 전체 클릭 UX 검토
+// TODO: 공연 상태(예정/종료)에 따른 뱃지 추가 여부 검토
+// TODO: 모바일에서 카드 레이아웃 세로형 전환 검토
+
+export default function ArtistConcertItem({ concert }: { concert: ConcertWithTicket }) {
+  const posterSrc = concert.posterUrl || PLACEHOLDER_IMAGE;
+
   return (
-    <Item variant={"outline"} className={"bg-bg-main hover:border-text-main items-start gap-8 p-6"}>
-      {/*왼쪽 날짜 파트*/}
-      <div className={"flex w-32 flex-col items-center justify-center gap-1"}>
-        <span className={"text-text-sub"}>3월</span>
-        <span className={"text-text-main text-3xl"}>15</span>
-        <span className={"text-text-sub text-xs"}>19:00</span>
+    <Card className="bg-bg-main flex flex-row gap-6 border p-6">
+      <div className="relative w-35 shrink-0">
+        <AspectRatio ratio={320 / 426.5}>
+          <Image
+            src={posterSrc}
+            alt={concert.name}
+            className="rounded-2xl object-cover"
+            fill
+            placeholder="blur"
+            blurDataURL={PLACEHOLDER_IMAGE}
+            sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+          />
+        </AspectRatio>
       </div>
-      {/*오른쪽 정보 파트*/}
-      <div className={"flex flex-1 flex-col gap-4"}>
-        {/*위쪽 파트*/}
-        <div className={"flex justify-between"}>
-          <div className={"flex flex-col gap-2"}>
-            <h3 className={"bold text-2xl"}>Echoes of Tommorow - Seoul</h3>
-            <div className={"flex gap-4"}>
-              <div className={"flex items-center justify-center gap-2"}>
-                <MapPin size={14} className={"text-text-sub"} />
-                <span className={"text-text-sub"}>올림픽홀 - 서울</span>
-              </div>
-              <div className={"flex items-center justify-center gap-2"}>
-                <Users size={14} className={"text-text-sub"} />
-                <span className={"text-text-sub"}>2,500석</span>
-              </div>
-            </div>
-            <div className={"flex gap-2"}>
-              <div className={"bg-text-point-sub flex h-6 w-40 items-center justify-center"}>
-                <span>예매 가능</span>
-              </div>
-              <div className={"bg-text-point-sub flex h-6 w-40 items-center justify-center"}>
-                <span>추천 콘서트</span>
-              </div>
-            </div>
+      <CardContent className="flex flex-1 justify-between p-0">
+        <div className="flex flex-col justify-between gap-2">
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold">{concert.name}</h3>
+            <ul className="text-text-sub space-y-1 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-2 [&>li>svg]:size-4">
+              <li>
+                <CalendarIcon />
+                {formatDateRangeKorean(concert.startDate, concert.endDate)}
+              </li>
+              {concert.ticketTime != null && concert.ticketEndTime != null && (
+                <li>
+                  <TicketsIcon />
+                  {formatDateRangeKorean(concert.ticketTime, concert.ticketEndTime)}
+                </li>
+              )}
+              <li>
+                <MapPinIcon />
+                {concert.placeName}
+              </li>
+              {concert.minPrice != null && concert.maxPrice != null && (
+                <li>
+                  <Ticket />
+                  {formatConcertPrice(concert.minPrice, concert.maxPrice)}
+                </li>
+              )}
+            </ul>
           </div>
-          <div className={"flex flex-col gap-2"}>
-            <div className={"flex justify-end"}>
-              <span className={"text-2xl"}>65,000원</span>
-            </div>
-            <div className={"flex justify-end"}>
-              <span className={"text-text-sub"}>최저가 기준</span>
-            </div>
-            <Button size={"lg"} type={"button"} className={"cursor-pointer"}>
-              상세보기
-            </Button>
+          <div className="flex gap-2">
+            <Link href={`/concerts/${concert.id}`}>
+              <Button>자세히 보기</Button>
+            </Link>
           </div>
         </div>
-        {/*아래쪽 파트*/}
-        <div className={"flex gap-6 border-t pt-4"}>
-          <div className={"text-text-sub flex items-center justify-center gap-2"}>
-            <Clock4 size={14} />
-            <span>공연 시간: 2시간 30분</span>
-          </div>
-          <div className="text-text-sub flex items-center justify-center gap-2">
-            <Ticket size={14} />
-            <span>티켓 판매: 1,204</span>
-          </div>
-          <div className="text-text-sub flex items-center justify-center gap-2">
-            <Heart size={14} />
-            <span>관심: 3,127</span>
-          </div>
-        </div>
-      </div>
-    </Item>
+      </CardContent>
+    </Card>
   );
 }

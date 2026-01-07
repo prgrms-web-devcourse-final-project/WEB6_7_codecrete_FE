@@ -21,11 +21,11 @@ const DEFAULT_TAGS = [
 export default function ActivityTagSection() {
   const { control, setValue } = useFormContext<MatePostWrite>();
 
-  const selectedTags = useWatch({
-    control,
-    name: "activityTags",
-    defaultValue: [],
-  });
+  const selectedTags =
+    useWatch({
+      control,
+      name: "activityTags",
+    }) || [];
 
   // 태그 클릭 핸들러 (넣었다 뺐다)
   const toggleTag = (tagLabel: string) => {

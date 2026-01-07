@@ -11,7 +11,6 @@ export default function ReviewTagSection() {
   const selectedTags = useWatch({
     control,
     name: "activityTags",
-    defaultValue: [],
   });
 
   // 태그 클릭 핸들러 (넣었다 뺐다)

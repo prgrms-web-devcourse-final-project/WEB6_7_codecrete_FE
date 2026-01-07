@@ -1,3 +1,4 @@
+import { CommentResponse } from "@/types/community";
 import { ConcertDetail, LikeConcert } from "@/types/concerts";
 import ClientApi from "@/utils/helpers/clientApi";
 
@@ -72,6 +73,38 @@ export const getConcertDetail = async ({
     return data.data;
   } catch (error) {
     console.error("Error fetching concert detail:", error);
+    return null;
+  }
+};
+
+/**
+ * 댓글 목록 조회
+ *
+ * @param {string} postId - 게시글 ID
+ * @returns {Promise<CommentResponse | null>} - 커뮤니티 글 목록 또는 null
+ */
+export const getCommentsList = async ({
+  postId,
+  page = 1,
+}: {
+  postId: number;
+  page?: number;
+}): Promise<CommentResponse | null> => {
+  try {
+    const res = await ClientApi(`/api/v1/posts/${postId}/comments?page=${page}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching comment list:", error);
     return null;
   }
 };
