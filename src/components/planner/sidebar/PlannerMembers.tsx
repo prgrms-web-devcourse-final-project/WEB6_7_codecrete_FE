@@ -144,17 +144,10 @@ export function PlannerMembers({
                   <SelectValue placeholder="역할을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="OWNER">OWNER (모든 권한)</SelectItem>
                   <SelectItem value="EDITOR">EDITOR (수정 가능)</SelectItem>
                   <SelectItem value="VIEWER">VIEWER (읽기 전용)</SelectItem>
                 </SelectContent>
               </Select>
-              {nextRole === "OWNER" && (
-                <p className="text-sm text-red-500">
-                  {selectedParticipant?.nickname}님에게 소유자 역할을 부여할 경우, 이 플래너의 소유
-                  권한을 잃고 편집자 권한으로 변경됩니다.
-                </p>
-              )}
             </Field>
           </FieldGroup>
           <DialogFooter>

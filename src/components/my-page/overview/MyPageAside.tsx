@@ -34,7 +34,8 @@ export default function MyPageAside({
         return true;
       }
       return false;
-    });
+    })
+    .slice(0, 5);
 
   return (
     <div className="max-w-125 flex-1">
