@@ -89,7 +89,7 @@ export default function PreferenceSelectSection() {
             {...register("ageRangeMin", {
               valueAsNumber: true,
               min: {
-                value: 19,
+                value: 20,
                 message: "만 19세 이상 성인만 모집 가능합니다.",
               },
               max: {
@@ -97,7 +97,7 @@ export default function PreferenceSelectSection() {
                 message: "입력 가능한 연령 범위가 아닙니다.",
               },
             })}
-            placeholder="ex. 12 (~)"
+            placeholder="ex. 20 (~)"
             className="h-13"
           />
           <Input
@@ -111,7 +111,7 @@ export default function PreferenceSelectSection() {
                 return !val || !min || val >= min || "최소값보다 커야 합니다";
               },
               min: {
-                value: 19,
+                value: 20,
                 message: "만 19세 이상 성인만 모집 가능합니다.",
               },
               max: {

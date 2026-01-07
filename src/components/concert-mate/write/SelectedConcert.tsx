@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { getConcertDetail } from "@/lib/api/concerts/concerts.client";
-import { getSearchConcertsAutoComplete } from "@/lib/api/search/search.client";
+import { getSearchConcerts } from "@/lib/api/search/search.client";
 import { cn } from "@/lib/utils";
 import { MatePostWrite } from "@/types/community/concert-mate";
 import { ConcertDetail } from "@/types/concerts";
@@ -112,10 +112,11 @@ export default function SelectedConcert() {
         try {
           setOptimisticResults([]);
 
-          const data = await getSearchConcertsAutoComplete({
+          const data = await getSearchConcerts({
             keyword: search,
-            start: 0,
-            end: 30,
+            isAuthenticated: true,
+            page: 0,
+            size: 100,
           });
           setConcertsResult(data);
         } catch (error) {
