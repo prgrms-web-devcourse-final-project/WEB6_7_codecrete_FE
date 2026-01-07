@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -117,7 +118,12 @@ export default function MeetingPostHeader({
             <DropdownMenuContent className="w-40" align="end">
               <DropdownMenuGroup>
                 {/* closing 되면 완료하기 버튼 사라짐 */}
-                {isOpen && <DropdownMenuItem onClick={handlerClosed}>완료하기</DropdownMenuItem>}
+                {isOpen && (
+                  <>
+                    <DropdownMenuItem onClick={handlerClosed}>구인마감</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem onClick={handleModify}>수정하기</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
                   삭제하기
