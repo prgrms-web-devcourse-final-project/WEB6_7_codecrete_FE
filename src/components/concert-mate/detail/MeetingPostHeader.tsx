@@ -116,12 +116,12 @@ export default function MeetingPostHeader({
 
             <DropdownMenuContent className="w-40" align="end">
               <DropdownMenuGroup>
+                {/* closing 되면 완료하기 버튼 사라짐 */}
+                {isOpen && <DropdownMenuItem onClick={handlerClosed}>완료하기</DropdownMenuItem>}
                 <DropdownMenuItem onClick={handleModify}>수정하기</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
                   삭제하기
                 </DropdownMenuItem>
-                {/* closing 되면 완료하기 버튼 사라짐 */}
-                {isOpen && <DropdownMenuItem onClick={handlerClosed}>완료하기</DropdownMenuItem>}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

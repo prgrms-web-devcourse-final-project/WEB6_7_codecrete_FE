@@ -84,7 +84,7 @@ export default function MateEditMain({ concertId, postId, postDetail }: MateEdit
             <MateWriteIntro />
             {/* 콘서트 선택 또는 검색*/}
             {/* TODO : 컴포넌트화 (PlannerCreate.tsx)*/}
-            <SelectedConcert />
+            <SelectedConcert initialConcertId={concertId} />
             {/* 정보 입력 */}
             <MateTitleSection />
             <PreferenceSelectSection />

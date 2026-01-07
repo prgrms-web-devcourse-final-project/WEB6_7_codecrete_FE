@@ -15,7 +15,7 @@ import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function SelectedConcert() {
+export default function SelectedConcert({ initialConcertId }: { initialConcertId?: number }) {
   const {
     setValue,
     // 필수 항목 에러 처리를 위해 추가
@@ -48,6 +48,38 @@ export default function SelectedConcert() {
     AutoCompleteConcerts[],
     AutoCompleteConcerts[]
   >(concertsResult, (_, newResults) => newResults);
+
+  // 초기 콘서트 로드 (수정 페이지용)
+  useEffect(() => {
+    if (initialConcertId && initialConcertId !== 0) {
+      const loadInitialConcert = async () => {
+        setIsLoadingConcertDetail(true);
+        try {
+          const data = await getConcertDetail({ concertId: initialConcertId.toString() });
+
+          if (!data) {
+            throw new Error("콘서트 정보를 불러올 수 없습니다.");
+          }
+
+          // 선택된 콘서트와 상세 정보 설정
+          setSelectedConcert({
+            id: Number(data.concertId),
+            name: data.name,
+            // AutoCompleteConcerts 타입에 맞게 필요한 필드만 설정
+          });
+          setConcertDetail(data);
+          setValue("concertId", Number(data.concertId));
+        } catch (error) {
+          console.error("초기 콘서트 로드 오류:", error);
+          toast.error("콘서트 정보를 불러올 수 없습니다.");
+        } finally {
+          setIsLoadingConcertDetail(false);
+        }
+      };
+
+      loadInitialConcert();
+    }
+  }, [initialConcertId, setValue]);
 
   // 빈 상태 메시지
   const getEmptyMessage = () => {
