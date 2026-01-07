@@ -90,7 +90,7 @@ export default function ReviewEditMain({
 
   // 취소 버튼
   const onCancelReview = () => {
-    router.push(`/concerts/${concertId}`);
+    router.push(`/concerts/${concertId}/review/${postId}`);
   };
 
   return (
