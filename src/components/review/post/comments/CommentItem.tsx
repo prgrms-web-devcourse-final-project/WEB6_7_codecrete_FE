@@ -42,6 +42,17 @@ export default function CommentItem({
   // TODO : 댓글 수정 기능
   // const handlerEdit = () => {};
 
+  useEffect(() => {
+    // 이전 데이터와 다를 때만 업데이트 (JSON 문자열 비교가 가장 간단)
+    if (JSON.stringify(comments) !== JSON.stringify(initialComments)) {
+      setComments(initialComments);
+    }
+    if (totalPages !== initialTotalPages) {
+      setTotalPages(initialTotalPages);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialComments, initialTotalPages]);
+
   const handlerDelete = async (targetCommentId: string) => {
     try {
       const success = await deleteComment({

@@ -44,7 +44,7 @@ export default function PreferenceSelectSection() {
               message: "최대 20명까지만 모집 가능합니다.",
             },
           })}
-          placeholder="ex. 1"
+          placeholder="ex. 2"
           className="h-13"
         />
         {errors.maxParticipants && (

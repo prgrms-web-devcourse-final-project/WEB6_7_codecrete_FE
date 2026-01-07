@@ -80,6 +80,7 @@ export const createComment = async ({
     const res = await ClientApi(`/api/v1/posts/${postId}/comments`, {
       method: "POST",
       body: JSON.stringify(data),
+      cache: "no-store",
     });
     if (!res.ok) {
       console.error("API Error:", res.status, res.statusText);
