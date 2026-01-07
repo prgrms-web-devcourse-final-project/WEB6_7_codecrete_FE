@@ -41,9 +41,8 @@ export default function MeetingPostHeader({
     normalizeDate(isModified ? postDetail.modifiedDate : postDetail.createdDate)
   );
 
-  // TODO: 아래 수정 주소는 동행구인 변경 주소로 변경해주세요
   const handleModify = () => {
-    router.push(`/concerts/${postDetail.concertId}/review/${postDetail.postId}/edit`);
+    router.push(`/concert-mate/${postDetail.postId}/edit`);
   };
 
   const handleDelete = async () => {
