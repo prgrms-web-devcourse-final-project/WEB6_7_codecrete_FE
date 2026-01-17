@@ -9,7 +9,7 @@ export default function PlannerInviteFriends({
   participants: PlannerParticipant[];
 }) {
   return (
-    <div className="bg-bg-main border-border border p-6">
+    <div className="bg-bg-main border-border lg:border lg:p-6">
       <h4 className="text-base font-bold">동행메이트</h4>
       <ul className="space-y-3">
         {participants.map((participant) => (

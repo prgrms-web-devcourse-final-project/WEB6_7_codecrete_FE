@@ -38,8 +38,9 @@ export default function TopButton() {
     <Button
       size="icon"
       className={twMerge(
-        "fixed right-6 bottom-6 z-90 size-12! rounded-full transition-opacity duration-300",
-        pathname.startsWith("/planner") && "bottom-35",
+        "fixed right-6 bottom-6 z-50 size-12! rounded-full transition-opacity duration-300",
+        pathname.startsWith("/planner") && "bottom-34",
+        pathname.startsWith("/concerts/") && "bottom-20",
         isVisible ? "opacity-100" : "pointer-events-none opacity-0",
         "lg:right-10 lg:bottom-10 lg:size-15!"
       )}

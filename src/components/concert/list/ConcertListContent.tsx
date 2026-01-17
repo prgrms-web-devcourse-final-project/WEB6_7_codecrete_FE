@@ -1,7 +1,6 @@
 "use client";
 
 import ConcertCard from "@/components/concert/ConcertCard";
-import { twMerge } from "tailwind-merge";
 import ListSortClient from "@/components/concert/list/ListSortClient";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -93,17 +92,17 @@ export default function ConcertListContent({
 
   return (
     // 정렬 수정 시, 스켈레톤 사이즈 주의 <ConcertCardSkeleton/>
-    <section className="px-15 py-16">
-      <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-9`)}>
+    <section className="px-5 py-7 lg:px-15 lg:py-16">
+      <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8">
         <div className="header flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-text-main text-2xl font-bold">{totalCount}</span>
-            <span className="text-text-main text-lg">items</span>
+          <div className="flex items-center gap-1 lg:gap-2">
+            <span className="text-text-main text-xl font-bold lg:text-2xl">{totalCount}</span>
+            <span className="text-text-main text-sm lg:text-lg">items</span>
           </div>
           {/* TODO : 정렬 API 수정 따라 수정 */}
           <ListSortClient />
         </div>
-        <div className="list grid gap-8 pb-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="list grid grid-cols-2 gap-x-4 gap-y-8 pb-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-10">
           {concertsList.map((concert: ConcertData, index: number) => (
             <ConcertCard
               key={`${concert.id}-${index}`} // 중복 처리 로직 지울 때 에러 해결용

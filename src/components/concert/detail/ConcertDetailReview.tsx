@@ -57,29 +57,31 @@ export default function ConcertDetailReview({
   const { summary, reviews } = data;
 
   return (
-    <div className="review flex flex-col gap-6">
-      <h2 className="text-text-main text-3xl font-bold">리뷰 게시판</h2>
-      <div className={twMerge(`bg-bg-sub flex flex-col gap-6 rounded-xl p-6`)}>
+    <div className="review mb-15 space-y-4 px-5 lg:mb-0 lg:space-y-6 lg:px-0">
+      <h2 className="text-text-main text-xl font-bold lg:text-3xl">리뷰 게시판</h2>
+      <div className="bg-bg-sub flex flex-col gap-4 rounded-xl p-4 lg:gap-6 lg:p-6">
         <div className="flex justify-between">
           <div className="flex gap-4">
-            <strong className="text-4xl">{summary.averageRating.toFixed(1)}</strong>
-            <div>
-              <div className="flex gap-1" aria-label={`평점 ${summary.averageRating}점`}>
+            <strong className="text-3xl lg:text-4xl">{summary.averageRating.toFixed(1)}</strong>
+            <div className="flex flex-col justify-between">
+              <div className="flex gap-0.5 lg:gap-1" aria-label={`평점 ${summary.averageRating}점`}>
                 {Array.from({ length: 5 }).map((_, index) => {
                   const isFilled = index < Math.floor(summary.averageRating);
 
                   return (
                     <Star
                       key={index}
-                      size={20}
-                      className={
+                      className={twMerge(
+                        "size-4 lg:size-5",
                         isFilled ? "fill-yellow-400 text-yellow-400" : "fill-gray-300 text-gray-300"
-                      }
+                      )}
                     />
                   );
                 })}
               </div>
-              <p className="text-text-sub text-sm">리뷰 {summary.totalCount.toLocaleString()} 개</p>
+              <p className="text-text-sub text-xs leading-tight lg:text-sm">
+                리뷰 {summary.totalCount.toLocaleString()} 개
+              </p>
             </div>
           </div>
           {isLoggedIn && (

@@ -27,7 +27,7 @@ export function SortSelect({
    */
   return (
     <Select onValueChange={onValueChange}>
-      <SelectTrigger size="default" className="w-28">
+      <SelectTrigger size="default" className="min-w-20 lg:min-w-28">
         <SelectValue placeholder="정렬" />
       </SelectTrigger>
       <SelectContent>
