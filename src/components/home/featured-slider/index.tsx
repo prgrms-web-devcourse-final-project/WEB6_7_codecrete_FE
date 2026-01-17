@@ -37,6 +37,14 @@ export default function FeaturedSlider({
           slidesPerView={5}
           loop={true}
           breakpoints={{
+            320: {
+              slidesPerView: 1.5,
+              spaceBetween: 16,
+            },
+            475: {
+              slidesPerView: 2,
+              spaceBetween: 16,
+            },
             640: {
               slidesPerView: 2.5,
               spaceBetween: 16,
