@@ -1,5 +1,5 @@
+import { ScheduleType } from "@/types/planner";
 import { z } from "zod";
-import type { Itinerary, KakaoMapSummary, TMapWalkRoute } from "@/types/planner";
 
 // MEAL 스케줄
 const mealSchema = z
@@ -87,65 +87,19 @@ const otherSchema = z.object({
   selectedRegularScheduleId: z.string().optional(),
 });
 
-// TRANSPORT 스케줄
-const transportSchema = z
-  .object({
-    scheduleType: z.literal("TRANSPORT"),
-    title: z.string().min(1, "일정 이름을 입력해주세요"),
-    startAt: z.string(),
-    duration: z.number().nonnegative(),
-    details: z.string().trim().min(1, "상세 정보를 입력해주세요"),
-    estimatedCost: z.number().nonnegative(),
-    startScheduleId: z.string().min(1, "출발 일정을 선택해주세요"),
-    endScheduleId: z.string().min(1, "도착 일정을 선택해주세요"),
-    transportType: z.enum(["WALK", "PUBLIC_TRANSPORT", "CAR"]),
-    selectedRouteIndex: z.number().nullable().optional(),
-    routeData: z.custom<Itinerary[]>((val) => Array.isArray(val)).optional(),
-    carRouteSummary: z
-      .custom<KakaoMapSummary>((val) => typeof val === "object" && val !== null)
-      .nullable()
-      .optional(),
-    walkRouteSummary: z
-      .custom<TMapWalkRoute>((val) => typeof val === "object" && val !== null)
-      .nullable()
-      .optional(),
-  })
-  .refine((data) => data.startScheduleId !== data.endScheduleId, {
-    message: "출발지와 도착지가 같을 수 없습니다",
-    path: ["endScheduleId"],
-  });
-
-// Discriminated Union 스키마
 export const scheduleFormSchema = z.discriminatedUnion("scheduleType", [
   mealSchema,
   waitingSchema,
   activitySchema,
   otherSchema,
-  transportSchema,
 ]);
 
 export type ScheduleFormData = z.infer<typeof scheduleFormSchema>;
-// 기본값 생성 헬퍼
+
 export const getDefaultScheduleValues = (
-  type: "MEAL" | "WAITING" | "ACTIVITY" | "TRANSPORT" | "OTHER" = "MEAL",
+  type: Exclude<ScheduleType, "TRANSPORT">,
   defaultStartTime?: string
 ): ScheduleFormData => {
-  if (type === "TRANSPORT") {
-    return {
-      scheduleType: "TRANSPORT",
-      title: "",
-      startAt: "",
-      duration: 0,
-      details: "",
-      estimatedCost: 0,
-      startScheduleId: "",
-      endScheduleId: "",
-      transportType: "PUBLIC_TRANSPORT",
-      selectedRouteIndex: null,
-      routeData: [],
-    };
-  }
-
   return {
     scheduleType: type,
     title: "",

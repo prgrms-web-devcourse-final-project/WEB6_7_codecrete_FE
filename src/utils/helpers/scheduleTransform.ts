@@ -1,72 +1,74 @@
+// src/utils/helpers/scheduleTransform.ts
+
 import { ScheduleFormData } from "@/lib/zod/schedule.schema";
 import { ScheduleDetail, Itinerary, KakaoMapSummary, TMapWalkRoute } from "@/types/planner";
 
-// 경로 정보 조회 실패 시 사용할 기본 소요 시간 (분)
-const DEFAULT_CAR_DURATION_MINUTES = 60;
-const DEFAULT_WALK_DURATION_MINUTES = 30;
+/**
+ * 기본 일정(MEAL/WAITING/ACTIVITY/OTHER) 폼 데이터를 API용 ScheduleDetail로 변환
+ */
+export function transformBasicSchedule(formData: ScheduleFormData): ScheduleDetail {
+  // 시간 형식 정규화 (HH:MM -> HH:MM:00)
+  const normalizedStartAt = formData.startAt ? `${formData.startAt}:00` : "";
+  const { placeName, placeAddress, coords } = formData;
 
-interface TransformContext {
+  return {
+    scheduleType: formData.scheduleType,
+    title: formData.title,
+    duration: formData.duration,
+    location: [placeAddress, placeName].filter(Boolean).join(", "),
+    locationLat: coords?.lat,
+    locationLon: coords?.lon,
+    startAt: normalizedStartAt,
+    details: formData.details,
+    estimatedCost: formData.estimatedCost || 0,
+  };
+}
+
+// ============================================
+// 🚗 이동 일정 변환 (나중에 사용)
+// ============================================
+
+// const DEFAULT_CAR_DURATION_MINUTES = 60;
+// const DEFAULT_WALK_DURATION_MINUTES = 30;
+
+interface TransportTransformContext {
   transportCandidates: ScheduleDetail[];
   selectedRoute: Itinerary | null;
   carRouteSummary: KakaoMapSummary | null;
   walkRouteSummary: TMapWalkRoute | null;
 }
 
-export function transformToScheduleDetail(
-  formData: ScheduleFormData,
-  context: TransformContext
+/**
+ * 이동(TRANSPORT) 일정을 자동 생성할 때 사용 (Phase 2)
+ * @param fromSchedule - 출발 일정
+ * @param toSchedule - 도착 일정
+ * @param context - 경로 정보
+ */
+export function transformTransportSchedule(
+  fromSchedule: ScheduleDetail,
+  toSchedule: ScheduleDetail,
+  context: TransportTransformContext
 ): ScheduleDetail {
-  const { transportCandidates, selectedRoute, carRouteSummary, walkRouteSummary } = context;
-
-  // 시간 형식 정규화 (HH:MM -> HH:MM:00)
-  const normalizedStartAt = formData.startAt ? `${formData.startAt}:00` : "";
-
-  // 기본 스케줄 데이터
-  let scheduleData: ScheduleDetail = {
-    scheduleType: formData.scheduleType,
-    title: formData.title,
-    duration: formData.duration,
-    location: "",
-    startAt: normalizedStartAt,
-    details: formData.details,
-    estimatedCost: formData.estimatedCost || 0,
-  };
-
-  // 일반 스케줄 (MEAL, WAITING, ACTIVITY, OTHER)
-  if (formData.scheduleType !== "TRANSPORT") {
-    const { placeName, placeAddress, coords } = formData;
-
-    scheduleData.location = [placeAddress, placeName].filter(Boolean).join(", ");
-    scheduleData.locationLat = coords?.lat;
-    scheduleData.locationLon = coords?.lon;
-
-    return scheduleData;
-  }
-
-  // 이동 스케줄 (TRANSPORT)
-  const { startScheduleId, endScheduleId, transportType } = formData;
-
-  const startSchedule = transportCandidates.find((s) => String(s.id) === startScheduleId);
-  const endSchedule = transportCandidates.find((s) => String(s.id) === endScheduleId);
-
-  if (!startSchedule || !endSchedule) {
-    throw new Error("출발/도착 일정 정보를 찾을 수 없습니다.");
-  }
+  const { selectedRoute, carRouteSummary, walkRouteSummary } = context;
 
   // 이동 기본 정보 설정
-  scheduleData = {
-    ...scheduleData,
-    transportType,
-    location: `${startSchedule.title || "출발"} → ${endSchedule.title || "도착"}`,
-    startPlaceLat: startSchedule.locationLat,
-    startPlaceLon: startSchedule.locationLon,
-    endPlaceLat: endSchedule.locationLat,
-    endPlaceLon: endSchedule.locationLon,
-    startAt: normalizedStartAt || startSchedule.startAt,
+  let scheduleData: ScheduleDetail = {
+    scheduleType: "TRANSPORT",
+    title: `${fromSchedule.title} → ${toSchedule.title}`,
+    duration: 30, // 기본값
+    transportType: "PUBLIC_TRANSPORT",
+    location: `${fromSchedule.title || "출발"} → ${toSchedule.title || "도착"}`,
+    startPlaceLat: fromSchedule.locationLat,
+    startPlaceLon: fromSchedule.locationLon,
+    endPlaceLat: toSchedule.locationLat,
+    endPlaceLon: toSchedule.locationLon,
+    startAt: addMinutesToTime(fromSchedule.startAt.substring(0, 5), fromSchedule.duration) + ":00",
+    details: "자동 생성된 이동 일정",
+    estimatedCost: 0,
   };
 
-  // 대중교통 경로 선택
-  if (transportType === "PUBLIC_TRANSPORT" && selectedRoute) {
+  // 대중교통 경로
+  if (selectedRoute) {
     const routeDurationMinutes = Math.ceil(selectedRoute.totalTime / 60);
     const selectedRouteCost = selectedRoute.fare?.regular?.totalFare || 0;
 
@@ -89,83 +91,54 @@ export function transformToScheduleDetail(
     };
   }
   // 자동차 경로
-  else if (transportType === "CAR") {
-    if (carRouteSummary) {
-      const carDurationMinutes = Math.ceil(carRouteSummary.duration / 60);
-      scheduleData = {
-        ...scheduleData,
-        duration: carDurationMinutes,
-        estimatedCost: carRouteSummary.fare?.taxi || 0,
-        distance: carRouteSummary.distance,
-        transportRoute: {
-          totalTime: carRouteSummary.duration,
-          totalDistance: carRouteSummary.distance,
-          totalWalkTime: 0,
-          totalWalkDistance: 0,
-          transferCount: 0,
-          leg: [],
-          fare: {
-            taxi: carRouteSummary.fare?.taxi,
-          },
+  else if (carRouteSummary) {
+    const carDurationMinutes = Math.ceil(carRouteSummary.duration / 60);
+    scheduleData = {
+      ...scheduleData,
+      transportType: "CAR",
+      duration: carDurationMinutes,
+      estimatedCost: carRouteSummary.fare?.taxi || 0,
+      distance: carRouteSummary.distance,
+      transportRoute: {
+        totalTime: carRouteSummary.duration,
+        totalDistance: carRouteSummary.distance,
+        totalWalkTime: 0,
+        totalWalkDistance: 0,
+        transferCount: 0,
+        leg: [],
+        fare: {
+          taxi: carRouteSummary.fare?.taxi,
         },
-      };
-    } else {
-      // 기본값 사용
-      scheduleData = {
-        ...scheduleData,
-        duration: DEFAULT_CAR_DURATION_MINUTES,
-        transportRoute: {
-          totalTime: DEFAULT_CAR_DURATION_MINUTES * 60,
-          totalDistance: 0,
-          totalWalkTime: 0,
-          totalWalkDistance: 0,
-          transferCount: 0,
-          leg: [],
-          fare: { taxi: undefined },
-        },
-      };
-    }
+      },
+    };
   }
   // 도보 경로
-  else if (transportType === "WALK") {
-    if (walkRouteSummary) {
-      const walkDurationMinutes = Math.ceil(walkRouteSummary.totalTime / 60);
-      scheduleData = {
-        ...scheduleData,
-        duration: walkDurationMinutes,
-        distance: walkRouteSummary.totalDistance,
-        transportRoute: {
-          totalTime: walkRouteSummary.totalTime,
-          totalDistance: walkRouteSummary.totalDistance,
-          totalWalkTime: walkRouteSummary.totalTime,
-          totalWalkDistance: walkRouteSummary.totalDistance,
-          transferCount: 0,
-          leg: [],
-          fare: { taxi: undefined },
-        },
-      };
-    } else {
-      // 기본값 사용
-      scheduleData = {
-        ...scheduleData,
-        duration: DEFAULT_WALK_DURATION_MINUTES,
-        transportRoute: {
-          totalTime: DEFAULT_WALK_DURATION_MINUTES * 60,
-          totalDistance: 0,
-          totalWalkTime: DEFAULT_WALK_DURATION_MINUTES * 60,
-          totalWalkDistance: 0,
-          transferCount: 0,
-          leg: [],
-          fare: { taxi: undefined },
-        },
-      };
-    }
+  else if (walkRouteSummary) {
+    const walkDurationMinutes = Math.ceil(walkRouteSummary.totalTime / 60);
+    scheduleData = {
+      ...scheduleData,
+      transportType: "WALK",
+      duration: walkDurationMinutes,
+      distance: walkRouteSummary.totalDistance,
+      transportRoute: {
+        totalTime: walkRouteSummary.totalTime,
+        totalDistance: walkRouteSummary.totalDistance,
+        totalWalkTime: walkRouteSummary.totalTime,
+        totalWalkDistance: walkRouteSummary.totalDistance,
+        transferCount: 0,
+        leg: [],
+        fare: { taxi: undefined },
+      },
+    };
   }
 
   return scheduleData;
 }
 
-// 시간 계산 헬퍼
+// ============================================
+// 🔧 시간 계산 헬퍼 함수들
+// ============================================
+
 export function addMinutesToTime(timeStr: string, minutes: number): string {
   const [hours, mins] = timeStr.split(":").map(Number);
   const totalMinutes = hours * 60 + mins + minutes;
@@ -174,7 +147,7 @@ export function addMinutesToTime(timeStr: string, minutes: number): string {
   return `${String(newHours).padStart(2, "0")}:${String(newMins).padStart(2, "0")}`;
 }
 
-// 스케줄 종료 시간 계산
 export function getScheduleEndTime(schedule: ScheduleDetail): string {
-  return addMinutesToTime(schedule.startAt.substring(0, 5), schedule.duration);
+  const startTime = schedule.startAt.substring(0, 5);
+  return addMinutesToTime(startTime, schedule.duration);
 }

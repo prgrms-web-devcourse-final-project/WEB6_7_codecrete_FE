@@ -5,6 +5,7 @@ import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 import {
   Dialog,
   DialogClose,
@@ -32,26 +33,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CarFrontIcon, UtensilsIcon, CoffeeIcon, Loader2, NotepadTextIcon } from "lucide-react";
+import { UtensilsIcon, CoffeeIcon, Loader2, NotepadTextIcon } from "lucide-react";
+
 import { PlaceSelector } from "./fields/PlaceSelector";
-import { TransportSelector } from "./fields/TransportSelector";
 import { createPlanSchedule } from "@/lib/api/planner/schedule.client";
 import {
   scheduleFormSchema,
   type ScheduleFormData,
   getDefaultScheduleValues,
 } from "@/lib/zod/schedule.schema";
-import { transformToScheduleDetail } from "@/utils/helpers/scheduleTransform";
 import { toMinutePrecision, formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
-import { getScheduleEndTime } from "@/utils/helpers/scheduleTransform";
-import {
-  ConcertCoords,
-  ScheduleDetail,
-  ScheduleType,
-  Itinerary,
-  KakaoMapSummary,
-  TMapWalkRoute,
-} from "@/types/planner";
+import { getScheduleEndTime, transformBasicSchedule } from "@/utils/helpers/scheduleTransform";
+import { ConcertCoords, ScheduleDetail, ScheduleType } from "@/types/planner";
 
 interface AddScheduleDialogProps {
   planId: string;
@@ -74,26 +67,8 @@ export default function AddScheduleDialog({
   const [isPending, startTransition] = useTransition();
 
   // scheduleType을 별도 state로 관리 (폼 리셋용)
-  const [currentScheduleType, setCurrentScheduleType] = useState<ScheduleType>("MEAL");
-
-  // 경로 데이터 state
-  const [routeContext, setRouteContext] = useState<{
-    routeData: Itinerary[];
-    selectedRoute: Itinerary | null;
-    carRouteSummary: KakaoMapSummary | null;
-    walkRouteSummary: TMapWalkRoute | null;
-  }>({
-    routeData: [],
-    selectedRoute: null,
-    carRouteSummary: null,
-    walkRouteSummary: null,
-  });
-
-  // 이동 경로 선택지
-  const transportCandidates = useMemo(
-    () => schedules.filter((s) => s.id && s.scheduleType !== "TRANSPORT" && s.location),
-    [schedules]
-  );
+  const [currentScheduleType, setCurrentScheduleType] =
+    useState<Exclude<ScheduleType, "TRANSPORT">>("MEAL");
 
   // 일반 일정 선택지
   const regularScheduleCandidates = useMemo(
@@ -126,7 +101,7 @@ export default function AddScheduleDialog({
     shouldFocusError: false,
   });
 
-  // 초기화 로직을 함수로 분리 (이벤트 핸들러에서만 호출)
+  // 초기화 로직
   const resetToInitialState = () => {
     setCurrentScheduleType("MEAL");
     const initialValues = getDefaultScheduleValues("MEAL", toMinutePrecision(defaultStartTime));
@@ -136,16 +111,10 @@ export default function AddScheduleDialog({
       keepIsValid: false,
       keepErrors: false,
     });
-    setRouteContext({
-      routeData: [],
-      selectedRoute: null,
-      carRouteSummary: null,
-      walkRouteSummary: null,
-    });
   };
 
   // scheduleType 변경 핸들러
-  const handleScheduleTypeChange = (newType: ScheduleType) => {
+  const handleScheduleTypeChange = (newType: Exclude<ScheduleType, "TRANSPORT">) => {
     setCurrentScheduleType(newType);
     const newValues = getDefaultScheduleValues(newType, toMinutePrecision(defaultStartTime));
     form.reset(newValues, {
@@ -154,21 +123,14 @@ export default function AddScheduleDialog({
       keepIsValid: false,
       keepErrors: false,
     });
-    setRouteContext({
-      routeData: [],
-      selectedRoute: null,
-      carRouteSummary: null,
-      walkRouteSummary: null,
-    });
   };
 
-  // 다이얼로그 열기/닫기 핸들러 (이벤트 핸들러에서 직접 호출)
+  // 다이얼로그 열기/닫기 핸들러
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
       // 열릴 때만 초기화
       resetToInitialState();
     }
-    // 닫힐 때는 초기화 안 해도 됨 (다음에 열릴 때 초기화되므로)
     onOpenChange(newOpen);
   };
 
@@ -185,10 +147,6 @@ export default function AddScheduleDialog({
       if ("title" in errors) {
         toast.error("일정 이름을 입력해주세요");
       }
-    } else if (scheduleType === "TRANSPORT") {
-      if ("startScheduleId" in errors) {
-        toast.error("출발 일정을 선택해주세요");
-      }
     }
   };
 
@@ -196,13 +154,7 @@ export default function AddScheduleDialog({
   const onSubmit = async (data: ScheduleFormData) => {
     startTransition(async () => {
       try {
-        const scheduleData = transformToScheduleDetail(data, {
-          transportCandidates,
-          selectedRoute: routeContext.selectedRoute,
-          carRouteSummary: routeContext.carRouteSummary,
-          walkRouteSummary: routeContext.walkRouteSummary,
-        });
-
+        const scheduleData = transformBasicSchedule(data);
         await createPlanSchedule({
           planId,
           scheduleData,
@@ -221,7 +173,7 @@ export default function AddScheduleDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[90vh] w-[95%] overflow-hidden sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] w-[95%] max-w-lg overflow-hidden">
         <DialogHeader>
           <DialogTitle>새로운 일정 추가</DialogTitle>
         </DialogHeader>
@@ -236,7 +188,7 @@ export default function AddScheduleDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      어떤 일정인가요?<span className="text-red-500">*</span>
+                      어떤 일정인가요?<span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <ToggleGroup
@@ -246,9 +198,10 @@ export default function AddScheduleDialog({
                         onValueChange={(val) => {
                           if (val) {
                             field.onChange(val);
-                            handleScheduleTypeChange(val as ScheduleType);
+                            handleScheduleTypeChange(val as Exclude<ScheduleType, "TRANSPORT">);
                           }
                         }}
+                        className="w-full"
                       >
                         <ToggleGroupItem value="MEAL" className="flex-1 gap-2">
                           <UtensilsIcon className="size-4" />
@@ -257,10 +210,6 @@ export default function AddScheduleDialog({
                         <ToggleGroupItem value="WAITING" className="flex-1 gap-2">
                           <CoffeeIcon className="size-4" />
                           <span>카페</span>
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="TRANSPORT" className="flex-1 gap-2">
-                          <CarFrontIcon className="size-4" />
-                          <span>이동</span>
                         </ToggleGroupItem>
                         <ToggleGroupItem value="ACTIVITY" className="flex-1 gap-2">
                           <NotepadTextIcon className="size-4" />
@@ -273,8 +222,8 @@ export default function AddScheduleDialog({
                 )}
               />
 
-              {/* 일정 선택 (일반 스케줄) */}
-              {currentScheduleType !== "TRANSPORT" && regularScheduleCandidates.length > 0 && (
+              {/* 일정 선택 (기존 일정 연결) */}
+              {regularScheduleCandidates.length > 0 && (
                 <FormField
                   control={form.control}
                   name="selectedRegularScheduleId"
@@ -320,16 +269,13 @@ export default function AddScheduleDialog({
                 />
               )}
 
-              {/* 장소 선택 (일반 스케줄) */}
-              {currentScheduleType !== "TRANSPORT" && (
-                <PlaceSelector
-                  key={currentScheduleType}
-                  form={form}
-                  scheduleType={currentScheduleType}
-                  defaultCoords={defaultCoords}
-                />
-              )}
-
+              {/* 장소 선택 */}
+              <PlaceSelector
+                key={currentScheduleType}
+                form={form}
+                scheduleType={currentScheduleType}
+                defaultCoords={defaultCoords}
+              />
               {/* 일정 제목 */}
               <FormField
                 control={form.control}
@@ -337,7 +283,7 @@ export default function AddScheduleDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      일정 이름<span className="text-red-500">*</span>
+                      일정 이름<span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="예: 점심 식사, 굿즈 구매" />
@@ -347,72 +293,62 @@ export default function AddScheduleDialog({
                 )}
               />
 
-              {/* 시간 설정 (일반 스케줄만) */}
-              {currentScheduleType !== "TRANSPORT" && (
-                <div className="flex gap-4">
-                  <FormField
-                    control={form.control}
-                    name="startAt"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>
-                          시작 시간<span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="time"
-                            step="60"
-                            min={timeRange.minTime}
-                            max={timeRange.maxTime}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="duration"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>
-                          소요시간<span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            value={String(field.value)}
-                            onValueChange={(val) => field.onChange(Number(val))}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="30">30분</SelectItem>
-                              <SelectItem value="60">1시간</SelectItem>
-                              <SelectItem value="90">1시간 30분</SelectItem>
-                              <SelectItem value="120">2시간</SelectItem>
-                              <SelectItem value="150">2시간 30분</SelectItem>
-                              <SelectItem value="180">3시간</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
-
-              {/* 이동 수단 선택 (TRANSPORT) */}
-              {currentScheduleType === "TRANSPORT" && (
-                <TransportSelector
-                  form={form}
-                  transportCandidates={transportCandidates}
-                  onRouteDataChange={setRouteContext}
+              <div className="flex gap-4">
+                {/* 시작 시간 */}
+                <FormField
+                  control={form.control}
+                  name="startAt"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        시작 시간<span className="text-destructive">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="time"
+                          step="60"
+                          min={timeRange.minTime}
+                          max={timeRange.maxTime}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              )}
+
+                {/* 소요시간 */}
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        소요시간<span className="text-destructive">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          value={String(field.value)}
+                          onValueChange={(val) => field.onChange(Number(val))}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="30">30분</SelectItem>
+                            <SelectItem value="60">1시간</SelectItem>
+                            <SelectItem value="90">1시간 30분</SelectItem>
+                            <SelectItem value="120">2시간</SelectItem>
+                            <SelectItem value="150">2시간 30분</SelectItem>
+                            <SelectItem value="180">3시간</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               {/* 상세 정보 */}
               <FormField
@@ -421,7 +357,7 @@ export default function AddScheduleDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      상세 정보<span className="text-red-500">*</span>
+                      상세 정보<span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -435,6 +371,7 @@ export default function AddScheduleDialog({
                 )}
               />
             </div>
+
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="ghost" type="button" disabled={isPending}>
