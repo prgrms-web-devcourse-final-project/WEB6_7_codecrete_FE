@@ -33,7 +33,7 @@ export default function ReviewConcertSection() {
         </p>
       </div>
       {errors.content?.message && (
-        <span className="text-xs text-red-500">{errors.content.message}</span>
+        <span className="text-destructive text-xs">{errors.content.message}</span>
       )}
     </CardContent>
   );

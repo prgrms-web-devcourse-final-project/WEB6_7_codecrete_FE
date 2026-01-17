@@ -25,7 +25,6 @@ export type ConcertInfoItem = {
   type: "date" | "location" | "price" | "ticketing";
   label: string;
   title: string;
-  subtitle?: string;
 };
 
 // 공연장 정보

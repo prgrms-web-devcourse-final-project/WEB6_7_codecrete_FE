@@ -53,10 +53,14 @@ export default function PlannerTopActions({
             </div>
 
             {/* 오른쪽 그룹: 공유, 저장 */}
-            <div className="bg-bg-main border-border fixed right-0 bottom-0 left-0 z-50 flex gap-3 border-t px-5 py-4 lg:static lg:z-0 lg:gap-4 lg:border-none lg:p-0">
-              <Button onClick={() => setShowShare(true)} variant="default" className="flex-1">
+            <div className="fixed right-6 bottom-6 z-50 lg:static">
+              <Button
+                onClick={() => setShowShare(true)}
+                variant="default"
+                className="size-12 flex-1 rounded-full lg:size-auto lg:rounded-md"
+              >
                 <Share2Icon className="h-4 w-4" />
-                <span className="text-sm">공유하기</span>
+                <span className="hidden text-sm lg:block">공유하기</span>
               </Button>
             </div>
           </div>

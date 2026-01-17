@@ -48,7 +48,7 @@ export default function PreferenceSelectSection() {
           className="h-13"
         />
         {errors.maxParticipants && (
-          <span className="text-xs text-red-500">{errors.maxParticipants.message}</span>
+          <span className="text-destructive text-xs">{errors.maxParticipants.message}</span>
         )}
       </div>
 
@@ -76,7 +76,7 @@ export default function PreferenceSelectSection() {
           )}
         />
         {errors.genderPreference && (
-          <span className="text-xs text-red-500">{errors.genderPreference.message}</span>
+          <span className="text-destructive text-xs">{errors.genderPreference.message}</span>
         )}
       </div>
 
@@ -124,10 +124,10 @@ export default function PreferenceSelectSection() {
           />
         </div>
         {errors.ageRangeMin && (
-          <span className="text-xs text-red-500">{errors.ageRangeMin.message}</span>
+          <span className="text-destructive text-xs">{errors.ageRangeMin.message}</span>
         )}
         {errors.ageRangeMax && (
-          <span className="text-xs text-red-500">{errors.ageRangeMax.message}</span>
+          <span className="text-destructive text-xs">{errors.ageRangeMax.message}</span>
         )}
       </div>
     </CardContent>

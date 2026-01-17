@@ -9,6 +9,7 @@ import { UserInfo } from "@/types/user";
 import { getUserInfo } from "@/lib/api/user/user.client";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ConcertReviewCard({
   review,
@@ -47,9 +48,9 @@ export default function ConcertReviewCard({
 
   return (
     <Link href={`/concerts/${concertId}/review/${review.postId}`} className="block">
-      <div className="border-border hover:border-primary/50 flex cursor-pointer flex-col gap-4 rounded-xl border-2 p-6 transition-colors">
+      <div className="border-border flex cursor-pointer flex-col gap-3 rounded-xl border p-4 transition-colors lg:gap-4 lg:p-6">
         <div className="flex items-start justify-between">
-          <div className="flex gap-4">
+          <div className="flex gap-3 lg:gap-4">
             <Avatar className="size-10 ring-2 ring-gray-100">
               {isAuthorLoading ? (
                 <AvatarFallback className="animate-pulse bg-gray-200" />
@@ -60,10 +61,10 @@ export default function ConcertReviewCard({
                 </>
               )}
             </Avatar>
-            <div className="flex flex-col gap-0.5">
-              <strong className="text-text-main text-base font-semibold">
+            <div className="flex flex-col justify-between">
+              <strong className="text-text-main text-base text-sm font-semibold">
                 {isAuthorLoading ? (
-                  <div className="h-4 w-16 animate-pulse rounded bg-gray-200" />
+                  <Skeleton className="h-5 w-16 lg:h-6" />
                 ) : (
                   (author?.nickname ?? "탈퇴한 사용자")
                 )}
@@ -99,13 +100,17 @@ export default function ConcertReviewCard({
         </div>
 
         <div>
-          <h3 className="text-text-main mb-1 line-clamp-1 text-lg font-bold">{review.title}</h3>
-          <p className="text-text-sub line-clamp-1 text-sm leading-relaxed">{review.content}</p>
+          <h3 className="text-text-main mb-1 line-clamp-1 text-base font-bold lg:text-lg">
+            {review.title}
+          </h3>
+          <p className="text-text-sub line-clamp-1 text-xs leading-normal lg:text-sm">
+            {review.content}
+          </p>
         </div>
 
         <div className="mt-auto flex flex-wrap gap-2">
           {review.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="px-2 py-0 text-xs font-normal">
+            <Badge key={tag} variant="secondary" className="px-2 text-xs font-normal">
               #{tag}
             </Badge>
           ))}

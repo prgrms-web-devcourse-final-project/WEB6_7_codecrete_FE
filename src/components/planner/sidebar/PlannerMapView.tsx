@@ -155,9 +155,9 @@ export default function PlannerMapView({ schedules }: { schedules: ScheduleDetai
   }, [uniqueCoords]);
 
   return (
-    <div className="bg-bg-main border-border border p-6">
+    <div className="bg-bg-main border-border lg:border lg:p-6">
       <h4 className="text-base font-bold">지도 보기</h4>
-      <AspectRatio ratio={1 / 1}>
+      <AspectRatio ratio={1}>
         <div className="border-border h-full w-full rounded-lg border bg-zinc-100">
           {uniqueCoords.length === 0 ? (
             <div className="text-text-sub flex h-full items-center justify-center text-sm">

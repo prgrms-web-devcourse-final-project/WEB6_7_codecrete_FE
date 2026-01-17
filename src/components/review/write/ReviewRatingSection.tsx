@@ -67,7 +67,7 @@ export default function ReviewRatingSection() {
           </div>
         </div>
       </CardTitle>
-      {errors.rating && <span className="text-xs text-red-500">{errors.rating.message}</span>}
+      {errors.rating && <span className="text-destructive text-xs">{errors.rating.message}</span>}
     </CardContent>
   );
 }
