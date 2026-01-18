@@ -17,8 +17,17 @@ import {
 } from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
 import ConcertChatButton from "./ConcertChatButton";
+import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
 
-export default async function ConcertHeader({ concertId }: { concertId: string }) {
+export default async function ConcertHeader({
+  concertId,
+  isLoggedIn,
+  isChatAvailable,
+}: {
+  concertId: string;
+  isLoggedIn: boolean;
+  isChatAvailable: boolean;
+}) {
   const [concertDetail, concertTicketing, isAuthenticated] = await Promise.all([
     getConcertDetail({ concertId }),
     getTicketOfficesByConcertId({ concertId }),
@@ -40,43 +49,51 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
   }
 
   return (
-    <section className="header bg-bg-sub px-15 py-10">
-      <div className="mx-auto flex w-full max-w-400 items-start gap-8">
-        <div className="border-border w-2/5 overflow-hidden rounded-2xl border">
+    <section className="header bg-bg-sub lg:px-15 lg:py-10">
+      {/* 모바일: flex-col (세로), md 이상: flex-row (가로) */}
+      <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:flex-row lg:items-start xl:gap-8">
+        {/* 포스터 영역: 모바일 w-full, md 이상 w-2/5 */}
+        <div className="border-border w-full flex-1 overflow-hidden lg:sticky lg:top-30 lg:rounded-2xl lg:border xl:w-2/5">
           <AspectRatio ratio={320 / 426.5}>
             <Image
-              src={
-                concertDetail.posterUrl ??
-                // TODO : 임시 포스터 이미지 생성해서 넣기
-                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFklEQVR42mN8//HLfwYiAOOoQvoqBABbWyZJf74GZgAAAABJRU5ErkJggg=="
-              }
+              src={concertDetail.posterUrl ?? PLACEHOLDER_IMAGE}
               alt={concertDetail.name}
               className="object-cover"
               fill
               placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFklEQVR42mN8//HLfwYiAOOoQvoqBABbWyZJf74GZgAAAABJRU5ErkJggg=="
+              blurDataURL={PLACEHOLDER_IMAGE}
             />
           </AspectRatio>
         </div>
-        <div className="bg-bg-main border-border sticky top-30 flex flex-1 flex-col gap-8 rounded-2xl border p-10">
-          <div className="title flex justify-between">
-            <div className="flex flex-col gap-4">
-              {/* TODO : 아티스트 쪽 장르? 된다면 넣기 */}
-              {concertDetail.concertArtists.map((artist) => (
-                <Badge
-                  key={artist.artist.id}
-                  className="bg-point-main text-text-point-main mr-2 text-sm"
-                >
-                  {artist.artist.artistType}
-                </Badge>
-              ))}
-              <div className="flex flex-col gap-1">
-                <h2 className="text-text-main text-4xl font-bold">{concertDetail.name}</h2>
-                <p className="text-text-sub text-xl">{concertDetail.description}</p>
-              </div>
+
+        {/* 정보 영역 */}
+        <div className="bg-bg-main border-border sticky top-4 mx-5 flex flex-1 flex-col gap-4 rounded-2xl border p-5 lg:top-30 lg:mx-0 xl:gap-8 xl:p-10">
+          <div className="title flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-3 md:gap-4">
+              {concertDetail.concertArtists.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {concertDetail.concertArtists.map((artist) => (
+                    <Badge
+                      key={artist.artist.id}
+                      className="bg-point-main text-text-point-main text-xs md:text-sm"
+                    >
+                      {artist.artist.artistType}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              <h2 className="text-text-main text-2xl font-bold xl:text-4xl">
+                {concertDetail.name}
+              </h2>
             </div>
+
+            {/* 버튼 그룹: 모바일에서는 상단 우측 혹은 하단 배치 등 고려 가능 */}
             <div className="flex gap-2">
-              <ConcertChatButton concertId={concertDetail.concertId} />
+              <ConcertChatButton
+                concertId={concertDetail.concertId}
+                isLoggedIn={isLoggedIn}
+                isChatAvailable={isChatAvailable}
+              />
               <ConcertLikeButton
                 concertId={concertDetail.concertId}
                 isAuthenticated={isAuthenticated}
@@ -84,7 +101,9 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
               />
             </div>
           </div>
-          <div className="border-border grid grid-cols-2 gap-x-4 gap-y-6 border-y py-8">
+
+          {/* 정보 그리드: 모바일 1열, md 이상 2열 */}
+          <div className="border-border grid grid-cols-1 gap-x-4 gap-y-4 border-y py-6 xl:grid-cols-2 xl:gap-y-6 xl:py-8">
             <ConcertHeaderInfo
               type="date"
               label="날짜 및 시간"
@@ -107,6 +126,7 @@ export default async function ConcertHeader({ concertId }: { concertId: string }
               }
             />
           </div>
+
           <ConcertHeaderArtist concertArtists={concertDetail.concertArtists} />
           <ConcertHeaderBtn
             concertDetail={concertDetail}

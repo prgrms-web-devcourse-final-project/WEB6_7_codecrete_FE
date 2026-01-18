@@ -24,6 +24,43 @@ import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import { getConcertDetail, getSimilarConcerts } from "@/lib/api/concerts/concerts.server";
 import { Suspense } from "react";
 import { getAuthStatus } from "@/lib/api/auth/auth.server";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const concertDetail = await getConcertDetail({ concertId: id });
+
+  if (!concertDetail) {
+    return {
+      title: "공연을 찾을 수 없습니다",
+      description: "요청한 공연 정보가 없습니다.",
+    };
+  }
+
+  return {
+    title: `${concertDetail.name} | 내 콘서트를 부탁해`,
+    description: `공연 "${concertDetail.name}"에 대한 상세 페이지입니다. 공연 티켓의 최소 · 최대가격, 공연 장소, 공연 일정, 출연 아티스트의 정보를 확인하고 외출 플래너를 생성해보세요!`,
+    openGraph: {
+      title: concertDetail.name,
+      description: `${concertDetail.name} 공연 정보`,
+      images: concertDetail.concertImageUrls?.[0]
+        ? [
+            {
+              url: concertDetail.concertImageUrls[0],
+              width: 1200,
+              height: 630,
+              alt: concertDetail.name,
+            },
+          ]
+        : [],
+    },
+  };
+}
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -34,9 +71,23 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   const isLoggedIn = await getAuthStatus();
 
-  // TODO: 존재하지 않는 공연 id 접근 시 404 페이지로 리다이렉트 처리 필요
   if (!concertDetail) {
-    return null;
+    notFound();
+  }
+
+  const now = new Date();
+
+  let isChatAvailable = false;
+
+  if (concertDetail.ticketTime) {
+    // ticketTime은 KST 기준 시간으로 내려온다고 가정
+    const ticketTime = new Date(concertDetail.ticketTime);
+    // 채팅은 티켓 오픈 시점 기준 ±3일 동안만 가능
+    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+
+    isChatAvailable =
+      now.getTime() >= ticketTime.getTime() - THREE_DAYS &&
+      now.getTime() <= ticketTime.getTime() + THREE_DAYS;
   }
 
   return (
@@ -49,10 +100,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         ]}
       />
       <Suspense fallback={<ConcertHeaderSkeleton />}>
-        <ConcertHeader concertId={id} />
+        <ConcertHeader concertId={id} isLoggedIn={isLoggedIn} isChatAvailable={isChatAvailable} />
       </Suspense>
       <Suspense fallback={<ConcertDetailSkeleton />}>
-        <ConcertDetail concertId={id} isLoggedIn={isLoggedIn} />
+        <ConcertDetail concertId={id} isLoggedIn={isLoggedIn} isChatAvailable={isChatAvailable} />
       </Suspense>
       {similarConcerts.length > 0 && (
         <Suspense fallback={<ConcertSimilarSkeleton />}>
