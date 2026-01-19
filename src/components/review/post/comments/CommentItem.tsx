@@ -11,33 +11,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
-import { CommentAddUser, CommentItemProps } from "@/types/community";
+import { CommentItemProps } from "@/types/community";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { deleteComment } from "@/lib/api/community/community.client";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { formatDateKorean } from "@/utils/helpers/formatters";
 import CommentPagination from "@/components/review/post/comments/CommentPagination";
-import { useEffect, useState } from "react";
-import { getCommentsList } from "@/lib/api/concerts/concerts.client";
 
-export default function CommentItem({
-  postId,
-  comments: initialComments,
-  totalPages: initialTotalPages,
-}: CommentItemProps) {
+export default function CommentItem({ postId, comments, totalPages }: CommentItemProps) {
   /**
    * TODO:
    * - 댓글 목록 map 로직은 상위 컴포넌트로 이동
    * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
-   * - 글자수 제한
    */
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get("page")) || 1;
+  // const searchParams = useSearchParams();
+  // const currentPage = Number(searchParams.get("page")) || 1;
 
-  const [comments, setComments] = useState(initialComments);
-  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  // const [comments, setComments] = useState(initialComments);
+  // const [totalPages, setTotalPages] = useState(initialTotalPages);
 
   // TODO : 댓글 수정 기능
   // const handlerEdit = () => {};
@@ -64,6 +57,7 @@ export default function CommentItem({
   };
 
   // 페이지 바뀔 때마다 댓글 다시 가져오기
+  /*
   useEffect(() => {
     const fetchComments = async () => {
       const res = await getCommentsList({ postId: Number(postId), page: currentPage });
@@ -75,6 +69,7 @@ export default function CommentItem({
 
     fetchComments();
   }, [currentPage, postId]);
+  */
 
   // 댓글이 없을 때
   if (!comments || comments.length === 0) {
