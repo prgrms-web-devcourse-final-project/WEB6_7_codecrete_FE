@@ -1,7 +1,8 @@
 "use client";
+
 import { Fragment } from "react";
 import { Itinerary } from "@/types/planner";
-import { BusFrontIcon, TrainIcon, ChevronRightIcon, StarIcon, CheckIcon } from "lucide-react";
+import { BusFrontIcon, TrainIcon, ChevronRightIcon, StarIcon } from "lucide-react";
 import TransitRouteTimeline from "./TransitRouteTimeline";
 import {
   Accordion,
@@ -52,41 +53,38 @@ export default function TransitRouteList({
             key={`route-${index}`}
             value={`route-${index}`}
             className={cn(
-              "border-input rounded-md border border-b! shadow-xs transition",
-              isSelected && "ring-primary/60 ring-2"
+              "bg-muted rounded-md border-0 opacity-60 shadow-none",
+              isSelected && "ring-input bg-main opacity-100 ring-1"
             )}
           >
             <AccordionTrigger
-              className="w-full px-3 py-2 hover:no-underline"
+              className="w-full p-3 hover:no-underline lg:p-4"
               onClick={() => onSelect(route, index)}
             >
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-foreground text-xl font-bold">
-                    {Math.round(route.totalTime / 60)}분
-                  </span>
-                  {isBest && (
-                    <span className="text-primary bg-primary/10 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold">
-                      <StarIcon className="size-3" />
-                      추천 경로
+                <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-foreground text-xl font-bold">
+                      {Math.round(route.totalTime / 60)}분
                     </span>
-                  )}
-                  {isSelected && (
-                    <span className="text-primary bg-primary/10 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold">
-                      <CheckIcon className="size-3" /> 선택됨
+                    {isBest && (
+                      <span className="text-primary bg-primary/10 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                        <StarIcon className="size-3" />
+                        추천 경로
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-muted-foreground flex items-center gap-2 text-xs leading-normal">
+                    {route.totalWalkTime !== undefined && (
+                      <span>도보 {Math.round(route.totalWalkTime / 60)}분</span>
+                    )}
+                    <Separator orientation="vertical" className="h-3!" />
+                    <span>환승 {route.transferCount}회</span>
+                    <Separator orientation="vertical" className="h-3!" />
+                    <span className="text-foreground font-medium">
+                      {route.fare.regular.totalFare.toLocaleString()}원
                     </span>
-                  )}
-                </div>
-                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                  {route.totalWalkTime !== undefined && (
-                    <span>도보 {Math.round(route.totalWalkTime / 60)}분</span>
-                  )}
-                  <Separator orientation="vertical" className="h-2" />
-                  <span>환승 {route.transferCount}회</span>
-                  <Separator orientation="vertical" className="h-2" />
-                  <span className="text-foreground font-medium">
-                    {route.fare.regular.totalFare.toLocaleString()}원
-                  </span>
+                  </div>
                 </div>
 
                 {filteredLegs.length > 0 && (
@@ -124,7 +122,7 @@ export default function TransitRouteList({
                 )}
               </div>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="p-0">
               <TransitRouteTimeline itinerary={route} />
             </AccordionContent>
           </AccordionItem>

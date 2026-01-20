@@ -1,5 +1,3 @@
-// src/utils/helpers/scheduleTransform.ts
-
 import { ScheduleFormData } from "@/lib/zod/schedule.schema";
 import { ScheduleDetail, Itinerary, KakaoMapSummary, TMapWalkRoute } from "@/types/planner";
 
@@ -39,10 +37,10 @@ interface TransportTransformContext {
 }
 
 /**
- * 이동(TRANSPORT) 일정을 자동 생성할 때 사용 (Phase 2)
+ * 이동(TRANSPORT) 일정을 자동 생성
  * @param fromSchedule - 출발 일정
  * @param toSchedule - 도착 일정
- * @param context - 경로 정보
+ * @param context - 경로 정보(선택된 이동 수단 및 소요 시간 등)
  */
 export function transformTransportSchedule(
   fromSchedule: ScheduleDetail,
@@ -51,18 +49,21 @@ export function transformTransportSchedule(
 ): ScheduleDetail {
   const { selectedRoute, carRouteSummary, walkRouteSummary } = context;
 
-  // 이동 기본 정보 설정
+  // 출발 일정의 종료 시간 계산
+  const startTime = getScheduleEndTime(fromSchedule);
+
+  // 이동수단 기본 정보
   let scheduleData: ScheduleDetail = {
     scheduleType: "TRANSPORT",
     title: `${fromSchedule.title} → ${toSchedule.title}`,
     duration: 30, // 기본값
-    transportType: "PUBLIC_TRANSPORT",
+    transportType: "PUBLIC_TRANSPORT", // 기본값 (나중에 덮어씀)
     location: `${fromSchedule.title || "출발"} → ${toSchedule.title || "도착"}`,
     startPlaceLat: fromSchedule.locationLat,
     startPlaceLon: fromSchedule.locationLon,
     endPlaceLat: toSchedule.locationLat,
     endPlaceLon: toSchedule.locationLon,
-    startAt: addMinutesToTime(fromSchedule.startAt.substring(0, 5), fromSchedule.duration) + ":00",
+    startAt: `${startTime}:00`,
     details: "자동 생성된 이동 일정",
     estimatedCost: 0,
   };
@@ -136,7 +137,7 @@ export function transformTransportSchedule(
 }
 
 // ============================================
-// 🔧 시간 계산 헬퍼 함수들
+// 시간 계산 헬퍼
 // ============================================
 
 export function addMinutesToTime(timeStr: string, minutes: number): string {
