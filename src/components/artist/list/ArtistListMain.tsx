@@ -9,8 +9,8 @@ export default async function ArtistListMain({ currentSort = "NAME" }: { current
   const initialArtists = await getArtists(0, 20, currentSort, cookieStore.toString());
 
   return (
-    <section className={"bg-bg-main flex justify-center px-15 py-16"}>
-      <div className={"flex w-full max-w-400 flex-col gap-8"}>
+    <section className="px-5 py-7 lg:px-15 lg:py-16">
+      <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8">
         <ArtistListClient initialArtists={initialArtists} initialSort={currentSort} />
       </div>
     </section>

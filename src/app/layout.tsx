@@ -9,10 +9,11 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import TopButton from "@/components/common/TopButton";
 import Script from "next/script";
+import React from "react";
 
 export const metadata = {
-  title: "내콘부",
-  description: "티켓",
+  title: "내콘부 | 내 콘서트를 부탁해",
+  description: "공연 예매 일정 확인부터 동행 구하기까지, 내콘부와 함께하세요!",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

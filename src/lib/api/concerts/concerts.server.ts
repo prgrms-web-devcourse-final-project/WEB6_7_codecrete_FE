@@ -20,7 +20,7 @@ export const getUpcomingConcerts = async ({
   size?: number;
 } = {}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
   try {
-    const res = await ServerApi(`/api/v1/concerts/list/UPCOMING?page=${page}&size=${size}`, {
+    const res = await ServerApi(`/api/v1/concerts/list/TICKETING?page=${page}&size=${size}`, {
       method: "GET",
     });
 

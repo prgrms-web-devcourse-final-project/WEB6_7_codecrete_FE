@@ -8,7 +8,7 @@ interface ReviewRatingBarProps {
 
 export default function ReviewRatingBar({ ratingDistribution, totalCount }: ReviewRatingBarProps) {
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="flex w-full flex-col gap-1.5 lg:gap-3">
       {([5, 4, 3, 2, 1] as const).map((score) => {
         const count = ratingDistribution[score];
         const percent = totalCount === 0 ? 0 : Math.round((count / totalCount) * 100);
