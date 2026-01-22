@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { useForm, type FieldErrors } from "react-hook-form";
+import { ControllerRenderProps, useForm, UseFormReturn, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -171,6 +171,24 @@ export default function AddScheduleDialog({
     });
   };
 
+  // 이전 일정을 직접 선택할 경우 기본 시작 시간 자동으로 설정
+  const handleScheduleChange = (
+    value: string,
+    field: ControllerRenderProps<ScheduleFormData, "selectedRegularScheduleId">,
+    form: UseFormReturn<ScheduleFormData>
+  ) => {
+    if (value === "new") {
+      field.onChange(undefined);
+    } else {
+      field.onChange(value);
+      const selectedSchedule = regularScheduleCandidates.find((s) => String(s.id) === value);
+      if (selectedSchedule) {
+        const endTime = getScheduleEndTime(selectedSchedule);
+        form.setValue("startAt", endTime, { shouldValidate: false });
+      }
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[90vh] w-[95%] max-w-lg overflow-hidden">
@@ -233,20 +251,7 @@ export default function AddScheduleDialog({
                       <FormControl>
                         <Select
                           value={field.value || "new"}
-                          onValueChange={(value) => {
-                            if (value === "new") {
-                              field.onChange(undefined);
-                            } else {
-                              field.onChange(value);
-                              const selectedSchedule = regularScheduleCandidates.find(
-                                (s) => String(s.id) === value
-                              );
-                              if (selectedSchedule) {
-                                const endTime = getScheduleEndTime(selectedSchedule);
-                                form.setValue("startAt", endTime, { shouldValidate: false });
-                              }
-                            }
-                          }}
+                          onValueChange={(value) => handleScheduleChange(value, field, form)}
                         >
                           <SelectTrigger className="w-(--radix-form-item-width) overflow-hidden *:data-[slot=select-value]:*:w-full">
                             <SelectValue placeholder="이전 일정 이어서 시작" />

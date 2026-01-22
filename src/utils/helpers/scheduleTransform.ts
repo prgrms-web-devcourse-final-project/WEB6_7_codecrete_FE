@@ -152,3 +152,33 @@ export function getScheduleEndTime(schedule: ScheduleDetail): string {
   const startTime = schedule.startAt.substring(0, 5);
   return addMinutesToTime(startTime, schedule.duration);
 }
+
+/**
+ * 다음 일정의 시작시간을 계산
+ * 일정 타입별 기본 소요시간을 고려하여 이동시간과 버퍼를 더한 후,
+ * 15분 단위로 반올림된 시간을 반환합니다.
+ *
+ * @param {ScheduleDetail} currentSchedule
+ * @param {number} transportDurationMinutes
+ * @param {number} bufferMinutes
+ * @returns {string}
+ */
+export function calculateNextScheduleStartTime(
+  currentSchedule: ScheduleDetail,
+  transportDurationMinutes: number,
+  bufferMinutes = 10
+): string {
+  const currentEndTime = getScheduleEndTime(currentSchedule);
+  const totalMinutesToAdd = transportDurationMinutes + bufferMinutes;
+  let nextStartTime = addMinutesToTime(currentEndTime, totalMinutesToAdd);
+
+  // 15분 단위로 반올림
+  const [hours, mins] = nextStartTime.split(":").map(Number);
+  const roundedMins = Math.ceil(mins / 15) * 15;
+  if (roundedMins === 60) {
+    nextStartTime = `${String((hours + 1) % 24).padStart(2, "0")}:00`;
+  } else {
+    nextStartTime = `${String(hours).padStart(2, "0")}:${String(roundedMins).padStart(2, "0")}`;
+  }
+  return nextStartTime;
+}

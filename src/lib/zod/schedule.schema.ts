@@ -1,4 +1,9 @@
 import { ScheduleType } from "@/types/planner";
+import {
+  DEFAULT_CAFE_DURATION,
+  DEFAULT_MEAL_DURATION,
+  DEFAULT_OTHER_DURATION,
+} from "@/utils/helpers/constants";
 import { z } from "zod";
 
 // MEAL 스케줄
@@ -100,11 +105,20 @@ export const getDefaultScheduleValues = (
   type: Exclude<ScheduleType, "TRANSPORT">,
   defaultStartTime?: string
 ): ScheduleFormData => {
+  let duration: number;
+  if (type === "MEAL") {
+    duration = DEFAULT_MEAL_DURATION;
+  } else if (type === "WAITING") {
+    duration = DEFAULT_CAFE_DURATION;
+  } else {
+    duration = DEFAULT_OTHER_DURATION;
+  }
+
   return {
     scheduleType: type,
     title: "",
     startAt: defaultStartTime || "12:00",
-    duration: 60,
+    duration: duration,
     details: "",
     estimatedCost: 0,
     placeName: "",
