@@ -1,4 +1,10 @@
-import { KakaoCarRouteGuide, KakaoMapSummary, TMapDetail, TMapSummary } from "@/types/planner";
+import {
+  KakaoCarRouteGuide,
+  KakaoMapSummary,
+  TMapDetail,
+  TMapSummary,
+  TMapWalkSummary,
+} from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 interface RouteCoords {
@@ -51,7 +57,12 @@ export const getTransitRouteDetailsByTmap = async ({
   }
 };
 
-export const getWalkRouteByTmap = async ({ startX, startY, endX, endY }: RouteCoords) => {
+export const getWalkRouteByTmap = async ({
+  startX,
+  startY,
+  endX,
+  endY,
+}: RouteCoords): Promise<TMapWalkSummary> => {
   const res = await ClientApi(
     `/api/v1/location/tmap/walk?startX=${startX}&startY=${startY}&endX=${endX}&endY=${endY}`,
     {

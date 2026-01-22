@@ -159,17 +159,17 @@ export function getScheduleEndTime(schedule: ScheduleDetail): string {
  * 15분 단위로 반올림된 시간을 반환합니다.
  *
  * @param {ScheduleDetail} currentSchedule
- * @param {number} transportDurationMinutes
+ * @param {number} transportDurationSeconds
  * @param {number} bufferMinutes
  * @returns {string}
  */
 export function calculateNextScheduleStartTime(
   currentSchedule: ScheduleDetail,
-  transportDurationMinutes: number,
+  transportDurationSeconds: number,
   bufferMinutes = 10
 ): string {
   const currentEndTime = getScheduleEndTime(currentSchedule);
-  const totalMinutesToAdd = transportDurationMinutes + bufferMinutes;
+  const totalMinutesToAdd = transportDurationSeconds / 60 + bufferMinutes;
   let nextStartTime = addMinutesToTime(currentEndTime, totalMinutesToAdd);
 
   // 15분 단위로 반올림

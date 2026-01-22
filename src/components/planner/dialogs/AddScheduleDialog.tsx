@@ -1,7 +1,13 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { ControllerRenderProps, useForm, UseFormReturn, type FieldErrors } from "react-hook-form";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import {
+  ControllerRenderProps,
+  useForm,
+  UseFormReturn,
+  useWatch,
+  type FieldErrors,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -33,7 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UtensilsIcon, CoffeeIcon, Loader2, NotepadTextIcon } from "lucide-react";
+import { UtensilsIcon, CoffeeIcon, Loader2, NotepadTextIcon, ZapIcon } from "lucide-react";
 
 import { PlaceSelector } from "./fields/PlaceSelector";
 import { createPlanSchedule } from "@/lib/api/planner/schedule.client";
@@ -43,8 +49,17 @@ import {
   getDefaultScheduleValues,
 } from "@/lib/zod/schedule.schema";
 import { toMinutePrecision, formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
-import { getScheduleEndTime, transformBasicSchedule } from "@/utils/helpers/scheduleTransform";
+import {
+  calculateNextScheduleStartTime,
+  getScheduleEndTime,
+  transformBasicSchedule,
+} from "@/utils/helpers/scheduleTransform";
 import { ConcertCoords, ScheduleDetail, ScheduleType } from "@/types/planner";
+import {
+  getTransitRouteDetailsByTmap,
+  getWalkRouteByTmap,
+} from "@/lib/api/planner/transport.client";
+import { Card } from "@/components/ui/card";
 
 interface AddScheduleDialogProps {
   planId: string;
@@ -69,6 +84,15 @@ export default function AddScheduleDialog({
   // scheduleType을 별도 state로 관리 (폼 리셋용)
   const [currentScheduleType, setCurrentScheduleType] =
     useState<Exclude<ScheduleType, "TRANSPORT">>("MEAL");
+
+  // 이동 시간 기반 추천 시작 시간
+  const [recommendTime, setRecommendTime] = useState<{
+    duration: number | null;
+    startAt: string | null;
+  }>({
+    duration: null,
+    startAt: null,
+  });
 
   // 일반 일정 선택지
   const regularScheduleCandidates = useMemo(
@@ -99,6 +123,17 @@ export default function AddScheduleDialog({
     reValidateMode: "onChange", // 제출 후에는 입력할 때마다 재검증 (에러 즉시 제거)
     criteriaMode: "all",
     shouldFocusError: false,
+  });
+
+  // watch를 사용해서 실시간으로 값 추적
+  const selectedScheduleId = useWatch({
+    control: form.control,
+    name: "selectedRegularScheduleId",
+  });
+
+  const currentCoords = useWatch({
+    control: form.control,
+    name: "coords",
   });
 
   // 초기화 로직
@@ -186,6 +221,82 @@ export default function AddScheduleDialog({
         const endTime = getScheduleEndTime(selectedSchedule);
         form.setValue("startAt", endTime, { shouldValidate: false });
       }
+    }
+  };
+
+  // 이전 일정과 이동 장소가 선택된 경우 이동시간을 고려한 추천 시작 시간 계산
+  useEffect(() => {
+    const calculateRecommendedTime = async () => {
+      if (!selectedScheduleId || !currentCoords) {
+        setRecommendTime({
+          duration: null,
+          startAt: null,
+        });
+        return;
+      }
+
+      const selectedSchedule = regularScheduleCandidates.find(
+        (s) => String(s.id) === selectedScheduleId
+      );
+
+      if (!selectedSchedule?.locationLat || !selectedSchedule?.locationLon) {
+        setRecommendTime({
+          duration: null,
+          startAt: null,
+        });
+        return;
+      }
+
+      try {
+        let duration: number;
+
+        // 대중교통 조회
+        const transitRes = await getTransitRouteDetailsByTmap({
+          startX: selectedSchedule.locationLon,
+          startY: selectedSchedule.locationLat,
+          endX: currentCoords.lon,
+          endY: currentCoords.lat,
+        });
+
+        if (!transitRes.metaData?.plan || transitRes.metaData.plan.itineraries.length === 0) {
+          // 도보 조회
+          const walkRes = await getWalkRouteByTmap({
+            startX: selectedSchedule.locationLon,
+            startY: selectedSchedule.locationLat,
+            endX: currentCoords.lon,
+            endY: currentCoords.lat,
+          });
+          duration = walkRes.totalTime;
+        } else {
+          const allTransitRoutes = transitRes.metaData.plan.itineraries.length;
+          // 모든 경로의 평균 소요시간 계산
+          duration =
+            transitRes.metaData.plan.itineraries.reduce((acc, cur) => acc + cur.totalTime, 0) /
+            allTransitRoutes;
+        }
+
+        const recommendedTime = calculateNextScheduleStartTime(selectedSchedule, duration);
+        setRecommendTime({
+          duration,
+          startAt: recommendedTime,
+        });
+      } catch (error) {
+        console.error("Failed to calculate transport duration:", error);
+        setRecommendTime({
+          duration: null,
+          startAt: null,
+        });
+      }
+    };
+
+    calculateRecommendedTime();
+  }, [selectedScheduleId, currentCoords, regularScheduleCandidates]);
+
+  // 추천 시간 적용 핸들러
+  const applyRecommendedTime = () => {
+    if (recommendTime.startAt) {
+      form.setValue("startAt", recommendTime.startAt, { shouldValidate: true });
+      toast.success("추천 시간이 적용되었습니다");
     }
   };
 
@@ -354,6 +465,48 @@ export default function AddScheduleDialog({
                   )}
                 />
               </div>
+
+              {/* 추천시간 안내 카드 - 시작시간 입력 필드 바로 아래 배치 */}
+              {recommendTime.startAt && (
+                <Card className="border-amber-600/20 bg-amber-600/5 p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="rounded-full bg-amber-600/5 p-1.5">
+                        <ZapIcon className="size-4 text-amber-600" />
+                      </div>
+                      <p className="text-sm font-medium">이동 시간 기반 추천</p>
+                    </div>
+
+                    <div className="text-muted-foreground space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span>예상 이동 시간</span>
+                        <span className="text-primary font-semibold">
+                          약 {Math.ceil(recommendTime.duration! / 60)} 분
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>추천 시작 시간</span>
+                        <span className="text-primary font-semibold">
+                          {formatTimeToKoreanAMPM(recommendTime.startAt!)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="w-full"
+                      onClick={applyRecommendedTime}
+                    >
+                      추천 시간으로 설정
+                    </Button>
+
+                    <p className="text-muted-foreground text-xs">
+                      * 교통 상황에 따라 실제 소요시간은 다를 수 있습니다
+                    </p>
+                  </div>
+                </Card>
+              )}
 
               {/* 상세 정보 */}
               <FormField
