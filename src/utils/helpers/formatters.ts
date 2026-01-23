@@ -111,6 +111,8 @@ export function formatConcertPrice(minPrice: number, maxPrice: number): string {
  * @returns {string} 포맷팅된 시간 문자열 (예: "오후 02:30")
  */
 export function formatTimeToKoreanAMPM(timeStr: string): string {
+  if (!timeStr) return "";
+
   const [hourStr, minuteStr] = timeStr.split(":");
   let hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);

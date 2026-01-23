@@ -170,7 +170,6 @@ export default function PendingTransportCard({
           },
         },
       });
-      toast.info("거리가 짧아 예상 도보 시간으로 표시됩니다.");
     } finally {
       setLoadingWalk(false);
     }

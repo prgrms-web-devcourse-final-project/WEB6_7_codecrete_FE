@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   ControllerRenderProps,
@@ -39,7 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UtensilsIcon, CoffeeIcon, Loader2, NotepadTextIcon, ZapIcon } from "lucide-react";
+import { UtensilsIcon, CoffeeIcon, Loader2, NotepadTextIcon } from "lucide-react";
 
 import { PlaceSelector } from "./fields/PlaceSelector";
 import { createPlanSchedule } from "@/lib/api/planner/schedule.client";
@@ -59,6 +58,8 @@ import {
   getTransitRouteDetailsByTmap,
   getWalkRouteByTmap,
 } from "@/lib/api/planner/transport.client";
+import { TimeValidationResult, validateScheduleTime } from "@/utils/helpers/scheduleValidation";
+import RecommendTimeCard from "./card/RecommendTimeCard";
 import { Card } from "@/components/ui/card";
 
 interface AddScheduleDialogProps {
@@ -93,6 +94,7 @@ export default function AddScheduleDialog({
     duration: null,
     startAt: null,
   });
+  const [isSettingRecommendTime, setIsSettingRecommendTime] = useState(false);
 
   // 일반 일정 선택지
   const regularScheduleCandidates = useMemo(
@@ -130,11 +132,33 @@ export default function AddScheduleDialog({
     control: form.control,
     name: "selectedRegularScheduleId",
   });
-
   const currentCoords = useWatch({
     control: form.control,
     name: "coords",
   });
+  const startAt = useWatch({
+    control: form.control,
+    name: "startAt",
+  });
+
+  // 시간 변경 시 검증
+  const timeValidation: TimeValidationResult = useMemo(() => {
+    if (!startAt || !selectedScheduleId || !recommendTime.duration) {
+      return { isValid: true, type: "valid" };
+    }
+
+    const selectedSchedule = regularScheduleCandidates.find(
+      (s) => String(s.id) === selectedScheduleId
+    );
+
+    if (!selectedSchedule) {
+      return { isValid: true, type: "valid" };
+    }
+
+    // 이전 일정과의 시간 검증
+    const travelMinutes = Math.ceil(recommendTime.duration / 60);
+    return validateScheduleTime(selectedSchedule, startAt, travelMinutes);
+  }, [startAt, selectedScheduleId, recommendTime.duration, regularScheduleCandidates]);
 
   // 초기화 로직
   const resetToInitialState = () => {
@@ -187,6 +211,13 @@ export default function AddScheduleDialog({
 
   // 폼 제출
   const onSubmit = async (data: ScheduleFormData) => {
+    // 시간 검증 실패시 경고
+    if (!timeValidation.isValid) {
+      const shouldContinue = confirm("⚠️ 추천 시간이 아닙니다. 그래도 진행하시겠습니까?");
+
+      if (!shouldContinue) return;
+    }
+
     startTransition(async () => {
       try {
         const scheduleData = transformBasicSchedule(data);
@@ -248,6 +279,7 @@ export default function AddScheduleDialog({
       }
 
       try {
+        setIsSettingRecommendTime(true);
         let duration: number;
 
         // 대중교통 조회
@@ -286,6 +318,8 @@ export default function AddScheduleDialog({
           duration: null,
           startAt: null,
         });
+      } finally {
+        setIsSettingRecommendTime(false);
       }
     };
 
@@ -465,48 +499,23 @@ export default function AddScheduleDialog({
                   )}
                 />
               </div>
-
               {/* 추천시간 안내 카드 - 시작시간 입력 필드 바로 아래 배치 */}
-              {recommendTime.startAt && (
-                <Card className="border-amber-600/20 bg-amber-600/5 p-4">
-                  <div className="space-y-3">
+              {recommendTime.startAt &&
+                (isSettingRecommendTime ? (
+                  <Card className="border-amber-600/20 bg-amber-600/5 p-4">
                     <div className="flex items-center gap-2">
-                      <div className="rounded-full bg-amber-600/5 p-1.5">
-                        <ZapIcon className="size-4 text-amber-600" />
-                      </div>
-                      <p className="text-sm font-medium">이동 시간 기반 추천</p>
+                      <Loader2 className="size-4 animate-spin text-amber-600" />
+                      <p className="text-sm font-medium">이동 시간 기반 추천을 불러오는 중...</p>
                     </div>
-
-                    <div className="text-muted-foreground space-y-1 text-sm">
-                      <div className="flex justify-between">
-                        <span>예상 이동 시간</span>
-                        <span className="text-primary font-semibold">
-                          약 {Math.ceil(recommendTime.duration! / 60)} 분
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>추천 시작 시간</span>
-                        <span className="text-primary font-semibold">
-                          {formatTimeToKoreanAMPM(recommendTime.startAt!)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="w-full"
-                      onClick={applyRecommendedTime}
-                    >
-                      추천 시간으로 설정
-                    </Button>
-
-                    <p className="text-muted-foreground text-xs">
-                      * 교통 상황에 따라 실제 소요시간은 다를 수 있습니다
-                    </p>
-                  </div>
-                </Card>
-              )}
+                  </Card>
+                ) : (
+                  <RecommendTimeCard
+                    travelDuration={recommendTime.duration!}
+                    recommendedStartTime={recommendTime.startAt!}
+                    validation={timeValidation}
+                    onApply={applyRecommendedTime}
+                  />
+                ))}
 
               {/* 상세 정보 */}
               <FormField
