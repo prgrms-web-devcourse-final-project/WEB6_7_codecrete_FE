@@ -13,6 +13,12 @@ export async function proxy(request: NextRequest) {
   const accessToken = getCookie(request, "ACCESS_TOKEN");
   const refreshToken = getCookie(request, "REFRESH_TOKEN");
 
+  const accept = request.headers.get("accept") ?? "";
+  const isPageRequest = accept.includes("text/html");
+
+  const accessState = accessToken ? verifyAccessToken(accessToken) : "expired";
+  const needsRefresh = !!refreshToken && accessState === "expired";
+
   // 0) 게스트 전용 경로 처리 (/sign-in, /sign-up)
   if (isGuestOnlyPath(pathname)) {
     const res = await handleGuestOnlyRoute(request, accessToken, refreshToken);
@@ -20,26 +26,38 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 1) 인증 필요 없는 경로
-  if (!isAuthRequiredPath(pathname)) return NextResponse.next();
+  // 1) 로그인된 사용자(refreshToken 보유)의 토큰 자동 갱신 처리 (경로 무관)
+  if (needsRefresh) {
+    if (isPageRequest) {
+      return refreshAccessAndContinueOrLogout(request);
+    } else {
+      const newAccess = await requestNewAccessToken(request);
+      if (newAccess) {
+        const res = NextResponse.next();
+        setAccessCookie(res, newAccess);
+        return res;
+      }
 
-  // 2) 인증 필요 경로: access 없으면 refresh 시도
-  if (!accessToken) {
-    if (!refreshToken) return redirectToLogin(request);
-    return refreshAccessAndContinueOrLogout(request, refreshToken);
+      return NextResponse.next();
+    }
   }
 
-  // 3) access 검증
-  const accessState = verifyAccessToken(accessToken);
-
-  if (accessState === "valid") return NextResponse.next();
-
-  if (accessState === "expired") {
-    if (!refreshToken) return redirectToLogin(request);
-    return refreshAccessAndContinueOrLogout(request, refreshToken);
+  // 2) 인증 필요 없는 경로는 그대로 통과
+  if (!isAuthRequiredPath(pathname)) {
+    return NextResponse.next();
   }
 
-  return redirectToLogin(request);
+  // 3) 인증 필수 경로인데 로그인 정보가 없으면 로그인으로 이동
+  if (!accessToken && !refreshToken) {
+    return redirectToLogin(request);
+  }
+
+  // accessToken이 명확히 invalid인 경우 로그인으로 이동
+  if (accessState === "invalid") {
+    return redirectToLogin(request);
+  }
+
+  return NextResponse.next();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,7 +78,7 @@ async function handleGuestOnlyRoute(
   // refresh가 "살아있으면" 새 access 받아서 로그인 상태로 보고 대시보드로 이동,
   // refresh가 "죽었으면" 쿠키 정리하고 /login 접근 허용
   if (refreshToken) {
-    const newAccess = await requestNewAccessToken(refreshToken);
+    const newAccess = await requestNewAccessToken(request);
 
     if (newAccess) {
       const res = NextResponse.redirect(new URL("/home", request.url));
@@ -140,33 +158,32 @@ function verifyAccessToken(token: string): "valid" | "expired" | "invalid" {
   }
 }
 
-async function refreshAccessAndContinueOrLogout(request: NextRequest, refreshToken: string) {
-  const newAccessToken = await requestNewAccessToken(refreshToken);
+async function refreshAccessAndContinueOrLogout(request: NextRequest) {
+  const newAccessToken = await requestNewAccessToken(request);
 
   if (!newAccessToken) return redirectToLogin(request);
 
-  const res = NextResponse.next();
+  const url = request.nextUrl.clone();
+  const res = NextResponse.redirect(url);
   setAccessCookie(res, newAccessToken);
   return res;
 }
 
-async function requestNewAccessToken(refreshToken: string): Promise<string | null> {
+async function requestNewAccessToken(request: NextRequest): Promise<string | null> {
   if (!API_URL) return null;
 
   try {
     const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
+      headers: {
+        cookie: request.headers.get("cookie") ?? "",
+      },
     });
 
     if (!res.ok) return null;
 
-    const data = (await res.json()) as {
-      accessToken?: string;
-      access_token?: string;
-    };
-    return data.accessToken ?? data.access_token ?? null;
+    const data = await res.json();
+    return data.accessToken ?? data?.data?.accessToken ?? null;
   } catch {
     return null;
   }

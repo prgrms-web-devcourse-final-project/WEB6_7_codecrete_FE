@@ -25,17 +25,18 @@ export default function MobilePlannerSidebar({
           <SheetTrigger asChild>
             <Button
               size="icon"
+              variant="outline"
               className="size-12 rounded-full shadow-lg transition-shadow hover:shadow-xl"
             >
               <MapIcon className="size-5" />
               <span className="sr-only">지도 및 정보 보기</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-dvh gap-0">
+          <SheetContent side="bottom" className="h-dvh gap-0 [&>button]:top-5">
             <SheetHeader className="border-border border-b sm:px-6">
-              <SheetTitle>플래너 지도 및 정보 보기</SheetTitle>
+              <SheetTitle className="text-base">플래너 지도 및 정보 보기</SheetTitle>
             </SheetHeader>
-            <div className="scrollbar-hide h-[calc(100%-80px)] overflow-y-auto p-6">
+            <div className="scrollbar-hide h-[calc(100%-80px)] overflow-y-auto p-6 pb-0">
               <PlannerSidebarContents participants={participants} schedules={schedules} />
             </div>
           </SheetContent>

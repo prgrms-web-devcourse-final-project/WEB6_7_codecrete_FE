@@ -20,7 +20,7 @@ export default function ConcertDetailInfo({
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-xl">
+      <div className="overflow-hidden lg:rounded-xl">
         {concertImageUrls.map((url) => (
           <Image
             key={url}
