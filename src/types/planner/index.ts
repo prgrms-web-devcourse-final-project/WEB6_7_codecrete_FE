@@ -268,6 +268,12 @@ export type TMapSummary = {
   } | null;
 };
 
+// 8. 도보 경로 요약
+export type TMapWalkSummary = {
+  totalDistance: number;
+  totalTime: number;
+};
+
 // ====== KakaoMap 타입 ======
 export type KakaoMapSummary = {
   distance: number;
