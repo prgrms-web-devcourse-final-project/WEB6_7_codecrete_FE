@@ -155,10 +155,7 @@ export default function AddScheduleDialog({
 
   // 일반 일정 선택지
   const regularScheduleCandidates = useMemo(
-    () =>
-      schedules.filter(
-        (s) => s.id && s.scheduleType !== "TRANSPORT" && !s.isMainEvent && s.location
-      ),
+    () => schedules.filter((s) => s.id && s.scheduleType !== "TRANSPORT" && s.location),
     [schedules]
   );
 
