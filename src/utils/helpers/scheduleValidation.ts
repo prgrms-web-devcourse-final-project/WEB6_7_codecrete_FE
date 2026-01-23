@@ -4,11 +4,12 @@ import type { ScheduleDetail } from "@/types/planner";
 
 export type TimeValidationResult = {
   isValid: boolean;
-  type: "insufficient" | "overlap" | "valid";
+  type: "insufficient" | "overlap" | "valid" | "early";
   message?: string;
   requiredTime?: number;
   actualTime?: number;
   recommendedStartTime?: string;
+  bufferTime?: number;
 };
 
 function normalizeTime(time: string): string {
@@ -69,9 +70,13 @@ export function validateScheduleTime(
     };
   }
 
+  // 3. 추천 시간보다 일찍 설정된 경우 - 여유 시간 정보 제공
+  const bufferTime = actualMinutes - requiredMinutes;
+
   return {
     isValid: true,
-    type: "valid",
+    type: bufferTime > 0 ? "early" : "valid",
+    bufferTime,
   };
 }
 

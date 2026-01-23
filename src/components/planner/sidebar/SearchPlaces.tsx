@@ -9,7 +9,7 @@ import {
   UtensilsIcon,
   XIcon,
 } from "lucide-react";
-import { useEffect, useId, useRef, useState, forwardRef } from "react";
+import { useEffect, useId, useMemo, useState, forwardRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"; // shadcn Button 추가
 import { toast } from "sonner";
@@ -19,6 +19,9 @@ import { calculateDistance } from "@/utils/helpers/geolocation";
 import { formatDistance } from "@/utils/helpers/formatters";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
+
+// 컴포넌트 외부에 전역 캐시 선언 (컴포넌트가 언마운트되어도 유지됨)
+const nearbyCacheMap = new Map<string, NearbyPlaces[]>();
 
 interface SearchPlacesProps {
   placeholder?: string;
@@ -46,15 +49,21 @@ const SearchPlaces = forwardRef<HTMLInputElement, SearchPlacesProps>(
     const [isLoading, setIsLoading] = useState(false);
     const [isRecommendation, setIsRecommendation] = useState(false);
     const id = useId();
-    const nearbyCacheRef = useRef<Record<string, NearbyPlaces[]>>({});
 
     const debouncedTerm = useDebounce(term, 500);
+
+    // 좌표를 메모이제이션 (같은 값이면 재계산 방지)
+    const stableCoords = useMemo(() => {
+      if (!defaultCoords?.lat || !defaultCoords?.lon) return null;
+      return {
+        lat: defaultCoords.lat,
+        lon: defaultCoords.lon,
+      };
+    }, [defaultCoords?.lat, defaultCoords?.lon]);
 
     // 검색어 지우기 핸들러
     const handleClear = () => {
       setTerm("");
-      // 지웠을 때 다시 추천 리스트가 뜨도록 하려면 여기서 초기화하거나,
-      // useEffect가 debouncedTerm 변경을 감지해서 알아서 처리하게 둠
     };
 
     useEffect(() => {
@@ -67,19 +76,12 @@ const SearchPlaces = forwardRef<HTMLInputElement, SearchPlacesProps>(
             if (!res.ok) throw new Error("검색 요청 실패");
             const data = await res.json();
             setResults(data?.documents ?? []);
-          } else if (defaultCoords) {
+          } else if (stableCoords) {
             setIsRecommendation(true);
 
-            // 주변 장소 추천 로직 : 콘서트 좌표 있으면 근처 맛집/카페 추천
-            if (!defaultCoords || !defaultCoords.lat || !defaultCoords.lon) {
-              setResults([]);
-              setIsLoading(false);
-              return;
-            }
-
-            // 무의미한 재호출을 막기 위해서 캐시 저장
-            const cacheKey = `${scheduleType || "MEAL"}-${defaultCoords.lat}-${defaultCoords.lon}`;
-            const cached = nearbyCacheRef.current[cacheKey];
+            // 무의미한 재호출을 막기 위해서 전역 캐시 사용
+            const cacheKey = `${scheduleType || "MEAL"}-${stableCoords.lat}-${stableCoords.lon}`;
+            const cached = nearbyCacheMap.get(cacheKey);
 
             // 캐시된 데이터가 있으면 사용하기
             if (cached) {
@@ -92,18 +94,16 @@ const SearchPlaces = forwardRef<HTMLInputElement, SearchPlacesProps>(
 
             // 스케줄 타입에 따라 맛집 또는 카페 추천
             if (scheduleType === "WAITING") {
-              data = await getNearbyCafes(defaultCoords.lon, defaultCoords.lat);
+              data = await getNearbyCafes(stableCoords.lon, stableCoords.lat);
             }
             if (scheduleType === "MEAL") {
-              data = await getNearbyRestaurants(defaultCoords.lon, defaultCoords.lat);
+              data = await getNearbyRestaurants(stableCoords.lon, stableCoords.lat);
             }
 
             setResults(data || []);
 
-            // 캐시에 저장
-            if (cacheKey) {
-              nearbyCacheRef.current[cacheKey] = data || [];
-            }
+            // 전역 캐시에 저장 (컴포넌트가 언마운트되어도 유지됨)
+            nearbyCacheMap.set(cacheKey, data || []);
           } else {
             setResults([]);
           }
@@ -121,7 +121,7 @@ const SearchPlaces = forwardRef<HTMLInputElement, SearchPlacesProps>(
         }
       };
       run();
-    }, [debouncedTerm, defaultCoords, scheduleType]);
+    }, [debouncedTerm, stableCoords, scheduleType]);
 
     return (
       <div className="flex h-full flex-col gap-3">

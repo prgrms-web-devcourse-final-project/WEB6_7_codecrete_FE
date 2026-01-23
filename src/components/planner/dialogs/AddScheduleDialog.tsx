@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   ControllerRenderProps,
   useForm,
@@ -107,6 +107,9 @@ export default function AddScheduleDialog({
     startAt: null,
   });
   const [isSettingRecommendTime, setIsSettingRecommendTime] = useState(false);
+
+  // API 호출 캐시 (같은 출발지-도착지 조합은 다시 호출하지 않음)
+  const routeCacheRef = useRef<Map<string, { duration: number; startAt: string }>>(new Map());
 
   // 일반 일정 선택지
   const regularScheduleCandidates = useMemo(
@@ -295,6 +298,16 @@ export default function AddScheduleDialog({
         return;
       }
 
+      // 캐시 키 생성 (출발지-도착지 조합)
+      const cacheKey = `${selectedSchedule.locationLat},${selectedSchedule.locationLon}-${currentCoords.lat},${currentCoords.lon}`;
+
+      // 캐시에 있으면 재사용
+      const cached = routeCacheRef.current.get(cacheKey);
+      if (cached) {
+        setRecommendTime(cached);
+        return;
+      }
+
       try {
         setIsSettingRecommendTime(true);
         let duration: number;
@@ -325,10 +338,14 @@ export default function AddScheduleDialog({
         }
 
         const recommendedTime = calculateNextScheduleStartTime(selectedSchedule, duration);
-        setRecommendTime({
+        const result = {
           duration,
           startAt: recommendedTime,
-        });
+        };
+
+        // 캐시에 저장
+        routeCacheRef.current.set(cacheKey, result);
+        setRecommendTime(result);
       } catch (error) {
         console.error("Failed to calculate transport duration:", error);
         setRecommendTime({
@@ -543,6 +560,7 @@ export default function AddScheduleDialog({
                     <RecommendTimeCard
                       travelDuration={recommendTime.duration!}
                       recommendedStartTime={recommendTime.startAt!}
+                      currentStartTime={startAt}
                       validation={timeValidation}
                       onApply={applyRecommendedTime}
                     />
