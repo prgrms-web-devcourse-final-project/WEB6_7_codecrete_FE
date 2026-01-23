@@ -26,6 +26,7 @@ export default function CommentItem({ postId, comments, totalPages }: CommentIte
    * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
    */
   const router = useRouter();
+  // TODO : 작성한 댓글 배포 환경에서 바로 보이는지 확인, 주석 코드 지우기
   // const searchParams = useSearchParams();
   // const currentPage = Number(searchParams.get("page")) || 1;
 
