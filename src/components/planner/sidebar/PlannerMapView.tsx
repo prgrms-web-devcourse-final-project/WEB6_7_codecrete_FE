@@ -2,18 +2,22 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import { ScheduleDetail } from "@/types/planner";
 import { formatDistance } from "@/utils/helpers/formatters";
 import { calculateDistance } from "@/utils/helpers/geolocation";
 import { Music4Icon, ScanIcon } from "lucide-react";
-import Link from "next/link";
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect, useState, useCallback } from "react";
 
 // kakao maps SDK 전역 변수 선언하는거라 어쩔수없이 any 처리
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const kakao: any;
 
 export default function PlannerMapView({ schedules }: { schedules: ScheduleDetail[] }) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const isMobile = useIsMobile();
+
   const concertCoords = useMemo(() => {
     const concert = schedules.find(
       (s) =>
@@ -48,6 +52,38 @@ export default function PlannerMapView({ schedules }: { schedules: ScheduleDetai
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const markersRef = useRef<kakao.maps.Marker[]>([]);
+
+  // 목록 클릭 핸들러
+  const handleLocationClick = useCallback(
+    (idx: number, lat: number, lon: number) => {
+      const map = mapRef.current;
+      if (!map) return;
+
+      if (selectedIndex === idx) {
+        // 같은 항목 클릭 시 줌아웃
+        const bounds = new kakao.maps.LatLngBounds();
+        uniqueCoords.forEach(({ lat, lon }) => bounds.extend(new kakao.maps.LatLng(lat, lon)));
+        map.setBounds(bounds, 40, 40, 40, 40);
+        setSelectedIndex(null);
+      } else {
+        // 다른 항목 클릭 시 줌인
+        map.setCenter(new kakao.maps.LatLng(lat, lon));
+        map.setLevel(3, { animate: { duration: 300 } });
+        setSelectedIndex(idx);
+      }
+    },
+    [selectedIndex, uniqueCoords]
+  );
+  // 전체 지도 보기
+  const handleViewAllClick = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const bounds = new kakao.maps.LatLngBounds();
+    uniqueCoords.forEach(({ lat, lon }) => bounds.extend(new kakao.maps.LatLng(lat, lon)));
+    map.setBounds(bounds, 40, 40, 40, 40);
+    setSelectedIndex(null);
+  }, [uniqueCoords]);
 
   useEffect(() => {
     if (!mapContainerRef.current || typeof window === "undefined" || typeof kakao === "undefined")
@@ -149,15 +185,10 @@ export default function PlannerMapView({ schedules }: { schedules: ScheduleDetai
     });
   }, [uniqueCoords]);
 
-  const mapLink = useMemo(() => {
-    const coordsUnion = uniqueCoords.map((c) => `${c.lat},${c.lon}`).join("/");
-    return `https://www.google.com/maps/dir/${coordsUnion}`;
-  }, [uniqueCoords]);
-
   return (
     <div className="bg-bg-main border-border lg:border lg:p-6">
       <h4 className="text-base font-bold">지도 보기</h4>
-      <AspectRatio ratio={1}>
+      <AspectRatio ratio={isMobile ? 16 / 9 : 1}>
         <div className="border-border h-full w-full rounded-lg border bg-zinc-100">
           {uniqueCoords.length === 0 ? (
             <div className="text-text-sub flex h-full items-center justify-center text-sm">
@@ -169,7 +200,7 @@ export default function PlannerMapView({ schedules }: { schedules: ScheduleDetai
         </div>
       </AspectRatio>
       {schedulesWithLocation.length > 0 && (
-        <ul className="space-y-3">
+        <ul className="space-y-1">
           {schedulesWithLocation.map((schedule, idx) => {
             const isConcert = schedule.isMainEvent || schedule.concertId != null;
             const distance =
@@ -191,8 +222,19 @@ export default function PlannerMapView({ schedules }: { schedules: ScheduleDetai
                 schedule.locationLat ?? "no-lat"
               }-${schedule.locationLon ?? "no-lon"}`;
 
+            if (!schedule.locationLat || !schedule.locationLon) return null;
+
             return (
-              <li key={scheduleKey} className="flex justify-between gap-2">
+              <li
+                key={scheduleKey}
+                className={cn(
+                  "hover:bg-accent flex cursor-pointer justify-between gap-2 rounded-md p-2 transition-colors",
+                  selectedIndex === idx && "ring-primary/10 ring-1"
+                )}
+                onClick={() =>
+                  handleLocationClick(idx, schedule.locationLat!, schedule.locationLon!)
+                }
+              >
                 <strong className="flex gap-2">
                   <Badge
                     variant={isConcert ? "destructive" : "outline"}
@@ -212,12 +254,10 @@ export default function PlannerMapView({ schedules }: { schedules: ScheduleDetai
           })}
         </ul>
       )}
-      <Link href={mapLink} target="_blank" rel="noopener noreferrer" className="block">
-        <Button className="w-full cursor-pointer">
-          <ScanIcon />
-          전체 지도 보기
-        </Button>
-      </Link>
+      <Button className="w-full cursor-pointer" onClick={handleViewAllClick}>
+        <ScanIcon />
+        전체 지도 보기
+      </Button>
     </div>
   );
 }
