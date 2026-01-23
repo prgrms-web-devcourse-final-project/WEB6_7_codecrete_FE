@@ -25,7 +25,9 @@ export default function MateWriteSection() {
           placeholder="원하는 동행자 스타일, 함께 하고 싶은 활동 등을 자유롭게 적어주세요"
           {...register("content", { required: "글 내용을 입력해주세요" })}
         />
-        {errors.content && <span className="text-xs text-red-500">{errors.content.message}</span>}
+        {errors.content && (
+          <span className="text-destructive text-xs">{errors.content.message}</span>
+        )}
         <p className="text-text-sub text-xs">구체적인 내용은 매칭 확률을 올려줍니다.</p>
       </div>
     </CardContent>

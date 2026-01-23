@@ -25,7 +25,7 @@ export default function MateTitleSection() {
           placeholder="제목을 입력해주세요"
           {...register("title", { required: "제목을 입력해주세요" })}
         />
-        {errors.title && <span className="text-xs text-red-500">{errors.title.message}</span>}
+        {errors.title && <span className="text-destructive text-xs">{errors.title.message}</span>}
         <p className="text-text-sub text-xs">동행 구인의 목적을 한 문장으로 표현해보세요.</p>
       </div>
     </CardContent>
