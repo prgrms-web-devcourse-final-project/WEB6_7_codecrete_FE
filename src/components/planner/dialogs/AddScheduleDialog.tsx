@@ -81,6 +81,46 @@ interface AddScheduleDialogProps {
   schedules?: ScheduleDetail[];
 }
 
+class LRUCache<K, V> {
+  private cache: Map<K, V>;
+  private readonly maxSize: number;
+
+  // 최대 사이즈 50으로 기본 설정
+  constructor(maxSize: number = 50) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
+  }
+
+  get(key: K): V | undefined {
+    const value = this.cache.get(key);
+    if (value !== undefined) {
+      // 최근 사용한 항목으로 갱신
+      this.cache.delete(key);
+      this.cache.set(key, value);
+    }
+    return value;
+  }
+
+  set(key: K, value: V): void {
+    // 이미 존재하면 삭제
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    }
+    // 최대 크기 초과시 가장 오래된 항목 삭제
+    else if (this.cache.size >= this.maxSize) {
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey);
+      }
+    }
+    this.cache.set(key, value);
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
 export default function AddScheduleDialog({
   planId,
   open,
@@ -109,7 +149,9 @@ export default function AddScheduleDialog({
   const [isSettingRecommendTime, setIsSettingRecommendTime] = useState(false);
 
   // API 호출 캐시 (같은 출발지-도착지 조합은 다시 호출하지 않음)
-  const routeCacheRef = useRef<Map<string, { duration: number; startAt: string }>>(new Map());
+  const routeCacheRef = useRef<LRUCache<string, { duration: number; startAt: string }>>(
+    new LRUCache(50) // 최대 50개 경로 캐싱
+  );
 
   // 일반 일정 선택지
   const regularScheduleCandidates = useMemo(
@@ -312,7 +354,6 @@ export default function AddScheduleDialog({
         setIsSettingRecommendTime(true);
         let duration: number;
 
-        // 대중교통 조회
         const transitRes = await getTransitRouteDetailsByTmap({
           startX: selectedSchedule.locationLon,
           startY: selectedSchedule.locationLat,
@@ -321,7 +362,6 @@ export default function AddScheduleDialog({
         });
 
         if (!transitRes.metaData?.plan || transitRes.metaData.plan.itineraries.length === 0) {
-          // 도보 조회
           const walkRes = await getWalkRouteByTmap({
             startX: selectedSchedule.locationLon,
             startY: selectedSchedule.locationLat,
@@ -331,7 +371,6 @@ export default function AddScheduleDialog({
           duration = walkRes.totalTime;
         } else {
           const allTransitRoutes = transitRes.metaData.plan.itineraries.length;
-          // 모든 경로의 평균 소요시간 계산
           duration =
             transitRes.metaData.plan.itineraries.reduce((acc, cur) => acc + cur.totalTime, 0) /
             allTransitRoutes;
@@ -343,7 +382,6 @@ export default function AddScheduleDialog({
           startAt: recommendedTime,
         };
 
-        // 캐시에 저장
         routeCacheRef.current.set(cacheKey, result);
         setRecommendTime(result);
       } catch (error) {
