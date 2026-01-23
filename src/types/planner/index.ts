@@ -37,7 +37,7 @@ export type PlanDetail = {
 
 export type ScheduleType = "TRANSPORT" | "MEAL" | "WAITING" | "ACTIVITY" | "OTHER";
 
-export type TransportType = "WALK" | "PUBLIC_TRANSPORT" | "CAR" | null;
+export type TransportType = "WALK" | "PUBLIC_TRANSPORT" | "CAR";
 
 export type ScheduleDetail = {
   id?: number; // planId가 아닌 scheduleId
@@ -266,6 +266,12 @@ export type TMapSummary = {
       endY: number;
     };
   } | null;
+};
+
+// 8. 도보 경로 요약
+export type TMapWalkSummary = {
+  totalDistance: number;
+  totalTime: number;
 };
 
 // ====== KakaoMap 타입 ======

@@ -39,11 +39,11 @@ export default function ConcertDetailVenue({
   ].filter(Boolean);
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-text-main text-3xl font-bold">공연장 정보</h2>
-      <div className="bg-bg-sub flex flex-col gap-6 rounded-xl p-6">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-text-main text-lg font-semibold">
+    <div className="space-y-4 px-5 lg:space-y-6 lg:px-0">
+      <h2 className="text-text-main text-xl font-bold lg:text-3xl">공연장 정보</h2>
+      <div className="bg-bg-sub flex flex-col gap-4 rounded-xl p-4 lg:gap-6 lg:p-6">
+        <div className="flex flex-col gap-2 lg:gap-3">
+          <h3 className="text-text-main text-base font-semibold lg:text-lg">
             {placeUrl && (
               <Link
                 href={placeUrl}
@@ -52,31 +52,31 @@ export default function ConcertDetailVenue({
                 className="flex items-center gap-2"
               >
                 {concertVenue.placeName}
-                <LinkIcon className="size-4" />
+                <LinkIcon className="size-3.5 lg:size-4" />
               </Link>
             )}
             {!placeUrl && concertVenue.placeName}
           </h3>
-          <div className="text-text-sub grid grid-cols-2 gap-2 text-sm font-medium">
+          <div className="text-text-sub grid grid-cols-2 gap-1 text-xs leading-normal font-medium lg:gap-2 lg:text-sm">
             <div className={twMerge("flex items-center gap-2", !placeTelephone && "col-span-2")}>
-              <MapPin className="size-4" />
+              <MapPin className="size-3.5 lg:size-4" />
               <p>{concertVenue.placeAddress}</p>
             </div>
             {placeTelephone && (
               <div className="flex items-center gap-2">
-                <Phone className="size-4" />
+                <Phone className="size-3.5 lg:size-4" />
                 <Link href={`tel:${placeTelephone}`}>{placeTelephone}</Link>
               </div>
             )}
             {barrierFreeFacilities.length > 0 && (
               <div className="text-text-sub flex items-center gap-2 font-medium">
-                <AccessibilityIcon className="size-4" />
+                <AccessibilityIcon className="size-3.5 lg:size-4" />
                 <p>{barrierFreeFacilities.join(" · ")}</p>
               </div>
             )}
             {nearbyAmenities.length > 0 && (
               <div className="text-text-sub flex items-center gap-2 font-medium">
-                <MapIcon className="size-4" />
+                <MapIcon className="size-3.5 lg:size-4" />
                 <p>{nearbyAmenities.join(" · ")}</p>
               </div>
             )}

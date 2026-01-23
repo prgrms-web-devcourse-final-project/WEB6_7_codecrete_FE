@@ -43,7 +43,7 @@ export default function PlannerNearbyRestaurants({
     : nearbyRestaurants.slice(0, INITIAL_DISPLAY_COUNT);
 
   return (
-    <div className="bg-bg-main border-border flex-1 overflow-hidden border p-6">
+    <div className="bg-bg-main border-border flex-1 lg:overflow-hidden lg:border lg:p-6">
       <h4 className="text-base font-semibold">주변 식당</h4>
       {isPending ? (
         <div className="flex items-center justify-center py-10">

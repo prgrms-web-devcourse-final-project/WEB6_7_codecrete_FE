@@ -4,6 +4,7 @@ import { Itinerary } from "@/types/planner";
 import { cn } from "@/lib/utils";
 import { BusFrontIcon, FootprintsIcon, MapPinIcon, TrainIcon } from "lucide-react";
 import { formatDuration } from "@/utils/helpers/formatters";
+import { Separator } from "@/components/ui/separator";
 
 interface TransitRouteTimelineProps {
   itinerary: Itinerary;
@@ -21,7 +22,7 @@ export default function TransitRouteTimeline({ itinerary }: TransitRouteTimeline
   }
 
   return (
-    <div className="border-input relative border-t px-3 py-2">
+    <div className="border-input relative border-t p-3 lg:p-4">
       {legs.map((leg, index) => {
         const isLast = index === legs.length - 1;
 
@@ -56,14 +57,14 @@ export default function TransitRouteTimeline({ itinerary }: TransitRouteTimeline
                 </div>
 
                 {/* 내용 (출발지, 이동 정보) */}
-                <div className="flex min-w-0 flex-1 flex-col pt-0.5">
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
                   {/* 출발지 이름 */}
                   <div className="truncate text-sm leading-tight font-semibold">
                     {leg.start.name}
                   </div>
 
                   {/* 이동 정보 (몇 분, 몇 정거장) */}
-                  <div className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
+                  <div className="text-muted-foreground flex items-center gap-2 text-xs leading-normal">
                     <span
                       className={cn(
                         "rounded border px-1.5 py-0.5 text-[10px] font-medium",
@@ -79,7 +80,7 @@ export default function TransitRouteTimeline({ itinerary }: TransitRouteTimeline
                     <span>{formatDuration(leg.sectionTime)}</span>
 
                     {/* 거리 or 정거장 수 */}
-                    <span className="text-gray-300">|</span>
+                    <Separator orientation="vertical" className="bg-muted h-3! w-px!" />
                     <span>
                       {isWalk
                         ? `${leg.distance}m`

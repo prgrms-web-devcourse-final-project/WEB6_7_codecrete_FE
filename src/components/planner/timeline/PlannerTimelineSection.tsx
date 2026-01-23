@@ -3,6 +3,7 @@ import PlannerTimelineItem from "./PlannerTimelineItem";
 import StartLocationCard from "./StartLocationCard";
 import { getMyLocation } from "@/lib/api/planner/location.server";
 import RouteCard from "./RouteCard";
+import PendingTransportCard from "./PendingTransportCard";
 
 export default async function PlannerTimelineSection({
   planId,
@@ -18,12 +19,60 @@ export default async function PlannerTimelineSection({
   totalDuration: number;
 }) {
   const firstSchedule = schedules[0];
-
   const myLocation = await getMyLocation();
 
-  // 경로 표시 조건: 내 위치(출발지)가 있고, 첫 번째 일정이 있고, 그 일정에 좌표가 있을 때
+  // 초기 경로 표시 조건
   const showRoute =
     myLocation && firstSchedule && firstSchedule.locationLat && firstSchedule.locationLon;
+
+  // 타임라인 아이템 생성 (일정 + pending 이동)
+  const timelineItems: {
+    type: string;
+    data?: ScheduleDetail;
+    id?: string;
+    fromSchedule?: ScheduleDetail;
+    toSchedule?: ScheduleDetail;
+  }[] = [];
+
+  schedules.forEach((schedule, index) => {
+    timelineItems.push({
+      type: "SCHEDULE",
+      data: schedule,
+    });
+
+    if (index < schedules.length - 1) {
+      const nextSchedule = schedules[index + 1];
+
+      if (
+        schedule.scheduleType !== "TRANSPORT" &&
+        nextSchedule.scheduleType !== "TRANSPORT" &&
+        schedule.location &&
+        nextSchedule.location &&
+        schedule.locationLat &&
+        schedule.locationLon &&
+        nextSchedule.locationLat &&
+        nextSchedule.locationLon
+      ) {
+        const hasConfirmedTransport = schedules.some(
+          (s) =>
+            s.scheduleType === "TRANSPORT" &&
+            s.startPlaceLat === schedule.locationLat &&
+            s.startPlaceLon === schedule.locationLon &&
+            s.endPlaceLat === nextSchedule.locationLat &&
+            s.endPlaceLon === nextSchedule.locationLon
+        );
+
+        if (!hasConfirmedTransport) {
+          timelineItems.push({
+            type: "PENDING_TRANSPORT",
+            id: `pending-${schedule.id}-${nextSchedule.id}`,
+            fromSchedule: schedule,
+            toSchedule: nextSchedule,
+          });
+        }
+      }
+    }
+  });
 
   return (
     <>
@@ -40,7 +89,10 @@ export default async function PlannerTimelineSection({
         {/* 타임라인 아이템들 */}
         <div className="before:bg-bg-sub relative space-y-6 before:absolute before:top-0 before:left-4 before:h-full before:w-0.5 lg:space-y-8 lg:before:left-8">
           <div className="relative space-y-6 lg:space-y-8">
+            {/* 출발지 */}
             <StartLocationCard myLocation={myLocation} />
+
+            {/* 출발지 → 첫 일정 경로 */}
             {showRoute && myLocation && (
               <RouteCard
                 key={`${firstSchedule.id}-route`}
@@ -56,18 +108,37 @@ export default async function PlannerTimelineSection({
                 }}
               />
             )}
-            {schedules.map((schedule) => (
-              <PlannerTimelineItem
-                key={schedule.id}
-                schedule={schedule}
-                role={role}
-                planId={planId}
-                concertCoords={{
-                  lat: concertCoords.lat,
-                  lon: concertCoords.lon,
-                }}
-              />
-            ))}
+
+            {/* 타임라인 아이템 렌더링 */}
+            {timelineItems.map((item, index) => {
+              if (item.type === "PENDING_TRANSPORT" && item.fromSchedule && item.toSchedule) {
+                return (
+                  <PendingTransportCard
+                    key={item.id || `pending-${index}`}
+                    fromSchedule={item.fromSchedule}
+                    toSchedule={item.toSchedule}
+                    planId={planId}
+                  />
+                );
+              }
+
+              // 일반 일정 (TRANSPORT 포함)
+              if (item.type === "SCHEDULE" && item.data) {
+                return (
+                  <PlannerTimelineItem
+                    key={item.data.id || `schedule-${index}`}
+                    schedule={item.data}
+                    role={role}
+                    planId={planId}
+                    concertCoords={{
+                      lat: concertCoords.lat,
+                      lon: concertCoords.lon,
+                    }}
+                  />
+                );
+              }
+              return null;
+            })}
           </div>
         </div>
       </div>

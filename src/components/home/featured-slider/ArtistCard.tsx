@@ -52,7 +52,7 @@ export default function ArtistCard({
         </Avatar>
 
         {/* 아티스트 정보 */}
-        <h3 className="text-text-main text-base font-bold md:text-lg">
+        <h3 className="text-text-main line-clamp-1 text-base font-bold md:text-lg">
           {artist.nameKo ?? artist.artistName}
         </h3>
 

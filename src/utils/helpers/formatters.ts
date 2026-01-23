@@ -68,10 +68,17 @@ export const formatDateTimeRange = (startDateTime: string, endDateTime: string):
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
 
-    return `${year}.${month}.${day} ${hours}:${minutes}`;
+    // 오전, 오후로 나눠서 표시 ex) 20:00 -> 오후 8시, 09:30 -> 오전 9시 30분
+    const hours = date.getHours();
+    const period = hours < 12 ? "오전" : "오후";
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const formattedHours = String(hours % 12 === 0 ? 12 : hours % 12);
+    if (minutes === "00") {
+      return `${year}.${month}.${day} ${period} ${formattedHours}시`;
+    } else {
+      return `${year}.${month}.${day} ${period} ${formattedHours}시 ${minutes}분`;
+    }
   };
 
   return `${formatDateTime(start)} ~ ${formatDateTime(end)}`;
@@ -104,6 +111,8 @@ export function formatConcertPrice(minPrice: number, maxPrice: number): string {
  * @returns {string} 포맷팅된 시간 문자열 (예: "오후 02:30")
  */
 export function formatTimeToKoreanAMPM(timeStr: string): string {
+  if (!timeStr) return "";
+
   const [hourStr, minuteStr] = timeStr.split(":");
   let hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
