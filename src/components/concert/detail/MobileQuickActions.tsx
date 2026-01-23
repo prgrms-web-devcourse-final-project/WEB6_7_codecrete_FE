@@ -22,6 +22,8 @@ interface MobileQuickActionsProps {
   concertEndDate?: string;
   userData: User | null;
   isLiked?: boolean;
+  isLoggedIn: boolean;
+  isChatAvailable: boolean;
 }
 
 export default function MobileQuickActions({
@@ -31,6 +33,8 @@ export default function MobileQuickActions({
   concertEndDate,
   userData,
   isLiked,
+  isLoggedIn,
+  isChatAvailable,
 }: MobileQuickActionsProps) {
   const [open, setOpen] = useState(false);
 
@@ -63,7 +67,7 @@ export default function MobileQuickActions({
           </SheetHeader>
           <div className="p-4 pt-15 pb-6">
             <SheetClose
-              className="bg-bg-sub border-border absolute top-4 left-1/2 h-2 w-40 -translate-x-1/2 rounded-lg border"
+              className="bg-muted absolute top-4 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-lg"
               aria-label="빠른 실행창 닫기"
             />
             <QuickActionsSection
@@ -73,6 +77,8 @@ export default function MobileQuickActions({
               concertEndDate={concertEndDate}
               userData={userData}
               isLiked={isLiked}
+              isLoggedIn={isLoggedIn}
+              isChatAvailable={isChatAvailable}
             />
           </div>
         </SheetContent>
