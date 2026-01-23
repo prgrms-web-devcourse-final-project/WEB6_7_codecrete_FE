@@ -155,13 +155,13 @@ export function getScheduleEndTime(schedule: ScheduleDetail): string {
 
 /**
  * 다음 일정의 시작시간을 계산
- * 일정 타입별 기본 소요시간을 고려하여 이동시간과 버퍼를 더한 후,
- * 15분 단위로 반올림된 시간을 반환합니다.
+ * 현재 일정의 종료 시간에 이동 시간과 버퍼 시간을 더해
+ * 다음 일정의 시작 시간을 계산하고, 15분 단위로 올림한 시간을 반환합니다.
  *
- * @param {ScheduleDetail} currentSchedule
- * @param {number} transportDurationSeconds
- * @param {number} bufferMinutes
- * @returns {string}
+ * @param {ScheduleDetail} currentSchedule 현재 일정 정보 (시작 시각과 소요 시간 포함)
+ * @param {number} transportDurationSeconds 이동 소요 시간(초 단위)
+ * @param {number} bufferMinutes 이동 후 여유 시간(분 단위, 기본값 10분)
+ * @returns {string} 계산된 다음 일정 시작 시각(HH:MM 형식)
  */
 export function calculateNextScheduleStartTime(
   currentSchedule: ScheduleDetail,

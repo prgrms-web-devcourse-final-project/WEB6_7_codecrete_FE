@@ -79,19 +79,3 @@ export function validateScheduleTime(
     bufferTime,
   };
 }
-
-export function calculateBufferTime(
-  prevSchedule: ScheduleDetail | null,
-  newStartTime: string,
-  travelTimeMinutes: number
-): number | null {
-  if (!prevSchedule) return null;
-
-  const prevStartTime = normalizeTime(prevSchedule.startAt);
-  const prevStartMinutes = timeToMinutes(prevStartTime);
-  const prevEndMinutes = prevStartMinutes + prevSchedule.duration;
-  const newStartMinutes = timeToMinutes(normalizeTime(newStartTime));
-  const actualMinutes = newStartMinutes - prevEndMinutes;
-
-  return actualMinutes - travelTimeMinutes;
-}

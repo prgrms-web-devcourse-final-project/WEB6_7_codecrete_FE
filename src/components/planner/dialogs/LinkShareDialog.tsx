@@ -7,18 +7,20 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import { PlannerShareLink } from "@/types/planner";
 
 interface LinkShareDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  shareLink: PlannerShareLink;
 }
 
-export default function LinkShareDialog({ open, onOpenChange }: LinkShareDialogProps) {
+export default function LinkShareDialog({ open, onOpenChange, shareLink }: LinkShareDialogProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText("https://example.com/share-link");
+      await navigator.clipboard.writeText(shareLink.url);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch (err) {
@@ -38,10 +40,14 @@ export default function LinkShareDialog({ open, onOpenChange }: LinkShareDialogP
             <div className="flex gap-2">
               <Input
                 readOnly
-                value="https://example.com/share-link"
+                value={shareLink.url || shareLink.status}
                 className="read-only:bg-muted"
               />
-              <Button className="relative shrink-0" onClick={handleCopy} disabled={copied}>
+              <Button
+                className="relative shrink-0"
+                onClick={handleCopy}
+                disabled={copied || !shareLink.url}
+              >
                 <span
                   className={twMerge(
                     "transition-all",
@@ -62,7 +68,9 @@ export default function LinkShareDialog({ open, onOpenChange }: LinkShareDialogP
               </Button>
             </div>
             <p className="text-muted-foreground text-xs">
-              공유 링크를 복사하여 친구들에게 일정을 공유하세요.
+              {shareLink.url
+                ? "공유 링크를 복사하여 친구들에게 일정을 공유하세요."
+                : "생성된 공유링크가 없어요. 관리자에게 문의해주세요."}
             </p>
           </Field>
         </FieldGroup>
