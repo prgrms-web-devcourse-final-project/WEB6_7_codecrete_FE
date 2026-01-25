@@ -54,7 +54,8 @@ export const getCommentsList = async ({
   page?: number;
 }): Promise<CommentResponse | null> => {
   try {
-    const res = await ServerApi(`/api/v1/posts/${postId}/comments?page=${page}`, {
+    const t = Date.now();
+    const res = await ServerApi(`/api/v1/posts/${postId}/comments?page=${page}&_t=${t}`, {
       method: "GET",
     });
 

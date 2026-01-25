@@ -36,8 +36,8 @@ export default function PreferenceSelectSection() {
             valueAsNumber: true,
             required: "인원수를 입력해주세요",
             min: {
-              value: 1,
-              message: "최소 1명 이상 모집해야 합니다.",
+              value: 2,
+              message: "최소 2명 이상 모집해야 합니다.",
             },
             max: {
               value: 20,
