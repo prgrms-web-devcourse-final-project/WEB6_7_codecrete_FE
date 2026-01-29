@@ -4,8 +4,8 @@ export default function ArtistDetailAbout({ artist }: { artist: ArtistDetail }) 
   const description = artist.description.trim();
 
   return (
-    <div className={"flex flex-col gap-6"}>
-      <h3 className={"text-2xl font-bold"}>아티스트 소개</h3>
+    <div className="space-y-4 lg:space-y-6">
+      <h3 className={"text-text-main text-xl font-bold lg:text-2xl"}>아티스트 소개</h3>
       {description ? (
         <p>{description}</p>
       ) : (

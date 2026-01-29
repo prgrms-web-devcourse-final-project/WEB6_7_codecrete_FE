@@ -17,12 +17,10 @@ export default function ArtistDetailPast({
   const visibleConcerts = (showAll ? pastConcerts : pastConcerts?.slice(0, 3)) ?? [];
 
   return (
-    <section className={"bg-bg-main px-15 py-16"}>
-      <div className={"mx-auto flex max-w-400 flex-col gap-8"}>
+    <section className={"bg-bg-main px-5 py-8 lg:px-15 lg:py-16"}>
+      <div className={"mx-auto flex max-w-400 flex-col gap-4 lg:gap-6"}>
         {/*헤더 및 분류 버튼 파트*/}
-        <div className={"flex justify-between"}>
-          <h2 className={"text-3xl font-bold"}>지난 공연</h2>
-        </div>
+        <h2 className={"text-text-main text-xl font-bold lg:text-2xl"}>지난 공연</h2>
         {hasConcerts ? (
           <div className="flex flex-col gap-4">
             {visibleConcerts.map((concert) => (

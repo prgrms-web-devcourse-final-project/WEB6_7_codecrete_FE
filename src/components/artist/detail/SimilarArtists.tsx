@@ -6,8 +6,8 @@ import Image from "next/image";
 
 export default function SimilarArtists({ relatedArtists }: { relatedArtists: RelatedArtist[] }) {
   return (
-    <div className={"flex flex-col gap-6"}>
-      <h3 className={"text-xl font-bold"}>유사 아티스트</h3>
+    <div className="space-y-4 lg:space-y-6">
+      <h3 className={"text-base font-bold lg:text-xl"}>유사 아티스트</h3>
       {relatedArtists.map((artist) => (
         <Item key={artist.spotifyArtistId} variant={"outline"} asChild>
           <Link href={`/artists/${artist.id}`}>
@@ -27,9 +27,7 @@ export default function SimilarArtists({ relatedArtists }: { relatedArtists: Rel
             <div className={"flex flex-1 flex-col gap-1"}>
               <ItemTitle>{artist.nameKo ?? artist.artistName}</ItemTitle>
             </div>
-            <div>
-              <ChevronRight className={"text-text-sub opacity-60"} />
-            </div>
+            <ChevronRight className="stroke-text-sub size-4" />
           </Link>
         </Item>
       ))}

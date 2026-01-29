@@ -29,7 +29,7 @@ export default function SearchIntro() {
       {isPending || isLoading ? (
         <SearchIntroSkeleton />
       ) : (
-        <section className="bg-bg-sub px-15 py-16">
+        <section className="bg-bg-sub px-5 py-8 lg:px-15 lg:py-16">
           <div className="mx-auto flex w-full max-w-400 flex-col gap-4">
             <h2 className="text-text-main text-4xl font-bold">검색 결과</h2>
             <p className="text-text-sub text-base">
