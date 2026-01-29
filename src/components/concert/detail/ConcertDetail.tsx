@@ -51,7 +51,7 @@ export default async function ConcertDetail({
 
         {/* 데스크톱: 오른쪽 빠른 실행 사이드바 */}
         <div className="right relative hidden flex-1 lg:block">
-          <div className="border-border sticky top-34 flex flex-col gap-4 rounded-xl border p-6">
+          <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:flex-row xl:gap-8">
             <h2 className="text-text-main text-xl font-bold">빠른 실행</h2>
             <div className="flex flex-col gap-3">
               <QuickActionsSection

@@ -41,6 +41,7 @@ export default function TopButton() {
         "fixed right-6 bottom-6 z-50 size-12! rounded-full transition-opacity duration-300",
         pathname.startsWith("/planner") && "bottom-34",
         pathname.startsWith("/concerts/") && "bottom-20",
+        pathname.startsWith("/artists/") && "bottom-20",
         isVisible ? "opacity-100" : "pointer-events-none opacity-0",
         "lg:right-10 lg:bottom-10 lg:size-15!"
       )}

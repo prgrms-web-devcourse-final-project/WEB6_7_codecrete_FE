@@ -12,7 +12,7 @@ export default function ConcertDetailVenue({
   if (!concertVenue) {
     return (
       <div className="space-y-6">
-        <h2 className="text-text-main text-3xl font-bold">공연장 정보</h2>
+        <h2 className="text-text-main text-xl font-bold lg:text-2xl">공연장 정보</h2>
         <p className="bg-bg-sub text-text-main rounded-xl p-6 font-medium">
           해당 공연장에 등록된 정보가 없습니다.
         </p>
@@ -40,7 +40,7 @@ export default function ConcertDetailVenue({
 
   return (
     <div className="space-y-4 px-5 lg:space-y-6 lg:px-0">
-      <h2 className="text-text-main text-xl font-bold lg:text-3xl">공연장 정보</h2>
+      <h2 className="text-text-main text-xl font-bold lg:text-2xl">공연장 정보</h2>
       <div className="bg-bg-sub flex flex-col gap-4 rounded-xl p-4 lg:gap-6 lg:p-6">
         <div className="flex flex-col gap-2 lg:gap-3">
           <h3 className="text-text-main text-base font-semibold lg:text-lg">
