@@ -13,14 +13,16 @@ import { getArtistDetail, getArtistLikeStatus } from "../artists/artists.server"
  * @returns {Promise<ResponseData<ConcertWithTicket[]>>} - 공연 목록 데이터
  */
 export const getUpcomingConcerts = async ({
+  sort,
   page = 0,
   size = 21,
 }: {
+  sort: string;
   page?: number;
   size?: number;
-} = {}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
+}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
   try {
-    const res = await ServerApi(`/api/v1/concerts/list/TICKETING?page=${page}&size=${size}`, {
+    const res = await ServerApi(`/api/v1/concerts/list/${sort}?page=${page}&size=${size}`, {
       method: "GET",
     });
 
