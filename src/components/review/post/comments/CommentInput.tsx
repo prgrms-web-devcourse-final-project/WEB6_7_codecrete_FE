@@ -19,7 +19,6 @@ export default function CommentInput({
 }: CommentInputProps) {
   /**
    * TODO:
-   * - 최대 글자 수 제한 및 안내 문구 추가 여부 검토
    * - 스켈레톤 처리
    */
 
@@ -74,6 +73,20 @@ export default function CommentInput({
     }
   };
 
+  // 글자수 제한
+  const MAX_LENGTH = 300;
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+
+    if (value.length > MAX_LENGTH) {
+      toast.info("댓글은 300자 까지만 작성 가능합니다.");
+      return;
+    }
+
+    setComment(value);
+  };
+
   return (
     <>
       <div className={"flex justify-between"}>
@@ -99,7 +112,7 @@ export default function CommentInput({
               aria-label={"댓글 입력"}
               className={"h-24 resize-none"}
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={handleChange}
               onKeyDown={handleKeyDown}
             />
             <div className={"flex justify-between"}>

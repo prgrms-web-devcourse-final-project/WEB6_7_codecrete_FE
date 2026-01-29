@@ -20,8 +20,8 @@ export default function Discography({ albums }: { albums: ArtistAlbum[] }) {
   const [expanded, setExpanded] = useState(false);
   if (!albums.length) {
     return (
-      <div className="flex flex-col gap-6">
-        <h3 className="text-2xl font-bold">디스코그래피</h3>
+      <div className="space-y-4 lg:space-y-6">
+        <h3 className="text-text-main text-xl font-bold lg:text-2xl">디스코그래피</h3>
         <p className="text-text-sub text-sm">등록된 앨범 정보가 없습니다.</p>
       </div>
     );
@@ -29,43 +29,51 @@ export default function Discography({ albums }: { albums: ArtistAlbum[] }) {
 
   const visibleAlbums = expanded ? albums : albums.slice(0, 5);
   return (
-    <div className={"flex flex-col gap-6"}>
-      <h3 className={"text-2xl font-bold"}>디스코그래피</h3>
+    <div className="space-y-4 lg:space-y-6">
+      <h3 className="text-text-main text-xl font-bold lg:text-2xl">디스코그래피</h3>
       <div className="flex w-full flex-col">
-        <ItemGroup className="w-full gap-6">
+        <ItemGroup className="w-full gap-3 lg:gap-6">
           {visibleAlbums.map((album) => (
             <Item
               key={`${album.albumName}-${album.releaseDate}`}
-              className={"flex w-full gap-6 p-6"}
+              className="flex w-full gap-4 p-4 lg:gap-6 lg:p-6"
               variant="outline"
               role="listitem"
             >
-              <ItemMedia variant="image" className={"relative h-24 w-24 shrink-0"}>
+              <ItemMedia variant="image" className={"relative h-20 w-20 shrink-0 lg:h-24 lg:w-24"}>
                 <Image
                   fill
                   sizes={"96px"}
                   src={album.imageUrl}
                   alt={album.albumName}
-                  className="border object-cover"
+                  className="h-full w-full border object-cover"
                 />
               </ItemMedia>
-              <div className={"flex flex-col gap-2"}>
+              <div className="flex-1 space-y-1.5 lg:space-y-2">
                 <ItemContent>
-                  <ItemTitle className={"text-lg"}>{album.albumName}</ItemTitle>
+                  <ItemTitle className="text-base leading-tight lg:text-lg">
+                    {album.albumName}
+                  </ItemTitle>
                 </ItemContent>
                 <ItemContent>
-                  <ItemDescription className={"text-sm"}>
+                  <ItemDescription className="text-xs leading-tight lg:text-sm">
                     {album.albumType} · {album.releaseDate}
                   </ItemDescription>
                 </ItemContent>
                 <ItemContent>
-                  <div className={"flex items-center gap-2 text-sm"}>
-                    <Image src="/spotify.svg" alt="Spotify" width={16} height={16} />
+                  <div className="flex items-center gap-1 text-xs leading-none lg:gap-2 lg:text-sm">
+                    <Image
+                      src="/spotify.svg"
+                      alt="Spotify"
+                      width={16}
+                      height={16}
+                      className="size-3 lg:size-4"
+                    />
                     <Link
                       href={album.spotifyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={"hover:underline"}
+                      className="hover:underline"
                     >
                       <span>Listen on Spotify</span>
                     </Link>
@@ -75,14 +83,13 @@ export default function Discography({ albums }: { albums: ArtistAlbum[] }) {
             </Item>
           ))}
         </ItemGroup>
-        {albums.length > 5 && (
+        {albums.length > 5 && !expanded && (
           <Button
             onClick={() => setExpanded((prev) => !prev)}
-            variant={"outline"}
-            size={"lg"}
-            className="hover:text-text-main mt-4 self-center text-sm font-semibold"
+            variant="outline"
+            className="hover:text-text-main mt-4 self-center"
           >
-            {expanded ? "접기" : "더보기"}
+            더보기
           </Button>
         )}
       </div>

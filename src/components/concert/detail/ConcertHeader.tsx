@@ -49,7 +49,7 @@ export default async function ConcertHeader({
   }
 
   return (
-    <section className="header bg-bg-sub lg:px-15 lg:py-10">
+    <section className="header bg-bg-sub pb-5 lg:px-15 lg:py-10">
       {/* 모바일: flex-col (세로), md 이상: flex-row (가로) */}
       <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:flex-row lg:items-start xl:gap-8">
         {/* 포스터 영역: 모바일 w-full, md 이상 w-2/5 */}

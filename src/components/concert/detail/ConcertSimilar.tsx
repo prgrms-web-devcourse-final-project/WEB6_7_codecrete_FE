@@ -22,10 +22,10 @@ export default function ConcertSimilar({
   }
 
   return (
-    <section className="bg-bg-sub flex w-full flex-col gap-8 overflow-hidden px-5 py-10 lg:px-15 lg:py-20">
+    <section className="bg-bg-sub flex w-full flex-col gap-8 overflow-hidden px-15 py-20">
       <div className="mx-auto flex w-full max-w-400 items-center justify-between">
         <div className="space-y-1 md:space-y-2">
-          <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
+          <h2 className="text-text-main text-lg font-extrabold lg:text-3xl">
             🎈 이 공연도 여기서 해요
           </h2>
           <p className="text-text-sub text-sm font-medium md:text-base">

@@ -40,7 +40,7 @@ export default async function ConcertDetail({
   return (
     <section className="bg-bg-main lg:px-15 lg:py-10">
       <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:flex-row xl:gap-8">
-        <div className="flex-2 space-y-15 lg:space-y-20">
+        <div className="flex-3 space-y-15 lg:space-y-20">
           <ConcertDetailInfo
             concertImageUrls={concertDetail?.concertImageUrls}
             alt={concertDetail?.name}
@@ -50,9 +50,9 @@ export default async function ConcertDetail({
         </div>
 
         {/* 데스크톱: 오른쪽 빠른 실행 사이드바 */}
-        <div className="right relative hidden flex-1 lg:block">
-          <div className="border-border sticky top-34 flex flex-col gap-4 rounded-xl border p-6">
-            <h2 className="text-text-main text-xl font-bold">빠른 실행</h2>
+        <div className="right relative hidden min-w-80 flex-1 lg:block">
+          <div className="sticky top-30 mx-auto flex w-full max-w-400 flex-col gap-5">
+            <h2 className="text-text-main hidden text-xl font-bold">빠른 실행</h2>
             <div className="flex flex-col gap-3">
               <QuickActionsSection
                 concertId={concertDetail?.concertId}

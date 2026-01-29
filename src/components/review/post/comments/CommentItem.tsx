@@ -11,47 +11,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
-import { CommentAddUser, CommentItemProps } from "@/types/community";
+import { CommentItemProps } from "@/types/community";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { deleteComment } from "@/lib/api/community/community.client";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { formatDateKorean } from "@/utils/helpers/formatters";
 import CommentPagination from "@/components/review/post/comments/CommentPagination";
-import { useEffect, useState } from "react";
-import { getCommentsList } from "@/lib/api/concerts/concerts.client";
 
-export default function CommentItem({
-  postId,
-  comments: initialComments,
-  totalPages: initialTotalPages,
-}: CommentItemProps) {
+export default function CommentItem({ postId, comments, totalPages }: CommentItemProps) {
   /**
    * TODO:
    * - 댓글 목록 map 로직은 상위 컴포넌트로 이동
    * - 이 컴포넌트는 단일 댓글(Comment) props만 받도록 리팩터링
-   * - 글자수 제한
    */
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get("page")) || 1;
+  // TODO : 작성한 댓글 배포 환경에서 바로 보이는지 확인, 주석 코드 지우기
+  // const searchParams = useSearchParams();
+  // const currentPage = Number(searchParams.get("page")) || 1;
 
-  const [comments, setComments] = useState(initialComments);
-  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  // const [comments, setComments] = useState(initialComments);
+  // const [totalPages, setTotalPages] = useState(initialTotalPages);
 
   // TODO : 댓글 수정 기능
   // const handlerEdit = () => {};
-
-  useEffect(() => {
-    // 이전 데이터와 다를 때만 업데이트 (JSON 문자열 비교가 가장 간단)
-    if (JSON.stringify(comments) !== JSON.stringify(initialComments)) {
-      setComments(initialComments);
-    }
-    if (totalPages !== initialTotalPages) {
-      setTotalPages(initialTotalPages);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialComments, initialTotalPages]);
 
   const handlerDelete = async (targetCommentId: string) => {
     try {
@@ -75,6 +58,7 @@ export default function CommentItem({
   };
 
   // 페이지 바뀔 때마다 댓글 다시 가져오기
+  /*
   useEffect(() => {
     const fetchComments = async () => {
       const res = await getCommentsList({ postId: Number(postId), page: currentPage });
@@ -86,6 +70,7 @@ export default function CommentItem({
 
     fetchComments();
   }, [currentPage, postId]);
+  */
 
   // 댓글이 없을 때
   if (!comments || comments.length === 0) {

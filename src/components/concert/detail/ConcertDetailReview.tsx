@@ -43,8 +43,7 @@ export default function ConcertDetailReview({
   if (isLoading) {
     return (
       <div className="review flex flex-col gap-6">
-        <h2 className="text-text-main text-3xl font-bold">리뷰 게시판</h2>
-
+        <h2 className="text-text-main text-xl font-bold lg:text-2xl">리뷰 게시판</h2>
         <ConcertReviewSummarySkeleton />
       </div>
     );
@@ -58,7 +57,7 @@ export default function ConcertDetailReview({
 
   return (
     <div className="review mb-15 space-y-4 px-5 lg:mb-0 lg:space-y-6 lg:px-0">
-      <h2 className="text-text-main text-xl font-bold lg:text-3xl">리뷰 게시판</h2>
+      <h2 className="text-text-main text-xl font-bold lg:text-2xl">리뷰 게시판</h2>
       <div className="bg-bg-sub flex flex-col gap-4 rounded-xl p-4 lg:gap-6 lg:p-6">
         <div className="flex justify-between">
           <div className="flex gap-4">

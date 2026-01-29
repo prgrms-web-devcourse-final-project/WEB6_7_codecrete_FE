@@ -1,13 +1,24 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { MateDetailData } from "@/types/community/concert-mate";
+import { formatDateKorean, formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
 import { Calendar, MapPin, Utensils } from "lucide-react";
 
 export default function MeetingDetail({ res }: { res: MateDetailData }) {
+  const formatFullDateTime = (isoString: string | null) => {
+    if (!isoString) return "-";
+    const [datePart, timePart] = isoString.split("T");
+
+    const MeetingDate = formatDateKorean(datePart);
+    const MeetingTime = formatTimeToKoreanAMPM(timePart);
+
+    return `${MeetingDate}, ${MeetingTime}`;
+  };
+
   const meetingInfoItems = [
     {
       icon: Calendar,
       label: "약속 시간",
-      value: res.meetingAt,
+      value: formatFullDateTime(res.meetingAt) || "-",
     },
     {
       icon: MapPin,

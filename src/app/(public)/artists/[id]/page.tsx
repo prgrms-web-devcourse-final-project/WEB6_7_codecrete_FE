@@ -5,6 +5,7 @@ import ArtistDetailPast from "@/components/artist/detail/ArtistDetailPast";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import { getArtistDetail, getArtistLikeStatus } from "@/lib/api/artists/artists.server";
 import { getConcertsByArtistId } from "@/lib/api/concerts/concerts.server";
+import { Metadata } from "next";
 // TODO: 공연 목록 토글 애니메이션 적용
 // - 전체 공연 보기 / 접기 시 height 변화가 자연스럽도록
 // - max-height + transition 또는 framer-motion 적용 검토
@@ -27,6 +28,41 @@ import { getConcertsByArtistId } from "@/lib/api/concerts/concerts.server";
 
 // TODO: 공연 데이터 로딩 상태(Skeleton UI) 추가
 // - 데이터 패칭 지연 시 Empty UI와 구분 필요
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const artistDetail = await getArtistDetail(Number(id));
+
+  if (!artistDetail) {
+    return {
+      title: "아티스트를 찾을 수 없습니다",
+      description: "요청한 아티스트 정보가 없습니다.",
+    };
+  }
+
+  return {
+    title: `${artistDetail.artistName} | 내 콘서트를 부탁해`,
+    description: `아티스트 "${artistDetail.artistName}"에 대한 상세 페이지입니다. 아티스트 정보와 출연 공연 일정을 확인하고 외출 플래너를 생성해보세요!`,
+    openGraph: {
+      title: artistDetail.artistName,
+      description: `${artistDetail.artistName} 정보`,
+      images: artistDetail.profileImageUrl?.[0]
+        ? [
+            {
+              url: artistDetail.profileImageUrl[0],
+              width: 1200,
+              height: 630,
+              alt: artistDetail.artistName,
+            },
+          ]
+        : [],
+    },
+  };
+}
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
