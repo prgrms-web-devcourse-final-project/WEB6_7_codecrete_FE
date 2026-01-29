@@ -9,9 +9,11 @@ import { SliderHeader } from "../SliderHeader";
 
 interface UpcomingSliderProps {
   concerts: ConcertWithTicket[] | null;
+  title: string;
+  description: string;
 }
 
-export default function UpcomingSlider({ concerts }: UpcomingSliderProps) {
+export default function UpcomingSlider({ concerts, title, description }: UpcomingSliderProps) {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   if (!concerts?.length) return null;
@@ -21,8 +23,8 @@ export default function UpcomingSlider({ concerts }: UpcomingSliderProps) {
       <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
         {/* 헤더 */}
         <SliderHeader
-          title="🎫 예매일 임박! 콘서트 모음"
-          description="티켓팅 광탈하고 울지 말고 미리미리 예매하자구요"
+          title={title}
+          description={description}
           onPrev={() => swiperInstance?.slidePrev()}
           onNext={() => swiperInstance?.slideNext()}
           className="mx-auto w-full max-w-400"

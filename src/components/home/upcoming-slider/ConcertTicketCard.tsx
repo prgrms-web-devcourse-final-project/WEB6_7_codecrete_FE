@@ -31,6 +31,10 @@ export default function ConcertTicketCard({ concert }: ConcertTicketCardProps) {
           placeholder="blur"
           blurDataURL={PLACEHOLDER_IMAGE}
           sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = PLACEHOLDER_IMAGE;
+          }}
         />
       </AspectRatio>
 
