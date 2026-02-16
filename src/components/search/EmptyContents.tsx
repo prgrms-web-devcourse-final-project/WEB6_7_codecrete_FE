@@ -3,18 +3,18 @@ import { MicVocalIcon, SpotlightIcon } from "lucide-react";
 
 export default function EmptyContents({ type }: { type: "concerts" | "artists" }) {
   return (
-    <div className="py-40">
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            {type === "concerts" ? <SpotlightIcon /> : <MicVocalIcon />}
-          </EmptyMedia>
-          <EmptyTitle>검색 결과 없음</EmptyTitle>
-          <EmptyDescription>
-            검색어에 해당하는 {type === "concerts" ? "공연" : "아티스트"}가 없습니다.
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    </div>
+    <Empty className="py-0!">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          {type === "concerts" ? <SpotlightIcon /> : <MicVocalIcon />}
+        </EmptyMedia>
+        <EmptyTitle>{type === "concerts" ? "공연" : "아티스트"} 검색 결과 없음</EmptyTitle>
+        <EmptyDescription>
+          검색어에 해당하는 {type === "concerts" ? "공연이" : "아티스트가"} 없습니다.
+          <br />
+          다른 검색어로 시도해보세요.
+        </EmptyDescription>
+      </EmptyHeader>
+    </Empty>
   );
 }

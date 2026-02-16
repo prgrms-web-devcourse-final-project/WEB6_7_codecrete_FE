@@ -12,29 +12,25 @@ export default async function SearchConcertPreview({
   concerts: ConcertDataWithLiked[];
   isAuthenticated: boolean;
 }) {
-  if (concerts.length === 0) {
-    return (
-      <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
-        <div className="flex justify-between">
-          <h2 className="text-2xl font-bold">공연</h2>
-          <Link href={`/search/concerts?keyword=${keyword}`}>더보기</Link>
-        </div>
-        <EmptyContents type="concerts" />
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
       <div className="flex justify-between">
         <h2 className="text-2xl font-bold">공연</h2>
         <Link href={`/search/concerts?keyword=${keyword}`}>더보기</Link>
       </div>
-      <div className="flex flex-col gap-6">
-        {concerts.map((concert) => (
-          <SearchConcertCard key={concert.id} concert={concert} isAuthenticated={isAuthenticated} />
-        ))}
-      </div>
+      {concerts.length > 0 ? (
+        <div className="flex flex-col gap-6">
+          {concerts.map((concert) => (
+            <SearchConcertCard
+              key={concert.id}
+              concert={concert}
+              isAuthenticated={isAuthenticated}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyContents type="concerts" />
+      )}
     </div>
   );
 }
