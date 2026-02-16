@@ -1,8 +1,7 @@
 import Link from "next/link";
 import SearchConcertCard from "@/components/search/SearchConcertCard";
-import { SpotlightIcon } from "lucide-react";
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "../ui/empty";
 import { ConcertDataWithLiked } from "@/types/concerts";
+import EmptyContents from "./EmptyContents";
 
 export default async function SearchConcertPreview({
   keyword,
@@ -20,17 +19,7 @@ export default async function SearchConcertPreview({
           <h2 className="text-2xl font-bold">공연</h2>
           <Link href={`/search/concerts?keyword=${keyword}`}>더보기</Link>
         </div>
-        <div className="py-40">
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <SpotlightIcon />
-              </EmptyMedia>
-              <EmptyTitle>검색 결과 없음</EmptyTitle>
-              <EmptyDescription>검색어에 해당하는 공연이 없습니다.</EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        </div>
+        <EmptyContents type="concerts" />
       </div>
     );
   }

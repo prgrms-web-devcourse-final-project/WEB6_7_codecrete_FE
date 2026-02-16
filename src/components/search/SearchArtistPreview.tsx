@@ -1,8 +1,7 @@
 import Link from "next/link";
 import SearchArtistCard from "./SearchArtistCard";
 import { SearchArtistWithLiked } from "@/types/search";
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "../ui/empty";
-import { MicVocalIcon } from "lucide-react";
+import EmptyContents from "./EmptyContents";
 
 export default async function SearchArtistPreview({
   keyword,
@@ -18,17 +17,7 @@ export default async function SearchArtistPreview({
           <h2 className="text-2xl font-bold">아티스트</h2>
           <Link href={`/search/artists?keyword=${keyword}`}>더보기</Link>
         </div>
-        <div className="py-40">
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <MicVocalIcon />
-              </EmptyMedia>
-              <EmptyTitle>검색 결과 없음</EmptyTitle>
-              <EmptyDescription>검색어에 해당하는 아티스트가 없습니다.</EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        </div>
+        <EmptyContents type="artists" />
       </div>
     );
   }
