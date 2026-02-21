@@ -1,7 +1,7 @@
-import Link from "next/link";
-import SearchConcertCard from "@/components/search/SearchConcertCard";
 import { ConcertDataWithLiked } from "@/types/concerts";
-import EmptyContents from "./EmptyContents";
+import SearchConcertCard from "./SearchConcertCard";
+import EmptyContents from "../EmptyContents";
+import TitleWithMoreBtn from "@/components/common/TitleWithMoreBtn";
 
 export default async function SearchConcertPreview({
   keyword,
@@ -13,13 +13,10 @@ export default async function SearchConcertPreview({
   isAuthenticated: boolean;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-bold">공연</h2>
-        <Link href={`/search/concerts?keyword=${keyword}`}>더보기</Link>
-      </div>
+    <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8">
+      <TitleWithMoreBtn href={`/search/concerts?keyword=${keyword}`} title="공연" />
       {concerts.length > 0 ? (
-        <div className="flex flex-col gap-6">
+        <div className="grid gap-4 lg:gap-6">
           {concerts.map((concert) => (
             <SearchConcertCard
               key={concert.id}

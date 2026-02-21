@@ -3,7 +3,7 @@
 import { getSearchArtistsWithLiked, getSearchConcertsCount } from "@/lib/api/search/search.client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import SearchIntroSkeleton from "../loading/search/SearchIntroSkeleton";
+import SearchIntroSkeleton from "../../loading/search/SearchIntroSkeleton";
 
 export default function SearchIntro() {
   const searchParams = useSearchParams();
@@ -30,9 +30,9 @@ export default function SearchIntro() {
         <SearchIntroSkeleton />
       ) : (
         <section className="bg-bg-sub px-5 py-8 lg:px-15 lg:py-16">
-          <div className="mx-auto flex w-full max-w-400 flex-col gap-4">
-            <h2 className="text-text-main text-4xl font-bold">검색 결과</h2>
-            <p className="text-text-sub text-base">
+          <div className="mx-auto flex w-full max-w-400 flex-col gap-2 lg:gap-4">
+            <h2 className="text-text-main text-2xl font-bold lg:text-4xl">검색 결과</h2>
+            <p className="text-text-sub text-sm lg:text-base">
               <span className="text-point-main">&quot;{keyword}&quot;</span>에 대한
               <span className="text-point-main ml-1">{artistsCount + concertsCount}개</span>의
               결과를 찾았습니다.

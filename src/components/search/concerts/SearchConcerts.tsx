@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import SearchConcertCard from "./SearchConcertCard";
 import { getSearchConcerts } from "@/lib/api/search/search.client";
 import { ConcertDataWithLiked } from "@/types/concerts";
-import EmptyContents from "./EmptyContents";
+import EmptyContents from "../EmptyContents";
 
 export default function SearchConcerts({
   initialConcerts,
@@ -79,9 +79,9 @@ export default function SearchConcerts({
   }
 
   return (
-    <section className="px-15 py-16">
-      <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
-        <div className="flex flex-col gap-6">
+    <section className="px-5 pt-7 pb-20 lg:gap-30 lg:px-15 lg:py-16">
+      <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8">
+        <div className="grid gap-4 lg:gap-6">
           {searchedConcerts.map((concert) => (
             <SearchConcertCard
               key={concert.id}

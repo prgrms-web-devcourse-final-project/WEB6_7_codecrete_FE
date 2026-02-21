@@ -38,7 +38,7 @@ export default function MyPageLikedArtistListItem({ artist }: { artist: LikedArt
   return (
     <Link
       href={`/artists/${artist.id}`}
-      className="group flex flex-col gap-5 transition hover:opacity-90"
+      className="group flex flex-col gap-3 transition hover:opacity-90 lg:gap-5"
     >
       <div className="border-border/60 relative aspect-square overflow-hidden rounded-lg border">
         <Image
@@ -72,7 +72,7 @@ export default function MyPageLikedArtistListItem({ artist }: { artist: LikedArt
           )}
         </Button>
       </div>
-      <strong className="line-clamp-1 text-2xl">{artist.artistName}</strong>
+      <strong className="line-clamp-1 text-lg lg:text-2xl">{artist.artistName}</strong>
     </Link>
   );
 }

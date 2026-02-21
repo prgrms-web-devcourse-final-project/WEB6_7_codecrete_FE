@@ -1,7 +1,7 @@
-import Link from "next/link";
 import SearchArtistCard from "./SearchArtistCard";
 import { SearchArtistWithLiked } from "@/types/search";
-import EmptyContents from "./EmptyContents";
+import EmptyContents from "../EmptyContents";
+import TitleWithMoreBtn from "@/components/common/TitleWithMoreBtn";
 
 export default async function SearchArtistPreview({
   keyword,
@@ -11,13 +11,10 @@ export default async function SearchArtistPreview({
   artists: SearchArtistWithLiked[];
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-bold">아티스트</h2>
-        <Link href={`/search/artists?keyword=${keyword}`}>더보기</Link>
-      </div>
+    <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8">
+      <TitleWithMoreBtn href={`/search/artists?keyword=${keyword}`} title="아티스트" />
       {artists.length > 0 ? (
-        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8 xl:gap-y-10">
           {artists.map((artist) => (
             <SearchArtistCard key={artist.id} artist={artist} />
           ))}

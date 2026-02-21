@@ -9,7 +9,7 @@ export default async function MateListIntro() {
 
   return (
     <section className="intro bg-bg-sub px-15 py-16">
-      <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-8`)}>
+      <div className={twMerge(`mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8`)}>
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
             <p className="text-text-sub text-md">Community</p>

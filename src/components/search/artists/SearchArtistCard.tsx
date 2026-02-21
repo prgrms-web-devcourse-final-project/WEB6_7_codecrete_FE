@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { cn } from "@/lib/utils";
 import { HeartIcon, Loader2Icon } from "lucide-react";
 
@@ -38,7 +38,7 @@ export default function SearchArtistCard({ artist }: { artist: SearchArtistWithL
   return (
     <Link
       href={`/artists/${artist.id}`}
-      className="group flex flex-col gap-5 transition hover:opacity-90"
+      className="group flex flex-col gap-3 transition hover:opacity-90 lg:gap-5"
     >
       <div className="border-border/60 relative aspect-square overflow-hidden rounded-lg border">
         <Image
@@ -72,7 +72,9 @@ export default function SearchArtistCard({ artist }: { artist: SearchArtistWithL
           )}
         </Button>
       </div>
-      <strong className="line-clamp-1 text-2xl">{artist.artistName}</strong>
+      <strong className="line-clamp-1 text-lg lg:text-2xl">
+        {artist.nameKo ?? artist.artistName}
+      </strong>
     </Link>
   );
 }

@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, MapPinIcon, Ticket, TicketsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { PLACEHOLDER_IMAGE } from "../home/upcoming-slider/constants";
 import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/formatters";
-import ConcertLikeButton from "../concert/detail/ConcertLikeButton";
-import { AspectRatio } from "../ui/aspect-ratio";
 import { ConcertDataWithLiked } from "@/types/concerts";
+import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import ConcertLikeButton from "@/components/concert/detail/ConcertLikeButton";
 
 export default function SearchConcertCard({
   concert,
@@ -19,8 +19,8 @@ export default function SearchConcertCard({
   const concertId = concert.id.toString();
 
   return (
-    <Card className="flex flex-row gap-6 p-6">
-      <div className="relative w-35 shrink-0">
+    <Card className="relative flex flex-col gap-4 p-4 sm:flex-row lg:gap-6 lg:p-6">
+      <div className="relative w-full shrink-0 sm:w-35">
         <AspectRatio ratio={320 / 426.5}>
           <Image
             src={concert.posterUrl ?? PLACEHOLDER_IMAGE}
@@ -33,11 +33,11 @@ export default function SearchConcertCard({
           />
         </AspectRatio>
       </div>
-      <CardContent className="flex flex-1 justify-between p-0">
-        <div className="flex flex-col justify-between gap-2">
+      <CardContent className="flex w-full flex-1 px-0 sm:justify-between">
+        <div className="flex flex-1 flex-col items-start justify-between gap-4">
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold">{concert.name}</h3>
-            <ul className="text-text-sub space-y-1 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li>svg]:size-4">
+            <h3 className="text-base font-bold sm:text-lg lg:text-2xl">{concert.name}</h3>
+            <ul className="text-text-sub space-y-1 text-sm break-keep [&>li]:grid [&>li]:grid-cols-[auto_1fr] [&>li]:gap-1 [&>li>svg]:size-5 [&>li>svg]:py-0.5">
               <li>
                 <CalendarIcon />
                 {formatDateRangeKorean(concert.startDate, concert.endDate)}
@@ -60,8 +60,11 @@ export default function SearchConcertCard({
               )}
             </ul>
           </div>
-          <Link href={`/concerts/${concert.id}`}>
-            <Button>자세히보기</Button>
+          <Link
+            href={`/concerts/${concert.id}`}
+            className="block w-full pr-12 sm:inline-block sm:pr-0"
+          >
+            <Button className="w-full sm:w-auto">자세히보기</Button>
           </Link>
         </div>
         <ConcertLikeButton

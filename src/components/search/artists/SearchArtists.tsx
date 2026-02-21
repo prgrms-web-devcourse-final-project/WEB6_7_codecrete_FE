@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { SearchArtistWithLiked } from "@/types/search";
 import SearchArtistCard from "./SearchArtistCard";
 import { Loader2Icon } from "lucide-react";
-import EmptyContents from "./EmptyContents";
+import EmptyContents from "../EmptyContents";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -42,10 +42,10 @@ export default function SearchArtists({ artists }: { artists: SearchArtistWithLi
   }, [hasMore, isLoading, artists.length]);
 
   return (
-    <section className="flex flex-col gap-30 px-15 py-16">
+    <section className="flex flex-col gap-20 px-5 py-7 lg:gap-30 lg:px-15 lg:py-16">
       {displayedArtists.length > 0 ? (
         <>
-          <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8 xl:gap-y-10">
             {displayedArtists.map((artist) => (
               <SearchArtistCard key={artist.id} artist={artist} />
             ))}
