@@ -114,7 +114,7 @@ export default function SearchModal() {
         </TooltipContent>
       </Tooltip>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-xl overflow-hidden">
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-xl overflow-hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>검색</DialogTitle>
           </DialogHeader>

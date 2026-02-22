@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main>{children}</main>
           <Footer />
-          <Toaster className={pretendard.className} />
+          <Toaster className={pretendard.className} style={{ fontFamily: "inherit" }} />
           <TopButton />
         </ThemeProvider>
         <Script

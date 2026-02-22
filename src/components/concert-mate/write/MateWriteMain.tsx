@@ -79,7 +79,7 @@ export default function MateWriteMain() {
   return (
     <FormProvider {...methods}>
       <section className="bg-bg-main flex justify-center px-15 py-16">
-        <form className={twMerge(`relative mx-auto flex w-full max-w-400 flex-col gap-8`)}>
+        <form className={twMerge(`relative mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8`)}>
           <Card className="gap-8 p-12">
             <MateWriteIntro />
             {/* 콘서트 선택 또는 검색*/}
