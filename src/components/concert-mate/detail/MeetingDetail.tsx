@@ -47,13 +47,13 @@ export default function MeetingDetail({ res }: { res: MateDetailData }) {
   ];
   return (
     <Card className="flex flex-col gap-4 p-6">
-      <CardTitle className="text-lg">만남 정보</CardTitle>
+      <CardTitle className="text-base font-bold lg:text-xl">만남 정보</CardTitle>
 
       {/* 만남 정보 */}
       {meetingInfoItems.map((item, index) => {
         const Icon = item.icon;
         return (
-          <CardContent key={index}>
+          <CardContent key={index} className="p-0">
             <div className="text-text-sub flex items-center gap-2 text-sm">
               <Icon className="h-4 w-4" />
               <span>{item.label}</span>
@@ -64,13 +64,13 @@ export default function MeetingDetail({ res }: { res: MateDetailData }) {
       })}
 
       {/* 기타 정보 */}
-      <CardContent>
+      <CardContent className="p-0">
         <div className="text-sm">
           <div className="text-text-sub mb-2 flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span>기타 정보</span>
           </div>
-          <div className="text-text-main flex flex-wrap gap-4">
+          <div className="text-text-main flex flex-wrap gap-1 lg:gap-2">
             {additionalInfo.map((info, index) => (
               <p key={index} className="px-6 text-sm">
                 {info.label}: {info.value}

@@ -18,7 +18,7 @@ export default function ArtistDetailOverview({ artist }: { artist: ArtistDetail 
         {/*데스크톱: 오른쪽 고정 사이드바*/}
         <div
           className={
-            "sticky top-34 hidden max-w-125 min-w-80 shrink-0 flex-col gap-12 self-start lg:flex"
+            "sticky top-30 hidden max-w-125 min-w-80 shrink-0 flex-col gap-12 self-start lg:flex"
           }
         >
           <QuickStat artist={artist} />

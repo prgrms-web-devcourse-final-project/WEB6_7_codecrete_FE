@@ -31,7 +31,7 @@ export default function MeetingAuthorCard({ userDetail }: { userDetail: UserInfo
 
   return (
     <Card className={"flex flex-col gap-4 p-6"}>
-      <CardTitle>작성자 정보</CardTitle>
+      <CardTitle className="text-base font-bold lg:text-xl">작성자 정보</CardTitle>
       <div className={"flex gap-4"}>
         <Avatar className={"h-16 w-16"}>
           <AvatarImage src={userDetail.profileImageUrl} alt={userDetail.nickname} />

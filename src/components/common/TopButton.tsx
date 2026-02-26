@@ -42,6 +42,7 @@ export default function TopButton() {
         pathname.startsWith("/planner") && "bottom-34",
         pathname.startsWith("/concerts/") && "bottom-20",
         pathname.startsWith("/artists/") && "bottom-20",
+        pathname.startsWith("/concert-mate/") && "bottom-20",
         isVisible ? "opacity-100" : "pointer-events-none opacity-0",
         "lg:right-10 lg:bottom-10 lg:size-15!"
       )}
