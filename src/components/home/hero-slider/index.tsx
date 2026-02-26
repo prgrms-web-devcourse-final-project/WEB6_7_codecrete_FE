@@ -75,16 +75,25 @@ function SlideContent({ slide, priority = false }: SlideContentProps) {
         >
           <h2
             className="text-3xl font-extrabold whitespace-pre-line md:text-4xl lg:text-6xl"
-            data-swiper-parallax="-50%"
+            data-swiper-parallax="-100%"
+            data-swiper-parallax-opacity="0"
           >
             {slide.title}
           </h2>
-          <h3 className="text-base font-bold md:text-lg lg:text-2xl" data-swiper-parallax="-150%">
+          <h3
+            className="text-base font-bold md:text-lg lg:text-2xl"
+            data-swiper-parallax="-70%"
+            data-swiper-parallax-opacity="0"
+          >
             {slide.description}
           </h3>
           <div className="space-y-0.5 text-xs font-semibold md:space-y-1 md:text-sm lg:text-lg">
-            <p data-swiper-parallax="-150%">{slide.place}</p>
-            <p data-swiper-parallax="-175%">{slide.period}</p>
+            <p data-swiper-parallax="-40%" data-swiper-parallax-opacity="0">
+              {slide.place}
+            </p>
+            <p data-swiper-parallax="-40%" data-swiper-parallax-opacity="0">
+              {slide.period}
+            </p>
           </div>
         </div>
       </div>
