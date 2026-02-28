@@ -1,6 +1,4 @@
 "use client";
-
-import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -30,24 +28,24 @@ export default function SocialButton() {
     <>
       <div className="social bg-bg-main flex w-full flex-col gap-3">
         <Button
-          className="kakao bg-point-main cursor-pointer"
-          variant="default"
+          className="kakao cursor-pointer bg-[#FEE500] text-[#262200] hover:bg-[#FEE60A] dark:bg-[#FEE500] dark:text-[#262200] dark:hover:bg-[#D5C10A]"
           size="lg"
+          variant="outline"
           asChild={false}
           onClick={handleKakaoLogin}
         >
-          <MessageCircle />
+          <Image src="/icons/ico_kakao.svg" alt="카카오 아이콘" width={16} height={16} />
           Kakao로 계속하기
         </Button>
 
         <Button
-          className="google bg-point-sub cursor-pointer"
-          variant="outline"
+          className="google cursor-pointer border-[#E3E3E3] bg-white text-[#1F1F1F] dark:bg-[#131314] dark:text-white"
           size="lg"
+          variant="outline"
           asChild={false}
           onClick={handleGoogleLogin}
         >
-          <Image src="/googleIcon.svg" alt="Google icon" width={15} height={15} />
+          <Image src="/icons/ico_google.svg" alt="구글 아이콘" width={16} height={16} />
           Google로 계속하기
         </Button>
       </div>
