@@ -43,21 +43,21 @@ export default function MateListBtn({ postId, likeCount, commentCount }: MateLis
 
   return (
     <>
-      <div className="reaction flex gap-4 px-16">
-        <button className="text-text-sub flex items-center gap-1 text-sm">
+      <div className="reaction flex gap-4">
+        <button className="text-text-sub flex items-center gap-1 text-sm" title="좋아요">
           <Heart className="h-4 w-4" />
           <p>{likeCount ?? "0"}</p>
         </button>
-        <button className="text-text-sub flex items-center gap-1 text-sm">
+        <button className="text-text-sub flex items-center gap-1 text-sm" title="댓글">
           <MessageCircle className="h-4 w-4" />
           <p>{commentCount ?? 0}</p>
         </button>
         <button
           onClick={handleOpenShareModal}
           className="text-text-sub hover:text-accent-foreground flex cursor-pointer items-center gap-1 text-sm"
+          title="공유하기"
         >
           <Share2 className="h-4 w-4" />
-          <p>공유하기</p>
         </button>
       </div>
 

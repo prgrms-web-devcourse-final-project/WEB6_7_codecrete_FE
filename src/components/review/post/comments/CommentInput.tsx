@@ -90,7 +90,7 @@ export default function CommentInput({
   return (
     <>
       <div className={"flex justify-between"}>
-        <h3 className={"text-xl font-bold"}>댓글 ({totalComments})</h3>
+        <h3 className={"text-lg font-bold lg:text-xl"}>댓글 ({totalComments})</h3>
         {/**
            * // TODO:
            * - 댓글 정렬

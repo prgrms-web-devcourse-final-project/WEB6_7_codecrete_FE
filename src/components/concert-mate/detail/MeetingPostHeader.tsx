@@ -86,20 +86,16 @@ export default function MeetingPostHeader({
   };
 
   return (
-    <header className={"flex flex-col gap-4"}>
-      <h1 className={"text-4xl"}>{postDetail.title}</h1>
+    <header className={"flex flex-col lg:gap-2"}>
+      <h1 className={"text-2xl font-bold md:text-3xl lg:text-4xl"}>{postDetail.title}</h1>
 
       <div className={"flex justify-between"}>
-        <div className={"flex gap-6"}>
-          <div className={"text-text-sub flex gap-6"}>
-            <div className={"flex items-center gap-2"}>
-              <Clock4 size={14} />
-              <p>
-                {displayDate}
-                {isModified && <span className="ml-1 text-xs">(수정됨)</span>}
-              </p>
-            </div>
-          </div>
+        <div className={"text-text-sub flex items-center gap-0.5 lg:gap-2"}>
+          <Clock4 className="size-3 lg:size-4" />
+          <p className="text-xs lg:text-sm">
+            {displayDate}
+            {isModified && <span className="ml-1 text-xs">(수정됨)</span>}
+          </p>
         </div>
 
         {isAuthor ? (

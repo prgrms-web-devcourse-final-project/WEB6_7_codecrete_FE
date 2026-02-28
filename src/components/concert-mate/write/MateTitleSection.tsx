@@ -1,8 +1,6 @@
 "use client";
-
-import { CardContent } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { MatePostWrite } from "@/types/community/concert-mate";
 import { useFormContext } from "react-hook-form";
 
@@ -14,20 +12,18 @@ export default function MateTitleSection() {
   } = useFormContext<MatePostWrite>();
 
   return (
-    <CardContent className="flex flex-col gap-2">
+    <Field className="flex flex-col gap-2">
       <div className="grid w-full gap-3">
-        <Label htmlFor="title" className="gap-1">
-          구인 제목 <span className="text-text-sub">*</span>
-        </Label>
+        <FieldLabel htmlFor="title" className="gap-1">
+          제목 <span className="text-text-sub">*</span>
+        </FieldLabel>
         <Input
           id="title"
-          className="h-13"
-          placeholder="제목을 입력해주세요"
+          placeholder="ex) 아이유 콘서트 같이 떼창할 Mate 구해요!"
           {...register("title", { required: "제목을 입력해주세요" })}
         />
         {errors.title && <span className="text-destructive text-xs">{errors.title.message}</span>}
-        <p className="text-text-sub text-xs">동행 구인의 목적을 한 문장으로 표현해보세요.</p>
       </div>
-    </CardContent>
+    </Field>
   );
 }

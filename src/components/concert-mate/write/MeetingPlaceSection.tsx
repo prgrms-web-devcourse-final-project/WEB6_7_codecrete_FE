@@ -1,8 +1,6 @@
 "use client";
-
-import { CardContent } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { MatePostWrite } from "@/types/community/concert-mate";
 import { useFormContext } from "react-hook-form";
 
@@ -11,15 +9,13 @@ export default function MeetingPlaceSection() {
   const { register } = useFormContext<MatePostWrite>();
 
   return (
-    <CardContent className="flex flex-col gap-2">
-      <Label htmlFor="place">약속 장소 (선택)</Label>
+    <Field>
+      <FieldLabel htmlFor="place">약속 장소 </FieldLabel>
       <Input
         id="place"
-        className="h-13"
         {...register("meetingPlace")}
-        placeholder="예: 올림픽공원역 4번 출구 또는 공연장 A번 게이트"
+        placeholder="올림픽공원역 4번 출구 또는 공연장 A번 게이트"
       />
-      <p className="text-text-sub text-xs">구체적인 장소를 명시해 주세요.</p>
-    </CardContent>
+    </Field>
   );
 }

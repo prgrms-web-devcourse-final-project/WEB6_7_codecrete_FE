@@ -9,10 +9,10 @@ export default function MeetingPostSidebar({
   res,
 }: MeetingPostSidebarProps) {
   return (
-    <aside className={"sticky top-34 flex w-125 shrink-0 flex-col gap-12 self-start"}>
+    <>
       <MeetingAuthorCard userDetail={userDetail} />
       {showMeetingDetail && <MeetingDetail res={res} />}
       <SharePosts />
-    </aside>
+    </>
   );
 }

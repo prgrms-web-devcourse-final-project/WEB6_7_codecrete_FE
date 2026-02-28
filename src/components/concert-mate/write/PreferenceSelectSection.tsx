@@ -1,8 +1,7 @@
 "use client";
 
-import { CardContent } from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -24,11 +23,11 @@ export default function PreferenceSelectSection() {
   } = useFormContext<MatePostWrite>();
 
   return (
-    <CardContent className="grid grid-cols-3 gap-2">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="participants">
+    <FieldGroup className="grid grid-cols-1 gap-y-7! lg:grid-cols-3">
+      <Field className="flex flex-col gap-2">
+        <FieldLabel htmlFor="participants">
           인원 수 <span className="text-text-sub">*</span>
-        </Label>
+        </FieldLabel>
         <Input
           id="participants"
           type="number"
@@ -44,24 +43,23 @@ export default function PreferenceSelectSection() {
               message: "최대 20명까지만 모집 가능합니다.",
             },
           })}
-          placeholder="ex. 2"
-          className="h-13"
+          placeholder="ex) 2"
         />
         {errors.maxParticipants && (
           <span className="text-destructive text-xs">{errors.maxParticipants.message}</span>
         )}
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="gender-preference">
+      <Field className="flex flex-col gap-2">
+        <FieldLabel htmlFor="gender-preference">
           성별 <span className="text-text-sub">*</span>
-        </Label>
+        </FieldLabel>
         <Controller
           name="genderPreference"
           rules={{ required: "성별을 선택해주세요" }}
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger id="gender-preference" className="!h-13 w-full">
+              <SelectTrigger id="gender-preference">
                 <SelectValue placeholder="ex. 성별 무관" />
               </SelectTrigger>
               <SelectContent>
@@ -78,10 +76,10 @@ export default function PreferenceSelectSection() {
         {errors.genderPreference && (
           <span className="text-destructive text-xs">{errors.genderPreference.message}</span>
         )}
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="age-range-min">연령대 (선택)</Label>
+      <Field className="flex flex-col gap-2">
+        <FieldLabel htmlFor="age-range-min">연령</FieldLabel>
         <div className="flex gap-2">
           <Input
             id="age-range-min"
@@ -97,8 +95,7 @@ export default function PreferenceSelectSection() {
                 message: "입력 가능한 연령 범위가 아닙니다.",
               },
             })}
-            placeholder="ex. 20 (~)"
-            className="h-13"
+            placeholder="최소 20세 이상"
           />
           <Input
             id="age-range-max"
@@ -119,8 +116,7 @@ export default function PreferenceSelectSection() {
                 message: "입력 가능한 연령 범위가 아닙니다.",
               },
             })}
-            placeholder="ex. 100"
-            className="h-13"
+            placeholder="최대 99세"
           />
         </div>
         {errors.ageRangeMin && (
@@ -129,7 +125,7 @@ export default function PreferenceSelectSection() {
         {errors.ageRangeMax && (
           <span className="text-destructive text-xs">{errors.ageRangeMax.message}</span>
         )}
-      </div>
-    </CardContent>
+      </Field>
+    </FieldGroup>
   );
 }

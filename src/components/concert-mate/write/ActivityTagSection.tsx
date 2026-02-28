@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { MatePostWrite } from "@/types/community/concert-mate";
 import { Beer, Camera, CarFront, Gift, MessagesSquareIcon, Utensils } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -47,8 +46,8 @@ export default function ActivityTagSection() {
   };
 
   return (
-    <CardContent className={"flex flex-col gap-4"}>
-      <Label htmlFor="custom-tag">태그 선택 (선택)</Label>
+    <Field className={"flex flex-col gap-4"}>
+      <FieldLabel htmlFor="custom-tag">태그 선택</FieldLabel>
       <div className={"flex flex-wrap gap-2"}>
         {DEFAULT_TAGS.map((tag) => {
           const Icon = tag.icon;
@@ -69,7 +68,6 @@ export default function ActivityTagSection() {
       </div>
       <Input
         id="custom-tag"
-        className={"h-13"}
         defaultValue={selectedTags}
         placeholder={
           "직접 태그를 추가해보세요 (Enter 입력)" /*
@@ -80,6 +78,6 @@ export default function ActivityTagSection() {
            */
         }
       />
-    </CardContent>
+    </Field>
   );
 }
