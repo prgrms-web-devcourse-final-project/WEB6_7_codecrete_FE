@@ -1,18 +1,29 @@
 import SocialButton from "@/components/auth/SocialButton";
-import SignInIntro from "@/components/auth/sign-in/SignInIntro";
 import SignInForm from "@/components/auth/sign-in/SignInForm";
-import SignUpLink from "@/components/auth/sign-in/SignUpLink";
-import PolicyText from "@/components/auth/sign-in/PolicyText";
+import Link from "next/link";
 
 export default function Page() {
   return (
-    <div className="flex w-full max-w-200 flex-col justify-center gap-10 px-12">
-      <SignInIntro />
+    <div className="flex w-full max-w-150 flex-col justify-center gap-10 lg:max-w-150">
+      <div className="intro flex flex-col gap-2 lg:gap-4">
+        <h2 className="text-text-main text-2xl font-bold lg:text-4xl">환영합니다</h2>
+        <p className="text-text-sub text-sm lg:text-base">계정에 로그인하여 계속 진행하세요</p>
+      </div>
+      {/* SNS 로그인 */}
       <SocialButton />
+      {/* 일반 로그인 */}
       <SignInForm />
-      <SignUpLink />
-      <PolicyText />
-      {/*TODO: 반응형 */}
+      <div className="space-y-2">
+        <div className="signUpLink flex justify-center gap-1">
+          <p className="text-text-sub">계정이 없으신가요?</p>
+          <Link href="/sign-up" className="text-text-main hover:text-text-sub">
+            회원가입
+          </Link>
+        </div>
+        <p className="agreePolicy text-text-sub flex justify-center text-xs">
+          계속 진행하시면 당사의 서비스 약관 및 개인정보 보호정책에 동의하는 것으로 간주됩니다.
+        </p>
+      </div>
     </div>
   );
 }

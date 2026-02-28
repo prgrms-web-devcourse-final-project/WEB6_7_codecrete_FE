@@ -124,7 +124,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
             id={"email"}
             placeholder="이메일을 입력하세요"
             autoComplete={"username"}
-            className="bg-point-sub h-13"
+            className="bg-point-sub"
             disabled={isVerified || (isCodeSent && remainingTime > 0)}
             {...register("email")}
           />
@@ -133,7 +133,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
             onClick={handleSendCode}
             variant="default"
             size="lg"
-            className="bg-point-main h-13"
+            className="bg-point-main"
             disabled={isVerified || isSendingCode || (isCodeSent && remainingTime > 0)}
           >
             {isVerified
@@ -157,7 +157,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
               type="text"
               id={"emailCode"}
               placeholder="인증번호를 입력해주세요"
-              className="bg-point-sub h-13"
+              className="bg-point-sub"
               disabled={isVerified}
               {...register("emailCode")}
             />
@@ -165,7 +165,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
               type="button"
               variant="default"
               size="lg"
-              className="bg-point-main h-13"
+              className="bg-point-main"
               onClick={handleVerifyCode}
               disabled={isVerified || isVerifying}
             >

@@ -35,7 +35,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
           id="date"
           value={formattedValue}
           placeholder="2025년 1월 19일"
-          className="bg-point-sub h-13 pr-10"
+          className="bg-point-sub pr-10"
           readOnly
         />
         <Popover open={open} onOpenChange={setOpen}>

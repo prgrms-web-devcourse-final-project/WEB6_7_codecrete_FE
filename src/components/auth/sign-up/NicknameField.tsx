@@ -60,7 +60,7 @@ export default function NicknameField({ checked, setChecked }: NicknameFieldProp
           type="text"
           id={"nickname"}
           placeholder="닉네임을 입력하세요"
-          className="bg-point-sub h-13"
+          className="bg-point-sub"
           {...register("nickname", {
             onChange: () => {
               setChecked(null);
@@ -72,7 +72,7 @@ export default function NicknameField({ checked, setChecked }: NicknameFieldProp
           type="button"
           variant="default"
           size="lg"
-          className="bg-point-main h-13"
+          className="bg-point-main"
           onClick={handleCheckNickname}
           disabled={checking}
         >
