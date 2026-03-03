@@ -8,6 +8,7 @@ import { SignUpFormValues } from "@/lib/zod/auth";
 import { sendEmailCode, verifyEmailCode } from "@/lib/api/auth/auth.client";
 import { toast } from "sonner";
 import FieldError from "@/components/auth/FieldError";
+import { Field, FieldLabel } from "@/components/ui/field";
 
 type EmailFieldProps = {
   onVerified: () => void;
@@ -114,10 +115,10 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
   };
   return (
     <>
-      <div className="emailInput flex flex-col gap-2">
-        <label htmlFor={"email"} className="text-sm">
+      <Field className="emailInput">
+        <FieldLabel htmlFor={"email"} className="text-sm">
           이메일 *
-        </label>
+        </FieldLabel>
         <div className="flex w-full items-center gap-2">
           <Input
             type="email"
@@ -146,12 +147,12 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
           </Button>
         </div>
         {errors.email && <FieldError message={errors.email.message} />}
-      </div>
+      </Field>
       {isCodeSent && (
-        <div className="emailConfirm flex flex-col gap-2">
-          <label htmlFor={"emailCode"} className="text-sm">
+        <Field className="emailConfirm">
+          <FieldLabel htmlFor={"emailCode"} className="text-sm">
             이메일 인증 *
-          </label>
+          </FieldLabel>
           <div className="flex w-full items-center gap-2">
             <Input
               type="text"
@@ -173,7 +174,7 @@ export default function EmailField({ onVerified }: EmailFieldProps) {
             </Button>
           </div>
           {errors.emailCode && <FieldError message={errors.emailCode.message} />}
-        </div>
+        </Field>
       )}
     </>
   );

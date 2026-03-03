@@ -2,6 +2,7 @@ import PasswordInput from "@/components/auth/PasswordInput";
 import { Controller, useFormContext } from "react-hook-form";
 import { SignUpFormValues } from "@/lib/zod/auth";
 import FieldError from "@/components/auth/FieldError";
+import { Field, FieldLabel } from "@/components/ui/field";
 
 export default function PasswordField() {
   const {
@@ -11,10 +12,10 @@ export default function PasswordField() {
 
   return (
     <>
-      <div className="passwordInput flex flex-col gap-2">
-        <label htmlFor={"password"} className="text-sm">
+      <Field className="passwordInput">
+        <FieldLabel htmlFor={"password"} className="text-sm">
           비밀번호 *
-        </label>
+        </FieldLabel>
         <Controller
           name={"password"}
           control={control}
@@ -23,17 +24,15 @@ export default function PasswordField() {
               value={field.value}
               id={"password"}
               onChange={field.onChange}
-              placeholder={"비밀번호를 영문, 숫자, 특수문자를 포함한 8자 이상 입력하세요"}
+              placeholder={"영문, 숫자, 특수문자를 포함하여 8자 이상 입력하세요"}
               autoComplete="new-password"
             />
           )}
         />
         {errors.password && <FieldError message={errors.password.message} />}
-      </div>
-      <div className="passwordConfirm flex flex-col gap-2">
-        <label htmlFor={"passwordConfirm"} className="text-sm">
-          비밀번호 확인 *
-        </label>
+      </Field>
+      <Field className="passwordConfirm">
+        <FieldLabel htmlFor={"passwordConfirm"}>비밀번호 확인 *</FieldLabel>
         <Controller
           name="passwordConfirm"
           control={control}
@@ -48,7 +47,7 @@ export default function PasswordField() {
           )}
         />
         {errors.passwordConfirm && <FieldError message={errors.passwordConfirm.message} />}
-      </div>
+      </Field>
     </>
   );
 }
