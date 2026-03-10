@@ -1,5 +1,5 @@
+import MyPageCalendar from "@/components/my-page/overview/calendar";
 import MyPageAside from "@/components/my-page/overview/MyPageAside";
-import MyPageCalendar from "@/components/my-page/overview/MyPageCalendar";
 import {
   getAllLikedConcerts,
   getLikedArtistList,
@@ -50,8 +50,8 @@ export default async function Page() {
   }
 
   return (
-    <div className="px-15 py-10">
-      <div className="mx-auto flex w-full max-w-400 gap-8">
+    <div className="px-5 py-8 lg:px-15 lg:py-10">
+      <div className="mx-auto flex w-full max-w-400 flex-col-reverse gap-8 lg:flex-row">
         <MyPageCalendar concerts={concertsList} planners={joinedPlanners} />
         <MyPageAside
           likedConcerts={concertsList}
