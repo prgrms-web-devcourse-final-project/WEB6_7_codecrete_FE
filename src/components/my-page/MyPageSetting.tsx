@@ -319,13 +319,13 @@ export default function MyPageSetting({ userData }: { userData: User }) {
   return (
     <>
       <Button
-        size="icon"
-        variant="ghost"
+        size="icon-sm"
+        variant="outline"
         aria-label="설정"
-        className="absolute -top-1 -left-1"
+        className="absolute top-0 right-0"
         onClick={handleEditDialog}
       >
-        <SettingsIcon className="text-background size-8 fill-white stroke-zinc-900" />
+        <SettingsIcon className="size-5" />
       </Button>
       <Dialog open={showEditDialog} onOpenChange={handleClose} aria-description="설정">
         <DialogContent>
