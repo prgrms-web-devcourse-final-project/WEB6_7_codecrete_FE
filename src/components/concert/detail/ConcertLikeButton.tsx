@@ -55,7 +55,7 @@ export default function ConcertLikeButton({
         <Button
           variant="outline"
           size="icon"
-          className="border-border hover:bg-border group absolute right-4 bottom-4 sm:static"
+          className="border-border hover:bg-border group"
           onClick={handleLikeConcert}
         >
           {isPending ? (

@@ -42,7 +42,7 @@ export default function MobileQuickActions({
     <div className="lg:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
         {!open && (
-          <div className="pointer-events-none fixed right-6 bottom-6">
+          <div className="pointer-events-none fixed right-6 bottom-6 z-50">
             <div className="pointer-events-auto mx-auto w-full max-w-120">
               <SheetTrigger asChild>
                 <Button
