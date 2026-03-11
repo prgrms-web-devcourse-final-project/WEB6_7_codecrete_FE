@@ -71,6 +71,7 @@ export default function SearchConcertCard({
           concertId={concertId}
           isAuthenticated={isAuthenticated}
           isLiked={concert.isLiked}
+          className="absolute right-4 bottom-4 sm:static"
         />
       </CardContent>
     </Card>
