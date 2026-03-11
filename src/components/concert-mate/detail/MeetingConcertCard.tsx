@@ -53,7 +53,7 @@ export default function MeetingConcertCard({ concertDetail }: { concertDetail: C
           </div>
           <Link
             href={`/concerts/${concertDetail.concertId}`}
-            className="block w-full pr-12 sm:inline-block sm:pr-0"
+            className="block w-full sm:inline-block"
           >
             <Button className="w-full sm:w-auto">자세히보기</Button>
           </Link>
