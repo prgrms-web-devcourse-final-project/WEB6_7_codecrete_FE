@@ -9,157 +9,43 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { MicVocalIcon } from "lucide-react";
-import { useState } from "react";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { twMerge } from "tailwind-merge";
+import { usePagination } from "@/hooks/usePagination";
+import PaginationPages from "@/components/common/PaginationPages";
+import { cn } from "@/lib/utils";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 2;
 
 export default function MyPageLikedArtistList({
   initialList,
 }: {
   initialList: LikedArtist[] | null;
 }) {
-  const artistList = initialList || [];
-  const [currentPage, setCurrentPage] = useState(1);
+  const artistList = initialList ?? [];
 
-  const totalPages = Math.ceil(artistList.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const displayedArtists = artistList.slice(startIndex, endIndex);
+  const {
+    currentPage,
+    totalPages,
+    displayRange,
+    goToPage,
+    goPrevPage,
+    goNextPage,
+    isFirstPage,
+    isLastPage,
+    pageRange,
+  } = usePagination({ totalItems: artistList.length, itemsPerPage: ITEMS_PER_PAGE });
+
+  const displayedArtists = artistList.slice(displayRange.start, displayRange.end);
 
   const handlePageChange = (e: React.MouseEvent<HTMLAnchorElement>, page: number) => {
     e.preventDefault();
-    if (page < 1 || page > totalPages || page === currentPage) return;
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const renderPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-
-    if (totalPages <= maxVisible) {
-      // 전체 페이지가 5개 이하면 모두 표시
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(
-          <PaginationItem key={i}>
-            <PaginationLink
-              href="#"
-              onClick={(e) => handlePageChange(e, i)}
-              isActive={currentPage === i}
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
-    } else {
-      const showStart = currentPage <= 3;
-      const showEnd = currentPage >= totalPages - 2;
-
-      if (showStart) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(
-            <PaginationItem key={i}>
-              <PaginationLink
-                href="#"
-                onClick={(e) => handlePageChange(e, i)}
-                isActive={currentPage === i}
-              >
-                {i}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        }
-        pages.push(
-          <PaginationItem key="ellipsis-end">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key={totalPages}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, totalPages)}>
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      } else if (showEnd) {
-        pages.push(
-          <PaginationItem key={1}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, 1)}>
-              1
-            </PaginationLink>
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key="ellipsis-start">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(
-            <PaginationItem key={i}>
-              <PaginationLink
-                href="#"
-                onClick={(e) => handlePageChange(e, i)}
-                isActive={currentPage === i}
-              >
-                {i}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        }
-      } else {
-        pages.push(
-          <PaginationItem key={1}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, 1)}>
-              1
-            </PaginationLink>
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key="ellipsis-start">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(
-            <PaginationItem key={i}>
-              <PaginationLink
-                href="#"
-                onClick={(e) => handlePageChange(e, i)}
-                isActive={currentPage === i}
-              >
-                {i}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        }
-        pages.push(
-          <PaginationItem key="ellipsis-end">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key={totalPages}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, totalPages)}>
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
-    }
-
-    return pages;
+    goToPage(page);
   };
 
   if (artistList.length === 0)
@@ -200,22 +86,26 @@ export default function MyPageLikedArtistList({
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                onClick={(e) => handlePageChange(e, currentPage - 1)}
-                aria-disabled={currentPage === 1}
-                className={twMerge(
-                  currentPage === 1 && "pointer-events-none opacity-50",
+                onClick={goPrevPage}
+                aria-disabled={isFirstPage}
+                className={cn(
+                  isFirstPage && "pointer-events-none opacity-50",
                   "[&>:not(svg)]:hidden"
                 )}
               />
             </PaginationItem>
-            {renderPageNumbers()}
+            <PaginationPages
+              pageRange={pageRange}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
             <PaginationItem>
               <PaginationNext
                 href="#"
-                onClick={(e) => handlePageChange(e, currentPage + 1)}
-                aria-disabled={currentPage === totalPages}
-                className={twMerge(
-                  currentPage === totalPages && "pointer-events-none opacity-50",
+                onClick={goNextPage}
+                aria-disabled={isLastPage}
+                className={cn(
+                  isLastPage && "pointer-events-none opacity-50",
                   "[&>:not(svg)]:hidden"
                 )}
               />
