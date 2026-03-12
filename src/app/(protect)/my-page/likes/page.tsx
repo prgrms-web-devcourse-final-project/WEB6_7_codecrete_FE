@@ -21,16 +21,16 @@ export default async function Page() {
   const hasLikedConcerts = likedConcerts.data != null;
 
   return (
-    <div className="my-15 space-y-20 px-5 lg:px-15">
-      <div className="mx-auto max-w-400 space-y-20">
+    <div className="space-y-20 px-5 py-7 lg:px-15 lg:py-15">
+      <div className="mx-auto max-w-400 space-y-10 lg:space-y-20">
         {hasLikedArtists && (
-          <section className="space-y-8">
+          <section className="space-y-5 lg:space-y-8">
             <MyPageLikedArtistList initialList={likedArtists.data} />
           </section>
         )}
         {hasLikedArtists && hasLikedConcerts && <Separator />}
         {hasLikedConcerts && (
-          <section className="space-y-8">
+          <section className="space-y-5 lg:space-y-8">
             <MyPageLikedConcertList
               initialList={likedConcerts.data}
               totalCount={likedConcertsCount.data || 0}

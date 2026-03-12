@@ -19,15 +19,22 @@ import {
 import { usePagination } from "@/hooks/usePagination";
 import PaginationPages from "@/components/common/PaginationPages";
 import { cn } from "@/lib/utils";
+import { useGridColumns } from "@/hooks/useGridColumns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-const ITEMS_PER_PAGE = 2;
+const ROWS = 3;
 
 export default function MyPageLikedArtistList({
   initialList,
 }: {
   initialList: LikedArtist[] | null;
 }) {
+  const isMobile = useIsMobile();
+
   const artistList = initialList ?? [];
+
+  const columns = useGridColumns();
+  const itemsPerPage = ROWS * columns;
 
   const {
     currentPage,
@@ -39,7 +46,7 @@ export default function MyPageLikedArtistList({
     isFirstPage,
     isLastPage,
     pageRange,
-  } = usePagination({ totalItems: artistList.length, itemsPerPage: ITEMS_PER_PAGE });
+  } = usePagination({ totalItems: artistList.length, itemsPerPage: itemsPerPage });
 
   const displayedArtists = artistList.slice(displayRange.start, displayRange.end);
 
@@ -52,10 +59,10 @@ export default function MyPageLikedArtistList({
     return (
       <>
         <div className="flex justify-between">
-          <h3 className="text-xl font-bold">찜한 아티스트</h3>
-          <p className="text-text-sub text-sm">총 0명</p>
+          <h3 className="text-lg font-bold lg:text-xl">찜한 아티스트</h3>
+          <p className="text-text-sub text-xs leading-normal lg:text-sm">총 0명</p>
         </div>
-        <div className="py-40">
+        <div className="py-2 lg:py-40">
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -72,12 +79,12 @@ export default function MyPageLikedArtistList({
   return (
     <>
       <div className="flex justify-between">
-        <h3 className="text-xl font-bold">찜한 아티스트</h3>
+        <h3 className="text-lg font-bold lg:text-xl">찜한 아티스트</h3>
         <p className="text-text-sub text-sm">총 {artistList.length}명</p>
       </div>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8 xl:gap-y-10">
         {displayedArtists.map((artist) => (
-          <MyPageLikedArtistListItem key={artist.id} artist={artist} />
+          <MyPageLikedArtistListItem key={artist.id} artist={artist} isMobile={isMobile} />
         ))}
       </div>
       {totalPages > 1 && (
