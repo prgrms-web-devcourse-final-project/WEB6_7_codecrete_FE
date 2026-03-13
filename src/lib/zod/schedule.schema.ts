@@ -3,7 +3,7 @@ import {
   DEFAULT_CAFE_DURATION,
   DEFAULT_MEAL_DURATION,
   DEFAULT_OTHER_DURATION,
-} from "@/utils/helpers/constants";
+} from "@/constants/planner";
 import { z } from "zod";
 
 // MEAL 스케줄

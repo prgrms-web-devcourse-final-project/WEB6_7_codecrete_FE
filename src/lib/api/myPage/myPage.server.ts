@@ -11,8 +11,8 @@ import { getUserInfo } from "../user/user.server";
 import { Concert, ConcertWithTicket } from "@/types/home";
 import { LikedArtist, LikedArtistWithConcerts } from "@/types/my-page";
 
-import { PAGE_SIZE } from "@/utils/helpers/constants";
 import { getConcertsByArtistId, getTicketOfficesByConcertId } from "../concerts/concerts.server";
+import { PAGE_SIZE } from "@/constants/pagination";
 
 /**
  * 찜한 공연 목록 조회

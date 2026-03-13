@@ -1,7 +1,7 @@
+import { PAGE_SIZE } from "@/constants/pagination";
 import { ResponseData } from "@/types/api";
 import { Concert } from "@/types/home";
 import ClientApi from "@/utils/helpers/clientApi";
-import { PAGE_SIZE } from "@/utils/helpers/constants";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 
 // TODO : 임시로 타입 정의 나중에 삭제 필요
