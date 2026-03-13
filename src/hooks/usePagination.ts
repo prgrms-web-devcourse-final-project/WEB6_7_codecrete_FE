@@ -3,23 +3,24 @@
 import { useState } from "react";
 import { useIsMobile } from "./use-mobile";
 
-interface UsePaginationProps {
+interface UsePaginationProps<T> {
   totalItems: number;
   itemsPerPage: number;
+  fetcher?: (page: number) => Promise<T[]>;
+  initialData?: T[] | null; //
 }
-interface UsePaginationReturn {
+interface UsePaginationReturn<T> {
   currentPage: number;
   totalPages: number;
-  displayRange: {
-    start: number;
-    end: number;
-  };
-  goToPage: (page: number) => void;
-  goPrevPage: () => void;
-  goNextPage: () => void;
+  isLoading: boolean;
   isFirstPage: boolean;
   isLastPage: boolean;
   pageRange: (number | "ellipsis")[];
+  goToPage: (page: number) => void;
+  goPrevPage: () => void;
+  goNextPage: () => void;
+  data: T[] | null;
+  displayRange: { start: number; end: number };
 }
 
 const ELLIPSIS = "ellipsis" as const;
@@ -42,21 +43,38 @@ const PAGINATION_CONFIG = {
  * @param {UsePaginationProps} props - 전체 아이템 수와 페이지 당 아이템 수
  * @returns {UsePaginationReturn} 현재 페이지, 이동 핸들러, 페이지 범위 등
  */
-export function usePagination({
+export function usePagination<T>({
   totalItems,
   itemsPerPage,
-}: UsePaginationProps): UsePaginationReturn {
+  fetcher,
+  initialData,
+}: UsePaginationProps<T>): UsePaginationReturn<T> {
   const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState<T[] | null>(initialData ?? null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const isMobile = useIsMobile();
 
   const config = isMobile ? PAGINATION_CONFIG.mobile : PAGINATION_CONFIG.desktop;
 
-  const goToPage = (page: number) => {
+  const goToPage = async (page: number) => {
     if (page < 1 || page > totalPages || page === currentPage) return;
 
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (fetcher) {
+      setIsLoading(true);
+      try {
+        const result = await fetcher(page);
+        setData(result);
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const goPrevPage = () => goToPage(currentPage - 1);
@@ -94,20 +112,21 @@ export function usePagination({
     const centerPages = Array.from({ length: maxVisible }, (_, i) => currentPage - sideCount + i);
     return [1, ELLIPSIS, ...centerPages, ELLIPSIS, totalPages];
   };
-  const pageRange = getPageRange();
 
   return {
     currentPage,
     totalPages,
+    isLoading,
+    isFirstPage: currentPage === 1,
+    isLastPage: currentPage === totalPages,
+    pageRange: getPageRange(),
+    goToPage,
+    goPrevPage,
+    goNextPage,
+    data,
     displayRange: {
       start: (currentPage - 1) * itemsPerPage,
       end: currentPage * itemsPerPage,
     },
-    goToPage,
-    goPrevPage,
-    goNextPage,
-    isFirstPage: currentPage === 1,
-    isLastPage: currentPage === totalPages,
-    pageRange,
   };
 }
