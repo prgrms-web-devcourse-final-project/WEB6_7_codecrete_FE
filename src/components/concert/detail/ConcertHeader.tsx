@@ -68,7 +68,7 @@ export default async function ConcertHeader({
 
         {/* 정보 영역 */}
         <div className="bg-bg-main border-border sticky top-4 mx-5 flex flex-1 flex-col gap-4 rounded-2xl border p-5 lg:top-30 lg:mx-0 xl:gap-8 xl:p-10">
-          <div className="title flex items-start justify-between gap-4">
+          <div className="title flex flex-col items-start justify-between gap-4 md:flex-row">
             <div className="flex flex-col gap-3 md:gap-4">
               {concertDetail.concertArtists.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -87,7 +87,7 @@ export default async function ConcertHeader({
               </h2>
             </div>
 
-            {/* 버튼 그룹: 모바일에서는 상단 우측 혹은 하단 배치 등 고려 가능 */}
+            {/* 버튼 그룹 */}
             <div className="flex gap-2">
               <ConcertChatButton
                 concertId={concertDetail.concertId}

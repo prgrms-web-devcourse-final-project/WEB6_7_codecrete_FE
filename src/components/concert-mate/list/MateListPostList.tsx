@@ -48,9 +48,9 @@ export default async function MateListPostList({ pageParam }: { pageParam: numbe
   );
 
   return (
-    <section className="px-15">
+    <section className="px-5 py-10 lg:px-15 lg:py-16">
       <div className="mx-auto w-full max-w-400">
-        <div className="flex flex-col gap-6 py-12">
+        <div className="flex flex-col gap-6">
           {posts.length > 0 ? (
             posts.map((post) => (
               <MateListCard

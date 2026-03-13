@@ -22,7 +22,7 @@ export default function MyPageNavigation() {
               key={href}
               href={href}
               className={twMerge(
-                "border-b-2 border-transparent py-4 text-base transition-colors",
+                "border-b-2 border-transparent py-3 text-sm transition-colors lg:py-4 lg:text-base",
                 isActive
                   ? "border-point-main text-text-main font-bold"
                   : "text-text-sub hover:text-text-main"

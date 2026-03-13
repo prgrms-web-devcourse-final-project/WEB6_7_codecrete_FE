@@ -13,6 +13,7 @@ import { useState } from "react";
 import { signUp } from "@/lib/api/auth/auth.client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { FieldGroup } from "@/components/ui/field";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -68,22 +69,24 @@ export default function SignUpForm() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="input flex flex-col gap-6">
-        <NicknameField checked={isNicknameChecked} setChecked={setIsNicknameChecked} />
-        <EmailField onVerified={() => setIsEmailVerified(true)} />
-        <PasswordField />
-        <BirthField />
-        <AgreeField />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FieldGroup className="input flex flex-col gap-6">
+          <NicknameField checked={isNicknameChecked} setChecked={setIsNicknameChecked} />
+          <EmailField onVerified={() => setIsEmailVerified(true)} />
+          <PasswordField />
+          <BirthField />
+          <AgreeField />
 
-        <Button
-          type="submit"
-          className="signUpButton cursor-pointer"
-          variant="default"
-          size="lg"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "회원가입 중..." : "회원가입"}
-        </Button>
+          <Button
+            type="submit"
+            className="signUpButton cursor-pointer"
+            variant="default"
+            size="lg"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "회원가입 중..." : "회원가입"}
+          </Button>
+        </FieldGroup>
       </form>
     </FormProvider>
   );

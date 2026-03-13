@@ -24,47 +24,42 @@ export default async function MateListCard({
       )}
     >
       <Link href={`concert-mate/${post.postId}`} className="flex flex-col gap-2">
-        <div className="flex justify-between">
-          <div className="flex gap-4">
-            <Avatar className="ring-border size-10 ring-4">
-              <AvatarImage src={user?.profileImageUrl} alt="아티스트" />
-              <AvatarFallback>
-                <ProfileNoImage size="xs" />
-              </AvatarFallback>
-            </Avatar>
+        <div className="flex justify-between gap-4">
+          <Avatar className="ring-border size-10 ring-4">
+            <AvatarImage src={user?.profileImageUrl} alt="아티스트" />
+            <AvatarFallback>
+              <ProfileNoImage size="xs" />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-1 flex-col gap-4">
             <div>
-              <strong className="text-text-main text-lg">
+              <strong className="text-text-main text-sm font-semibold">
                 {user?.nickname || "알 수 없는 사용자"}
               </strong>
-              <p className="text-text-sub text-sm">{formattedDate}</p>
+              <p className="text-text-sub text-xs leading-normal lg:text-sm">{formattedDate}</p>
             </div>
-          </div>
-        </div>
-        <div className={twMerge(`flex flex-col gap-2 px-16`)}>
-          <h2 className="text-text-main text-lg font-bold">{post.title}</h2>
-          <div
-            className={twMerge(
-              `bg-bg-sub flex justify-between rounded-lg p-3`,
-              `group-hover:bg-bg-main`
-            )}
-          >
-            {concert ? (
-              <div>
-                <strong className="text-text-main text-sm">{concert.name}</strong>
-                <p className="text-text-sub text-sm">
-                  {concert.placeName} · {concert.startDate}
-                </p>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-text-main text-base font-semibold lg:text-lg">{post.title}</h2>
+              <div className="bg-bg-sub group-hover:bg-bg-main flex flex-col justify-between gap-1 rounded-lg p-3">
+                {concert ? (
+                  <>
+                    <strong className="text-text-main text-sm font-semibold">{concert.name}</strong>
+                    <p className="text-text-sub text-xs">
+                      {concert.placeName} · {concert.startDate}
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-md flex justify-center rounded-md py-5">
+                    <span>공연 정보를 불러올 수 없습니다.</span>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="text-md flex justify-center rounded-md py-5">
-                <span>공연 정보를 불러올 수 없습니다.</span>
-              </div>
-            )}
+              <p className="text-text-sub line-clamp-4 text-sm">{post.content}</p>
+            </div>
+            <MateListBtn postId={post.postId} likeCount={likeCount} commentCount={commentCount} />
           </div>
-          <p className="text-text-sub line-clamp-4 text-sm">{post.content}</p>
         </div>
       </Link>
-      <MateListBtn postId={post.postId} likeCount={likeCount} commentCount={commentCount} />
     </div>
   );
 }

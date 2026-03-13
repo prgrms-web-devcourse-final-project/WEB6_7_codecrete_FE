@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { ChevronDownIcon } from "lucide-react";
 
@@ -60,47 +59,39 @@ export function MateDatePicker() {
   );
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="flex flex-col gap-3">
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              id="date-picker"
-              className="h-13 w-full justify-between font-normal"
-            >
-              {currentDate ? format(currentDate, "yyyy-MM-dd") : "날짜를 입력하세요"}
-              <ChevronDownIcon />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={currentDate}
-              captionLayout="dropdown"
-              disabled={isDateDisabled}
-              onSelect={(date) => {
-                update(date, localTime);
-                setOpen(false);
-              }}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-      <div className="flex flex-col gap-3">
-        <Input
-          type="time"
-          id="time-picker"
-          step="60"
-          value={localTime}
-          onChange={(e) => {
-            const newTime = e.target.value;
-            setLocalTime(newTime);
-            update(currentDate, newTime);
-          }}
-          className="bg-background h-13 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-        />
-      </div>
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" id="date-picker" className="w-full justify-between font-normal">
+            {currentDate ? format(currentDate, "yyyy-MM-dd") : "날짜를 입력하세요"}
+            <ChevronDownIcon />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={currentDate}
+            captionLayout="dropdown"
+            disabled={isDateDisabled}
+            onSelect={(date) => {
+              update(date, localTime);
+              setOpen(false);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      <Input
+        type="time"
+        id="time-picker"
+        step="60"
+        value={localTime}
+        onChange={(e) => {
+          const newTime = e.target.value;
+          setLocalTime(newTime);
+          update(currentDate, newTime);
+        }}
+        className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+      />
     </div>
   );
 }

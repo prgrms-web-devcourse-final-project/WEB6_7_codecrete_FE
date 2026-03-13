@@ -163,7 +163,7 @@ export default function SelectedConcert({ initialConcertId }: { initialConcertId
   }, [search, setOptimisticResults]);
 
   return (
-    <Field className="px-6">
+    <Field>
       <FieldLabel>
         콘서트 선택<span className="text-text-sub">*</span>
       </FieldLabel>

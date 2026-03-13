@@ -1,4 +1,4 @@
-import SearchConcerts from "@/components/search/SearchConcerts";
+import SearchConcerts from "@/components/search/concerts/SearchConcerts";
 import { getAuthStatus } from "@/lib/api/auth/auth.server";
 import { getSearchConcerts } from "@/lib/api/search/search.server";
 

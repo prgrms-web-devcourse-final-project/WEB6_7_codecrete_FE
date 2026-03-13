@@ -1,12 +1,11 @@
 "use client";
 
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../ui/empty";
-import { SpotlightIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import SearchConcertCard from "./SearchConcertCard";
 import { getSearchConcerts } from "@/lib/api/search/search.client";
 import { ConcertDataWithLiked } from "@/types/concerts";
+import EmptyContents from "../EmptyContents";
 
 export default function SearchConcerts({
   initialConcerts,
@@ -76,24 +75,13 @@ export default function SearchConcerts({
   }, [initialConcerts, keyword]);
 
   if (searchedConcerts.length === 0) {
-    return (
-      <div className="py-40">
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <SpotlightIcon />
-            </EmptyMedia>
-            <EmptyTitle>검색 결과 없음</EmptyTitle>
-            <EmptyDescription>검색어에 해당하는 공연이 없습니다.</EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      </div>
-    );
+    return <EmptyContents type="concerts" />;
   }
+
   return (
-    <section className="px-15 py-16">
-      <div className="mx-auto flex w-full max-w-400 flex-col gap-8">
-        <div className="flex flex-col gap-6">
+    <section className="px-5 pt-7 pb-20 lg:gap-30 lg:px-15 lg:py-16">
+      <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:gap-8">
+        <div className="grid gap-4 lg:gap-6">
           {searchedConcerts.map((concert) => (
             <SearchConcertCard
               key={concert.id}

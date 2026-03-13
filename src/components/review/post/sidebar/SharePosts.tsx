@@ -35,7 +35,7 @@ export default function SharePosts() {
 
   return (
     <Card className={"flex flex-col gap-4 p-6"}>
-      <CardTitle>이 게시글 공유하기</CardTitle>
+      <CardTitle className="text-base font-bold lg:text-xl">이 게시글 공유하기</CardTitle>
 
       <div className={"flex flex-col"}>
         <Button

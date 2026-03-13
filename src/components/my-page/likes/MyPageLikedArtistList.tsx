@@ -9,167 +9,54 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { MicVocalIcon } from "lucide-react";
-import { useState } from "react";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { twMerge } from "tailwind-merge";
-
-const ITEMS_PER_PAGE = 12;
+import { usePagination } from "@/hooks/usePagination";
+import PaginationPages from "@/components/common/PaginationPages";
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { PAGE_SIZE } from "@/constants/pagination";
 
 export default function MyPageLikedArtistList({
   initialList,
 }: {
   initialList: LikedArtist[] | null;
 }) {
-  const artistList = initialList || [];
-  const [currentPage, setCurrentPage] = useState(1);
+  const isMobile = useIsMobile();
+  const artistList = initialList ?? [];
 
-  const totalPages = Math.ceil(artistList.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const displayedArtists = artistList.slice(startIndex, endIndex);
+  const {
+    currentPage,
+    totalPages,
+    displayRange,
+    goToPage,
+    goPrevPage,
+    goNextPage,
+    isFirstPage,
+    isLastPage,
+    pageRange,
+  } = usePagination({ totalItems: artistList.length, itemsPerPage: PAGE_SIZE });
+
+  const displayedArtists = artistList.slice(displayRange.start, displayRange.end);
 
   const handlePageChange = (e: React.MouseEvent<HTMLAnchorElement>, page: number) => {
     e.preventDefault();
-    if (page < 1 || page > totalPages || page === currentPage) return;
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const renderPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-
-    if (totalPages <= maxVisible) {
-      // 전체 페이지가 5개 이하면 모두 표시
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(
-          <PaginationItem key={i}>
-            <PaginationLink
-              href="#"
-              onClick={(e) => handlePageChange(e, i)}
-              isActive={currentPage === i}
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
-    } else {
-      const showStart = currentPage <= 3;
-      const showEnd = currentPage >= totalPages - 2;
-
-      if (showStart) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(
-            <PaginationItem key={i}>
-              <PaginationLink
-                href="#"
-                onClick={(e) => handlePageChange(e, i)}
-                isActive={currentPage === i}
-              >
-                {i}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        }
-        pages.push(
-          <PaginationItem key="ellipsis-end">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key={totalPages}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, totalPages)}>
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      } else if (showEnd) {
-        pages.push(
-          <PaginationItem key={1}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, 1)}>
-              1
-            </PaginationLink>
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key="ellipsis-start">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(
-            <PaginationItem key={i}>
-              <PaginationLink
-                href="#"
-                onClick={(e) => handlePageChange(e, i)}
-                isActive={currentPage === i}
-              >
-                {i}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        }
-      } else {
-        pages.push(
-          <PaginationItem key={1}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, 1)}>
-              1
-            </PaginationLink>
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key="ellipsis-start">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(
-            <PaginationItem key={i}>
-              <PaginationLink
-                href="#"
-                onClick={(e) => handlePageChange(e, i)}
-                isActive={currentPage === i}
-              >
-                {i}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        }
-        pages.push(
-          <PaginationItem key="ellipsis-end">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-        pages.push(
-          <PaginationItem key={totalPages}>
-            <PaginationLink href="#" onClick={(e) => handlePageChange(e, totalPages)}>
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
-    }
-
-    return pages;
+    goToPage(page);
   };
 
   if (artistList.length === 0)
     return (
       <>
         <div className="flex justify-between">
-          <h3 className="text-xl font-bold">찜한 아티스트</h3>
-          <p className="text-text-sub text-sm">총 0명</p>
+          <h3 className="text-lg font-bold lg:text-xl">찜한 아티스트</h3>
+          <p className="text-text-sub text-xs leading-normal lg:text-sm">총 0명</p>
         </div>
-        <div className="py-40">
+        <div className="py-2 lg:py-40">
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -186,12 +73,12 @@ export default function MyPageLikedArtistList({
   return (
     <>
       <div className="flex justify-between">
-        <h3 className="text-xl font-bold">찜한 아티스트</h3>
+        <h3 className="text-lg font-bold lg:text-xl">찜한 아티스트</h3>
         <p className="text-text-sub text-sm">총 {artistList.length}명</p>
       </div>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+      <div className="list grid grid-cols-2 gap-x-4 gap-y-8 pb-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-10">
         {displayedArtists.map((artist) => (
-          <MyPageLikedArtistListItem key={artist.id} artist={artist} />
+          <MyPageLikedArtistListItem key={artist.id} artist={artist} isMobile={isMobile} />
         ))}
       </div>
       {totalPages > 1 && (
@@ -200,22 +87,26 @@ export default function MyPageLikedArtistList({
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                onClick={(e) => handlePageChange(e, currentPage - 1)}
-                aria-disabled={currentPage === 1}
-                className={twMerge(
-                  currentPage === 1 && "pointer-events-none opacity-50",
+                onClick={goPrevPage}
+                aria-disabled={isFirstPage}
+                className={cn(
+                  isFirstPage && "pointer-events-none opacity-50",
                   "[&>:not(svg)]:hidden"
                 )}
               />
             </PaginationItem>
-            {renderPageNumbers()}
+            <PaginationPages
+              pageRange={pageRange}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
             <PaginationItem>
               <PaginationNext
                 href="#"
-                onClick={(e) => handlePageChange(e, currentPage + 1)}
-                aria-disabled={currentPage === totalPages}
-                className={twMerge(
-                  currentPage === totalPages && "pointer-events-none opacity-50",
+                onClick={goNextPage}
+                aria-disabled={isLastPage}
+                className={cn(
+                  isLastPage && "pointer-events-none opacity-50",
                   "[&>:not(svg)]:hidden"
                 )}
               />

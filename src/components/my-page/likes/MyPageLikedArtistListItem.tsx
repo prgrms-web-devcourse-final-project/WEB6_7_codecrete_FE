@@ -9,7 +9,13 @@ import { HeartIcon, Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LikedArtist } from "@/types/my-page";
 
-export default function MyPageLikedArtistListItem({ artist }: { artist: LikedArtist }) {
+export default function MyPageLikedArtistListItem({
+  artist,
+  isMobile,
+}: {
+  artist: LikedArtist;
+  isMobile: boolean;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(artist.isLiked);
   const [imgSrc, setImgSrc] = useState(artist.imageUrl || "/images/artist-placeholder.png");
@@ -38,7 +44,7 @@ export default function MyPageLikedArtistListItem({ artist }: { artist: LikedArt
   return (
     <Link
       href={`/artists/${artist.id}`}
-      className="group flex flex-col gap-5 transition hover:opacity-90"
+      className="group flex flex-col gap-3 transition hover:opacity-90 lg:gap-5"
     >
       <div className="border-border/60 relative aspect-square overflow-hidden rounded-lg border">
         <Image
@@ -56,7 +62,8 @@ export default function MyPageLikedArtistListItem({ artist }: { artist: LikedArt
           aria-label="아티스트 좋아요"
           className={cn(
             "absolute top-2 right-2 h-9 w-9 rounded-full bg-black/20 backdrop-blur-sm transition-all duration-200 group-hover:scale-100 group-hover:opacity-100",
-            isLoading ? "opacity-100" : "opacity-0"
+            isLoading ? "opacity-100" : "opacity-0",
+            isMobile && "opacity-100"
           )}
         >
           {isLoading ? (
@@ -72,7 +79,9 @@ export default function MyPageLikedArtistListItem({ artist }: { artist: LikedArt
           )}
         </Button>
       </div>
-      <strong className="line-clamp-1 text-2xl">{artist.artistName}</strong>
+      <strong className="line-clamp-1 text-lg lg:text-2xl">
+        {artist.nameKo ?? artist.artistName}
+      </strong>
     </Link>
   );
 }

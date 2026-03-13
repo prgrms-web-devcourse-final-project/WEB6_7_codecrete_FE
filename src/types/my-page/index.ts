@@ -19,6 +19,12 @@ export interface Concert {
   posterUrl?: string;
 }
 
+// 사용자 일정 점 타입
+export interface ScheduleDot {
+  count: number;
+  className: string;
+}
+
 // 사용자 일정 타입
 export interface UserSchedule {
   id: string;

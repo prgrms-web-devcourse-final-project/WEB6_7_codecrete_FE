@@ -4,6 +4,7 @@ import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
 import { getUsersMe } from "@/lib/api/user/user.server";
 import MateEditMain from "@/components/concert-mate/edit/MateEditMain";
 import { getPostsDetail } from "@/lib/api/community/concert-mate/mate.server";
+import PageHeader from "@/components/common/PageHeader";
 
 export default async function page({ params }: { params: Promise<{ id: string }> }) {
   // 게시글 id
@@ -37,6 +38,10 @@ export default async function page({ params }: { params: Promise<{ id: string }>
           { label: concertDetail?.name, href: `/concert-mate/${postId}` },
           { label: "게시글 수정" },
         ]}
+      />
+      <PageHeader
+        title="당신의 공연 Mate를 찾아보세요!"
+        description="아티스트도, 좌석도, 취향도 맞는 Mate를 찾아보세요. 상세하게 적을수록 딱 맞는 공연 파트너를 만날 확률이 높아져요!"
       />
       <MateEditMain concertId={Number(concertId)} postId={Number(postId)} postDetail={postDetail} />
     </>

@@ -73,12 +73,11 @@ export default function MeetingPostBody({
 
   return (
     <>
-      <section className="flex flex-col gap-10 py-8">
+      <Separator />
+      <section className="flex min-h-20 flex-col gap-10 lg:min-h-40">
         <p className="whitespace-pre-line">{postDetail.content}</p>
       </section>
-
       <Separator />
-
       <div className="flex justify-between">
         <div>
           <Button
@@ -107,7 +106,6 @@ export default function MeetingPostBody({
           </Badge>
         )}
       </div>
-      <Separator />
     </>
   );
 }

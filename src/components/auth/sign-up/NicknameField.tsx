@@ -9,6 +9,7 @@ import { useState } from "react";
 import { checkNickname } from "@/lib/api/auth/auth.client";
 import { NicknameFieldProps } from "@/types/auth";
 import { toast } from "sonner";
+import { Field, FieldLabel } from "@/components/ui/field";
 
 export default function NicknameField({ checked, setChecked }: NicknameFieldProps) {
   const {
@@ -51,16 +52,14 @@ export default function NicknameField({ checked, setChecked }: NicknameFieldProp
   };
 
   return (
-    <div className="nicknameInput flex flex-col gap-2">
-      <label htmlFor={"nickname"} className="text-sm">
-        닉네임 *
-      </label>
+    <Field className="nicknameInput">
+      <FieldLabel htmlFor={"nickname"}>닉네임 *</FieldLabel>
       <div className="flex w-full items-center gap-2">
         <Input
           type="text"
           id={"nickname"}
           placeholder="닉네임을 입력하세요"
-          className="bg-point-sub h-13"
+          className="bg-point-sub"
           {...register("nickname", {
             onChange: () => {
               setChecked(null);
@@ -72,7 +71,7 @@ export default function NicknameField({ checked, setChecked }: NicknameFieldProp
           type="button"
           variant="default"
           size="lg"
-          className="bg-point-main h-13"
+          className="bg-point-main"
           onClick={handleCheckNickname}
           disabled={checking}
         >
@@ -82,6 +81,6 @@ export default function NicknameField({ checked, setChecked }: NicknameFieldProp
       {checked === true && <p className="text-xs text-green-600">사용 가능한 닉네임입니다.</p>}
       {checked === false && <FieldError message="중복된 닉네임입니다." />}
       {errors.nickname && <FieldError message={errors.nickname.message} />}
-    </div>
+    </Field>
   );
 }

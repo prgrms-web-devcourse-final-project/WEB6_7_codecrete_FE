@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { CardContent } from "@/components/ui/card";
 import { PostConfirmSectionProps } from "@/types/community";
+import { Field } from "@/components/ui/field";
 
 /*
  * TODO: 리뷰 작성 동의 체크 기능 구현
@@ -26,8 +26,8 @@ import { PostConfirmSectionProps } from "@/types/community";
 
 export default function ReviewConfirmSection({ checked, onChange }: PostConfirmSectionProps) {
   return (
-    <CardContent className={"flex flex-col gap-4"}>
-      <div className="bg-bg-sub flex w-full items-start gap-3 p-6">
+    <Field className={"flex flex-col gap-4"}>
+      <div className="bg-bg-sub flex w-full items-start gap-3 rounded-lg p-6">
         <Checkbox
           className={"bg-bg-main border-border-point"}
           id="review-confirm"
@@ -36,14 +36,14 @@ export default function ReviewConfirmSection({ checked, onChange }: PostConfirmS
           onCheckedChange={onChange}
         />
 
-        <Label htmlFor="review-confirm" className="text-text-main flex flex-col items-start">
-          <span>
-            본 리뷰는 직접 관람한 경험을 바탕으로 작성되었으며, 커뮤니티 가이드라인을 준수했음을
-            확인합니다.
-          </span>
-          <span>허위 또는 오해를 유발하는 리뷰는 계정 이용에 제한이 있을 수 있습니다.</span>
+        <Label
+          htmlFor="review-confirm"
+          className="text-text-main flex flex-col items-start leading-tight"
+        >
+          <span>본 구인 글은 커뮤니티 가이드라인을 준수했음을 확인합니다.</span>
+          <span>허위 또는 오해를 유발하는 구인 글은 계정 이용에 제한이 있을 수 있습니다.</span>
         </Label>
       </div>
-    </CardContent>
+    </Field>
   );
 }

@@ -3,8 +3,8 @@ import { getSearchArtistsWithLiked, getSearchConcertsCount } from "@/lib/api/sea
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { twMerge } from "tailwind-merge";
-import SearchNavigationSkeleton from "../loading/search/SearchNavigationSkeleton";
+import SearchNavigationSkeleton from "../../loading/search/SearchNavigationSkeleton";
+import { cn } from "@/lib/utils";
 
 export default function SearchNavigation() {
   const searchParams = useSearchParams();
@@ -43,7 +43,7 @@ export default function SearchNavigation() {
       {isPending || isLoading ? (
         <SearchNavigationSkeleton />
       ) : (
-        <nav className="border-border border-y px-15">
+        <nav className="border-border border-y px-5 lg:px-15">
           <div className="mx-auto flex w-full max-w-400 gap-8">
             {searchTabs.map((tab) => {
               const isActive = pathname === tab.href;
@@ -51,15 +51,15 @@ export default function SearchNavigation() {
               return (
                 <Link key={tab.id} href={`${tab.href}?keyword=${keyword}`}>
                   <div
-                    className={twMerge(
-                      `flex cursor-pointer gap-1 py-4 text-sm`,
+                    className={cn(
+                      "flex cursor-pointer gap-1 py-3 text-xs leading-normal lg:py-4 lg:text-sm",
                       isActive
                         ? "border-border-point text-text-main border-b-2 font-semibold"
                         : "text-text-sub"
                     )}
                   >
                     {tab.label}
-                    <p className="text-sm font-normal">({tab.count})</p>
+                    <p className="text-xs leading-normal font-normal lg:text-sm">({tab.count})</p>
                   </div>
                 </Link>
               );

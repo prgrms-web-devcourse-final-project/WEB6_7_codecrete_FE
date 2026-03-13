@@ -13,6 +13,7 @@ import FieldError from "@/components/auth/FieldError";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
 const SAVED_EMAIL_KEY = "remember_email";
 
@@ -67,40 +68,40 @@ export default function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="input flex flex-col gap-6">
-      <div className={"flex flex-col gap-2"}>
-        <label htmlFor="email" className={"text-sm"}>
-          이메일
-        </label>
-        <Input
-          id={"email"}
-          placeholder="이메일을 입력하세요"
-          className="bg-point-sub h-13"
-          autoComplete={"email"}
-          aria-label={"이메일"}
-          {...register("email")}
-        />
-        {errors.email && <FieldError message={errors.email.message} />}
-      </div>
-      <div className={"flex flex-col gap-2"}>
-        <label htmlFor="password">비밀번호</label>
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => (
-            <div className={"flex flex-col gap-2"}>
-              <PasswordInput
-                id={"password"}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder={"비밀번호를 입력하세요"}
-                autoComplete="current-password"
-              />
-              {errors.password && <FieldError message={errors.password?.message} />}
-            </div>
-          )}
-        />
-      </div>
-
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="email">이메일</FieldLabel>
+          <Input
+            id={"email"}
+            placeholder="이메일을 입력하세요"
+            className="bg-point-sub"
+            autoComplete={"email"}
+            aria-label={"이메일"}
+            {...register("email")}
+          />
+          {errors.email && <FieldError message={errors.email.message} />}
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="password">비밀번호</FieldLabel>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <div className={"flex flex-col gap-2"}>
+                <PasswordInput
+                  id={"password"}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder={"비밀번호를 입력하세요"}
+                  autoComplete="current-password"
+                />
+                {errors.password && <FieldError message={errors.password?.message} />}
+              </div>
+            )}
+          />
+          {errors.email && <FieldError message={errors.email.message} />}
+        </Field>
+      </FieldGroup>
       <div className="idSave flex justify-between">
         <div className="flex items-center gap-2">
           <Controller

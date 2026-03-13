@@ -1,4 +1,4 @@
-import SearchArtists from "@/components/search/SearchArtists";
+import SearchArtists from "@/components/search/artists/SearchArtists";
 import { getSearchArtistsWithLiked } from "@/lib/api/search/search.server";
 
 export default async function Page({

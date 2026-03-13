@@ -1,7 +1,4 @@
 "use client";
-
-import { Card } from "@/components/ui/card";
-import MateWriteIntro from "@/components/concert-mate/write/MateWriteIntro";
 import MateTitleSection from "@/components/concert-mate/write/MateTitleSection";
 import MateWriteSection from "@/components/concert-mate/write/MateWriteSection";
 import MateTimeSection from "@/components/concert-mate/write/MeetingTimeSection";
@@ -11,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import ReviewConfirmSection from "@/components/review/write/ReviewConfirmSection";
 import ReviewFooterActions from "@/components/review/write/ReviewFooterActions";
 import PreferenceSelectSection from "@/components/concert-mate/write/PreferenceSelectSection";
-import { twMerge } from "tailwind-merge";
 import SelectedConcert from "@/components/concert-mate/write/SelectedConcert";
 import { FormProvider, useForm } from "react-hook-form";
 import { useState } from "react";
@@ -19,6 +15,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createMatePost } from "@/lib/api/community/concert-mate/mate.client";
 import { MatePostWrite } from "@/types/community/concert-mate";
+import { FieldGroup } from "@/components/ui/field";
 
 export default function MateWriteMain() {
   const methods = useForm<MatePostWrite>({
@@ -78,10 +75,9 @@ export default function MateWriteMain() {
 
   return (
     <FormProvider {...methods}>
-      <section className="bg-bg-main flex justify-center px-15 py-16">
-        <form className={twMerge(`relative mx-auto flex w-full max-w-400 flex-col gap-8`)}>
-          <Card className="gap-8 p-12">
-            <MateWriteIntro />
+      <section className="bg-bg-main space-y-5 px-5 py-6 lg:px-15 lg:py-16">
+        <form className="border-border relative mx-auto flex w-full max-w-400 flex-col gap-5 rounded-lg border p-5 lg:gap-8 lg:p-20">
+          <FieldGroup>
             {/* 콘서트 선택 또는 검색*/}
             {/* TODO : 컴포넌트화 (PlannerCreate.tsx)*/}
             <SelectedConcert />
@@ -104,7 +100,7 @@ export default function MateWriteMain() {
               isDisabled={!isConfirmed}
               buttonText={"구인글 등록"}
             />
-          </Card>
+          </FieldGroup>
         </form>
       </section>
     </FormProvider>
