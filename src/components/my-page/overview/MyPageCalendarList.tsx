@@ -125,7 +125,7 @@ export default function MyPageCalendarList({
   if (concerts.length === 0 && schedules.length === 0) {
     return (
       <section className="space-y-4">
-        <h3 className="text-lg font-bold">{dateStr}</h3>
+        <h3 className="text-base font-bold lg:text-lg">{dateStr}</h3>
         <p className="border-border text-text-sub rounded-lg border px-5 py-20 text-center">
           해당 날짜에 일정이 없습니다.
         </p>
@@ -135,7 +135,7 @@ export default function MyPageCalendarList({
 
   return (
     <section className="space-y-4">
-      <h3 className="text-lg font-bold">{dateStr}</h3>
+      <h3 className="text-base font-bold lg:text-lg">{dateStr}</h3>
       <div className="flex flex-col gap-8">
         {concerts.length > 0 && (
           <>

@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { ko } from "date-fns/locale";
 import { patchTicketTimeSet } from "@/lib/api/admin/admin.client";
 import { getConcertStartDate, isSameDay, dateToISOString } from "@/utils/helpers/handleDate";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function ConcertHeaderBtn({
   concertDetail,
@@ -35,6 +36,9 @@ export default function ConcertHeaderBtn({
   concertTicketingData: TicketOffice[] | null;
   userData: User | null;
 }) {
+  // 반응형
+  const isMobile = useIsMobile();
+
   // 링크 이동
   const router = useRouter();
 
@@ -186,7 +190,7 @@ export default function ConcertHeaderBtn({
 
   return (
     <>
-      <div className="button flex w-full gap-4">
+      <div className="button flex w-full gap-2 md:gap-4">
         <Button
           variant="default"
           size="lg"
@@ -195,7 +199,7 @@ export default function ConcertHeaderBtn({
           onClick={handleOpenTicketModal}
         >
           <ExternalLink />
-          티켓 예매하기
+          {isMobile ? "예매하기" : "티켓 예매하기"}
         </Button>
         <Button
           variant="outline"
@@ -205,7 +209,7 @@ export default function ConcertHeaderBtn({
           onClick={handleOpenPlannerModal}
         >
           <CalendarPlus2 />
-          플래너 만들기
+          {isMobile ? "플래너" : "플래너 만들기"}
         </Button>
         {userData?.role === "ADMIN" && (
           <Button
