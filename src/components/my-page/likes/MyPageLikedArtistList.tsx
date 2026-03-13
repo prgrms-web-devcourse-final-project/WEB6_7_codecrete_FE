@@ -19,10 +19,8 @@ import {
 import { usePagination } from "@/hooks/usePagination";
 import PaginationPages from "@/components/common/PaginationPages";
 import { cn } from "@/lib/utils";
-import { useGridColumns } from "@/hooks/useGridColumns";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-const ROWS = 3;
+import { PAGE_SIZE } from "@/constants/pagination";
 
 export default function MyPageLikedArtistList({
   initialList,
@@ -30,11 +28,7 @@ export default function MyPageLikedArtistList({
   initialList: LikedArtist[] | null;
 }) {
   const isMobile = useIsMobile();
-
   const artistList = initialList ?? [];
-
-  const columns = useGridColumns();
-  const itemsPerPage = ROWS * columns;
 
   const {
     currentPage,
@@ -46,7 +40,7 @@ export default function MyPageLikedArtistList({
     isFirstPage,
     isLastPage,
     pageRange,
-  } = usePagination({ totalItems: artistList.length, itemsPerPage: itemsPerPage });
+  } = usePagination({ totalItems: artistList.length, itemsPerPage: PAGE_SIZE });
 
   const displayedArtists = artistList.slice(displayRange.start, displayRange.end);
 
@@ -82,7 +76,7 @@ export default function MyPageLikedArtistList({
         <h3 className="text-lg font-bold lg:text-xl">찜한 아티스트</h3>
         <p className="text-text-sub text-sm">총 {artistList.length}명</p>
       </div>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8 xl:gap-y-10">
+      <div className="list grid grid-cols-2 gap-x-4 gap-y-8 pb-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-10">
         {displayedArtists.map((artist) => (
           <MyPageLikedArtistListItem key={artist.id} artist={artist} isMobile={isMobile} />
         ))}
