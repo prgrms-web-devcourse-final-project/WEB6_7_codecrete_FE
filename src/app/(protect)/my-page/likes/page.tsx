@@ -14,7 +14,7 @@ export default async function Page() {
   // TODO : 찜한 아티스트 총 개수 필요함
 
   // 찜한 공연 목록 API
-  const likedConcerts = await getLikedConcertList({ page: 0, size: 12 });
+  const likedConcerts = await getLikedConcertList({ page: 0 });
   const likedConcertsCount = await getLikedConcertCount();
 
   const hasLikedArtists = likedArtists.data != null;
