@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { deleteLikeConcert, postLikeConcert } from "@/lib/api/concerts/concerts.client";
+import { cn } from "@/lib/utils";
 import { HeartIcon, Loader2Icon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -12,10 +13,12 @@ export default function ConcertLikeButton({
   concertId,
   isAuthenticated,
   isLiked,
+  className,
 }: {
   concertId: string;
   isAuthenticated: boolean;
   isLiked?: boolean;
+  className?: string;
 }) {
   const [isPending, startTransition] = useTransition();
   const [currentLiked, setCurrentLiked] = useState<boolean>(isLiked ?? false);
@@ -55,7 +58,7 @@ export default function ConcertLikeButton({
         <Button
           variant="outline"
           size="icon"
-          className="border-border hover:bg-border group absolute right-4 bottom-4 sm:static"
+          className={cn("border-border hover:bg-border group", className)}
           onClick={handleLikeConcert}
         >
           {isPending ? (

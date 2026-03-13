@@ -17,8 +17,8 @@ export default function MyPageConcertCard({
   onCreatePlan: () => void;
 }) {
   return (
-    <Card className="bg-bg-main flex flex-row gap-6 border p-6">
-      <div className="relative w-35 shrink-0">
+    <Card className="relative flex flex-col gap-4 p-4 sm:flex-row lg:gap-6 lg:p-6">
+      <div className="relative w-full shrink-0 sm:w-35">
         <AspectRatio ratio={320 / 426.5}>
           <Image
             src={concert.posterUrl ?? PLACEHOLDER_IMAGE}
@@ -31,11 +31,11 @@ export default function MyPageConcertCard({
           />
         </AspectRatio>
       </div>
-      <CardContent className="flex flex-1 justify-between p-0">
-        <div className="flex flex-col justify-between gap-2">
+      <CardContent className="relative flex w-full flex-1 px-0 sm:justify-between">
+        <div className="flex flex-1 flex-col items-start justify-between gap-4">
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold">{concert.name}</h3>
-            <ul className="text-text-sub space-y-1 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-2 [&>li>svg]:size-4">
+            <h4 className="text-base font-bold sm:text-lg lg:text-2xl">{concert.name}</h4>
+            <ul className="text-text-sub space-y-1 text-sm break-keep [&>li]:grid [&>li]:grid-cols-[auto_1fr] [&>li]:gap-1 [&>li>svg]:size-5 [&>li>svg]:py-0.5">
               <li>
                 <CalendarIcon />
                 {formatDateRangeKorean(concert.startDate, concert.endDate)}
@@ -58,9 +58,9 @@ export default function MyPageConcertCard({
               )}
             </ul>
           </div>
-          <div className="flex gap-2">
+          <div className="grid w-full grid-cols-2 gap-2 md:flex md:w-auto">
             <Link href={`/concerts/${concert.id}`}>
-              <Button>자세히보기</Button>
+              <Button className="w-full">자세히보기</Button>
             </Link>
             <Button variant="outline" type="button" onClick={onCreatePlan}>
               계획 추가하기
