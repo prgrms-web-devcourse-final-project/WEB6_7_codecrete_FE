@@ -15,16 +15,13 @@
  */
 
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
-import { getConcertDetail, getSimilarConcerts } from "@/lib/api/concerts/concerts.server";
+import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus } from "@/lib/api/auth/auth.server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ConcertHeader from "@/components/concert/detail/header";
-import { Suspense } from "react";
-import ConcertDetail from "@/components/concert/detail/ConcertDetail";
 import ConcertSimilar from "@/components/concert/detail/ConcertSimilar";
-import ConcertDetailSkeleton from "@/components/loading/concert/detail/ConcertDetailSkeleton";
-import ConcertSimilarSkeleton from "@/components/loading/concert/detail/ConcertSimilarSkeleton";
+import ConcertContents from "@/components/concert/detail/contents";
 
 export async function generateMetadata({
   params,
@@ -82,9 +79,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     getAuthStatus(),
   ]);
 
-  const similarConcertsData = await getSimilarConcerts({ concertId: id });
-  const similarConcerts = similarConcertsData.data ?? [];
-
   if (!concertDetail) {
     notFound();
   }
@@ -105,18 +99,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         isAuthenticated={isAuthenticated}
         isChatAvailable={isChatAvailable}
       />
-      <Suspense fallback={<ConcertDetailSkeleton />}>
-        <ConcertDetail
-          concertId={id}
-          isLoggedIn={isAuthenticated}
-          isChatAvailable={isChatAvailable}
-        />
-      </Suspense>
-      {similarConcerts.length > 0 && (
-        <Suspense fallback={<ConcertSimilarSkeleton />}>
-          <ConcertSimilar similarConcerts={similarConcerts} />
-        </Suspense>
-      )}
+      <ConcertContents
+        concertDetail={concertDetail}
+        isAuthenticated={isAuthenticated}
+        isChatAvailable={isChatAvailable}
+      />
+      <ConcertSimilar concertId={concertDetail.concertId} />
     </>
   );
 }
