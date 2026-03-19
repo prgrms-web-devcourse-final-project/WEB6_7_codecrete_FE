@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -79,15 +80,14 @@ export default function PlannerDialog({ open, onOpenChange, concertDetail }: Pla
   if (!concertDetail) return null;
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      aria-description="해당 공연 정보로 플래너 만들기"
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>플래너 만들기</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          해당 공연 정보로 플래너 만들기. 공연 당일은 플래너를 생성할 수 없습니다.
+        </DialogDescription>
         <FieldGroup className="max-h-[60vh] gap-6 overflow-y-auto p-4">
           <Field>
             <FieldLabel>제목</FieldLabel>
