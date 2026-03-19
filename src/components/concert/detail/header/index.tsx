@@ -1,23 +1,21 @@
 import Image from "next/image";
-import ConcertHeaderArtist from "@/components/concert/detail/ConcertHeaderArtist";
-import ConcertHeaderBtn from "@/components/concert/detail/ConcertHeaderBtn";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Badge } from "@/components/ui/badge";
-import ConcertHeaderInfo from "./ConcertHeaderInfo";
 import {
   formatConcertPrice,
   formatDateRange,
   formatDateTimeRange,
 } from "@/utils/helpers/formatters";
-import ConcertLikeButton from "./ConcertLikeButton";
 import {
   getConcertDetail,
   getIsLikedConcert,
   getTicketOfficesByConcertId,
 } from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus, getMe } from "@/lib/api/auth/auth.server";
-import ConcertChatButton from "./ConcertChatButton";
 import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
+import ConcertChatButton from "./ConcertChatButton";
+import ConcertHeaderBtn from "./ConcertHeaderBtn";
+import ConcertHeaderInfo from "./ConcertHeaderInfo";
+import ConcertLikeButton from "./ConcertLikeButton";
 
 export default async function ConcertHeader({
   concertId,
@@ -70,7 +68,7 @@ export default async function ConcertHeader({
         <div className="bg-bg-main border-border sticky top-4 mx-5 flex flex-1 flex-col gap-4 rounded-2xl border p-5 lg:top-30 lg:mx-0 xl:gap-8 xl:p-10">
           <div className="title flex flex-col items-start justify-between gap-4 md:flex-row">
             <div className="flex flex-col gap-3 md:gap-4">
-              {concertDetail.concertArtists.length > 0 && (
+              {/* {concertDetail.concertArtists.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {concertDetail.concertArtists.map((artist) => (
                     <Badge
@@ -81,7 +79,7 @@ export default async function ConcertHeader({
                     </Badge>
                   ))}
                 </div>
-              )}
+              )} */}
               <h2 className="text-text-main text-2xl font-bold xl:text-4xl">
                 {concertDetail.name}
               </h2>
@@ -127,7 +125,7 @@ export default async function ConcertHeader({
             />
           </div>
 
-          <ConcertHeaderArtist concertArtists={concertDetail.concertArtists} />
+          {/* <ConcertHeaderArtist concertArtists={concertDetail.concertArtists} /> */}
           <ConcertHeaderBtn
             concertDetail={concertDetail}
             concertTicketingData={concertTicketing}

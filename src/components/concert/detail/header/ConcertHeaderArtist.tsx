@@ -1,3 +1,5 @@
+"use client";
+
 import { MicVocalIcon } from "lucide-react";
 import { ArtistDetail } from "@/types/artists";
 import {
