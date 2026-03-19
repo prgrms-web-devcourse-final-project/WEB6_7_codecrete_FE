@@ -3,7 +3,6 @@ import { ConcertDetail, ConcertVenueInfo, LikeConcert, TicketOffice } from "@/ty
 import { Concert, ConcertWithTicket } from "@/types/home";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 import ServerApi from "@/utils/helpers/serverApi";
-import { getArtistDetail, getArtistLikeStatus } from "../artists/artists.server";
 
 /**
  * 다가오는 공연 목록 가져오기
@@ -84,25 +83,8 @@ export const getConcertDetail = async ({
     }
 
     const data = await res.json();
-    const concertArtists = Promise.all(
-      data.data.concertArtists.map(async (artistId: number) => {
-        try {
-          const artistDetail = await getArtistDetail(artistId);
-          const artistLiked = await getArtistLikeStatus(artistId);
-          if (!artistDetail) {
-            return null;
-          }
-          return { artistId, artist: { ...artistDetail, liked: artistLiked } };
-        } catch {
-          return { artistId };
-        }
-      })
-    );
 
-    return {
-      ...data.data,
-      concertArtists: await concertArtists,
-    };
+    return data.data;
   } catch (error) {
     console.error("Error fetching concert detail:", error);
     return null;

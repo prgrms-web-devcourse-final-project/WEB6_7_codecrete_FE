@@ -1,5 +1,3 @@
-import { ArtistDetail } from "../artists";
-
 // 공연 상세 정보
 export type ConcertDetail = {
   concertId: string;
@@ -17,7 +15,8 @@ export type ConcertDetail = {
   ticketTime: string | null;
   ticketEndTime: string | null;
   viewCount: number;
-  concertArtists: { id: number; artist: ArtistDetail & { liked: boolean } }[];
+  concertArtists: number[];
+  // concertArtists: { id: number; artist: ArtistDetail & { liked: boolean } }[];
 };
 
 // 공연 상세 정보 아이템
