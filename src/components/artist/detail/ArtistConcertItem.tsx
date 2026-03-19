@@ -4,16 +4,16 @@ import { ConcertWithTicket } from "@/types/home";
 import Link from "next/link";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
-import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/formatters";
+import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 
 // TODO: 카드 hover 시 전체 클릭 UX 검토
 // TODO: 공연 상태(예정/종료)에 따른 뱃지 추가 여부 검토
 // TODO: 모바일에서 카드 레이아웃 세로형 전환 검토
 
 export default function ArtistConcertItem({ concert }: { concert: ConcertWithTicket }) {
-  const posterSrc = concert.posterUrl || PLACEHOLDER_IMAGE;
+  const posterSrc = concert.posterUrl || PLACEHOLDER_CONCERT;
 
   return (
     <Card className="bg-bg-main flex gap-4 border p-4 md:flex-row md:gap-5 md:p-6 lg:gap-6">
@@ -25,7 +25,7 @@ export default function ArtistConcertItem({ concert }: { concert: ConcertWithTic
             className="rounded-2xl object-cover"
             fill
             placeholder="blur"
-            blurDataURL={PLACEHOLDER_IMAGE}
+            blurDataURL={PLACEHOLDER_CONCERT}
             sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
           />
         </AspectRatio>

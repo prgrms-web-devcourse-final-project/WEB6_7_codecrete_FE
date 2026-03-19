@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
-import { SliderHeader } from "../SliderHeader";
+import { SliderHeader } from "../../common/SliderHeader";
 import "swiper/css";
 import ArtistCard from "./ArtistCard";
 import { ArtistListData } from "@/types/artists";

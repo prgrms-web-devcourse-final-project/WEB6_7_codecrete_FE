@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatConcertPrice, formatDateRangeKorean } from "@/utils/helpers/formatters";
 import { ConcertDetail } from "@/types/concerts";
-import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 
 export default function MeetingConcertCard({ concertDetail }: { concertDetail: ConcertDetail }) {
   return (
@@ -14,12 +14,12 @@ export default function MeetingConcertCard({ concertDetail }: { concertDetail: C
       <div className="relative w-full shrink-0 sm:w-35">
         <AspectRatio ratio={320 / 426.5}>
           <Image
-            src={concertDetail.posterUrl ?? PLACEHOLDER_IMAGE}
+            src={concertDetail.posterUrl ?? PLACEHOLDER_CONCERT}
             alt={concertDetail.name}
             className="rounded-2xl object-cover"
             fill
             placeholder="blur"
-            blurDataURL={PLACEHOLDER_IMAGE}
+            blurDataURL={PLACEHOLDER_CONCERT}
             sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
           />
         </AspectRatio>
