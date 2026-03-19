@@ -18,20 +18,22 @@ import { useRouter } from "next/navigation";
 import { MessageSquareIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
+interface ConcertChatButtonProps {
+  concertId?: string;
+  isAuthenticated?: boolean;
+  isChatAvailable?: boolean;
+}
+
 export default function ConcertChatButton({
   concertId,
-  isLoggedIn,
+  isAuthenticated,
   isChatAvailable,
-}: {
-  concertId?: string;
-  isLoggedIn?: boolean;
-  isChatAvailable?: boolean;
-}) {
+}: ConcertChatButtonProps) {
   const router = useRouter();
   const [chatDialogOpen, setChatDialogOpen] = useState(false);
 
   const handleClick = () => {
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       toast.error("로그인이 필요합니다.");
       router.push("/sign-in");
       return;
