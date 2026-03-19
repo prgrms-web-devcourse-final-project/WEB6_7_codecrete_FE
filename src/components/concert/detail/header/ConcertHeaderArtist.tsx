@@ -1,5 +1,3 @@
-"use client";
-
 import { MicVocalIcon } from "lucide-react";
 import { ArtistDetail } from "@/types/artists";
 import {
@@ -12,18 +10,27 @@ import {
 } from "@/components/ui/empty";
 import Link from "next/link";
 import ConcertArtistCard from "./ConcertArtistCard";
+import { getArtistDetail, getIsLikedArtist } from "@/lib/api/artists/artists.server";
 
-export default function ConcertHeaderArtist({
-  concertArtists,
-}: {
-  concertArtists: { id: number; artist: ArtistDetail & { liked: boolean } }[];
-}) {
-  const artists = concertArtists ?? [];
+interface ConcertHeaderArtistProps {
+  concertArtists: number[];
+}
+
+export default async function ConcertHeaderArtist({ concertArtists }: ConcertHeaderArtistProps) {
+  const artists = (
+    await Promise.all(
+      concertArtists.map(async (artistId) => {
+        const artistDetail = await getArtistDetail(artistId);
+        const isLiked = await getIsLikedArtist(artistId);
+        return { ...artistDetail, liked: isLiked } as ArtistDetail & { liked: boolean };
+      })
+    )
+  ).filter(Boolean);
 
   if (!artists.length) {
     return (
-      <div className="about-Artist flex flex-col gap-4">
-        <strong className="text-xl">아티스트 정보</strong>
+      <div className="about-Artist flex flex-col gap-3 lg:gap-4">
+        <strong className="text-lg lg:text-xl">아티스트 정보</strong>
         <div className="bg-background rounded-lg py-10">
           <Empty>
             <EmptyContent className="gap-4">
@@ -49,11 +56,11 @@ export default function ConcertHeaderArtist({
   }
 
   return (
-    <div className="about-Artist flex flex-col gap-4">
-      <strong className="text-xl">아티스트 정보</strong>
-      <div className="flex flex-col gap-4">
-        {artists.map(({ id, artist }) => (
-          <ConcertArtistCard key={id} artist={artist} />
+    <div className="about-Artist flex flex-col gap-3 lg:gap-4">
+      <strong className="text-lg lg:text-xl">아티스트 정보</strong>
+      <div className="flex flex-col gap-3 lg:gap-4">
+        {artists.map((artist) => (
+          <ConcertArtistCard key={artist.id} {...artist} />
         ))}
       </div>
     </div>

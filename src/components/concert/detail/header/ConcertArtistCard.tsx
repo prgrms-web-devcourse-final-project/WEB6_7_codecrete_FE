@@ -1,24 +1,19 @@
 "use client";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { PLACEHOLDER_ARTIST } from "@/constants/placeholder";
 import { toggleArtistLike } from "@/lib/api/artists/artists.server";
 import { ArtistDetail } from "@/types/artists";
 import { Loader2Icon, Music, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function ConcertArtistCard({
-  artist,
-}: {
-  artist: ArtistDetail & { liked: boolean };
-}) {
+export default function ConcertArtistCard(artist: ArtistDetail & { liked: boolean }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(artist.liked);
 
   const name = artist.nameKo || artist.artistName;
-  const fallback = (name || "?").slice(0, 2).toUpperCase();
   const albumsText = artist.totalAlbums ? `${artist.totalAlbums} Albums` : null;
 
   const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -48,10 +43,15 @@ export default function ConcertArtistCard({
       className="border-border flex justify-between border-b py-4 last:border-0"
     >
       <div className="flex gap-4">
-        <Avatar className="ring-border size-16 ring-4">
-          <AvatarImage src={artist.profileImageUrl} alt={name} />
-          <AvatarFallback>{fallback}</AvatarFallback>
-        </Avatar>
+        <Image
+          src={artist.profileImageUrl}
+          alt={name}
+          className="ring-border size-16 rounded-full ring-4"
+          width={64}
+          height={64}
+          placeholder="blur"
+          blurDataURL={PLACEHOLDER_ARTIST}
+        />
         <div className="space-y-1">
           <strong className="text-lg">{name}</strong>
           <div className="text-text-sub flex items-center gap-3 text-sm">
