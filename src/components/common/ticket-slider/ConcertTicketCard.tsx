@@ -10,6 +10,7 @@ import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 
 interface ConcertTicketCardProps {
   concert: ConcertWithTicket;
+  priority?: boolean;
 }
 
 interface TicketOverlayProps {
@@ -17,7 +18,7 @@ interface TicketOverlayProps {
   dateString: string;
 }
 
-export default function ConcertTicketCard({ concert }: ConcertTicketCardProps) {
+export default function ConcertTicketCard({ concert, priority }: ConcertTicketCardProps) {
   const dateString = formatDateRange(concert.startDate, concert.endDate);
 
   return (
@@ -30,9 +31,9 @@ export default function ConcertTicketCard({ concert }: ConcertTicketCardProps) {
           className="rounded-2xl object-cover"
           fill
           placeholder="blur"
-          priority
+          priority={priority}
           blurDataURL={PLACEHOLDER_CONCERT}
-          sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+          sizes="(max-width: 640px) 84vw, (max-width: 1024px) 46vw, 320px"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = PLACEHOLDER_CONCERT;
