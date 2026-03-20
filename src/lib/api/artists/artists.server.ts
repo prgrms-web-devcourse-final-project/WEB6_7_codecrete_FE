@@ -115,7 +115,7 @@ export async function getFeaturedArtists({
     const data = await res.json();
     return data;
   } catch (err) {
-    console.error("Error fetching upcoming concerts:", err);
+    console.error("Error fetching featured artists:", err);
 
     return createEmptyResponse("아티스트 목록을 가져오는데 실패했습니다");
   }
