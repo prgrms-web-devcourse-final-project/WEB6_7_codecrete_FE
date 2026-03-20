@@ -1,3 +1,4 @@
+import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 import { ConcertData } from "@/types/concerts";
 import { Calendar, MapPin } from "lucide-react";
 import Image from "next/image";
@@ -23,6 +24,9 @@ export default function ConcertCard({
         width={375}
         height={500}
         className="aspect-3/4 w-full rounded-lg"
+        sizes="(max-width: 768px) 50vw, 375px"
+        placeholder="blur"
+        blurDataURL={PLACEHOLDER_CONCERT}
       />
       <div className="flex flex-col gap-1 lg:gap-3">
         <strong className="line-clamp-1 text-base md:text-lg lg:text-xl xl:text-2xl">{name}</strong>
