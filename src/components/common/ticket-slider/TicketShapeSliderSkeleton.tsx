@@ -1,10 +1,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-export default function UpcomingSliderSkeleton() {
+export default function TicketShapeSliderSkeleton({ className }: { className?: string }) {
   return (
-    <section className="w-full overflow-hidden py-10 md:py-15 lg:py-20">
+    <section className={cn("w-full overflow-hidden py-10 md:py-15 lg:py-20", className)}>
       <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
-        <div className="mx-auto flex w-full max-w-400 items-end justify-between gap-4">
+        <div className="mx-auto flex w-full max-w-400 items-start justify-between gap-4">
           <div className="w-full space-y-2 md:w-auto">
             <Skeleton className="h-7 w-48 md:h-9 md:w-80 lg:w-96" />
             <Skeleton className="h-4 w-32 md:h-6 md:w-60 lg:w-80" />

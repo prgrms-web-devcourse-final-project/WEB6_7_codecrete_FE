@@ -4,11 +4,13 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import QrCode from "@/components/ui/qr-code";
 import { ConcertWithTicket } from "@/types/home";
 import { formatDateRange } from "@/utils/helpers/formatters";
-import { DEFAULT_TICKET_URL, PLACEHOLDER_IMAGE } from "./constants";
+import { DEFAULT_TICKET_URL } from "./constants";
 import { cn } from "@/lib/utils";
+import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 
 interface ConcertTicketCardProps {
   concert: ConcertWithTicket;
+  priority?: boolean;
 }
 
 interface TicketOverlayProps {
@@ -16,7 +18,7 @@ interface TicketOverlayProps {
   dateString: string;
 }
 
-export default function ConcertTicketCard({ concert }: ConcertTicketCardProps) {
+export default function ConcertTicketCard({ concert, priority }: ConcertTicketCardProps) {
   const dateString = formatDateRange(concert.startDate, concert.endDate);
 
   return (
@@ -24,16 +26,17 @@ export default function ConcertTicketCard({ concert }: ConcertTicketCardProps) {
       {/* 포스터 이미지 */}
       <AspectRatio ratio={320 / 426.5}>
         <Image
-          src={concert.posterUrl ?? PLACEHOLDER_IMAGE}
+          src={concert.posterUrl ?? PLACEHOLDER_CONCERT}
           alt={concert.name}
           className="rounded-2xl object-cover"
           fill
           placeholder="blur"
-          blurDataURL={PLACEHOLDER_IMAGE}
-          sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+          priority={priority}
+          blurDataURL={PLACEHOLDER_CONCERT}
+          sizes="(max-width: 640px) 84vw, (max-width: 1024px) 46vw, 320px"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = PLACEHOLDER_IMAGE;
+            target.src = PLACEHOLDER_CONCERT;
           }}
         />
       </AspectRatio>

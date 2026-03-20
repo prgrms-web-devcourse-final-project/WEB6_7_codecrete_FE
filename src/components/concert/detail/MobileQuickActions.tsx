@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import {
   Sheet,
@@ -11,29 +10,22 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import QuickActionsSection from "./QuickActionsSection";
-import { TicketOffice } from "@/types/concerts";
-import { User } from "@/types/user";
+import { ConcertDetail, TicketOffice } from "@/types/concerts";
 import { FlashlightIcon } from "lucide-react";
 
 interface MobileQuickActionsProps {
-  concertId?: string;
-  concertTicketingData?: TicketOffice[] | null;
-  concertStartDate?: string;
-  concertEndDate?: string;
-  userData: User | null;
+  concertDetail: ConcertDetail;
+  concertTicketing: TicketOffice[] | null;
   isLiked?: boolean;
-  isLoggedIn: boolean;
+  isAuthenticated: boolean;
   isChatAvailable: boolean;
 }
 
 export default function MobileQuickActions({
-  concertId,
-  concertTicketingData,
-  concertStartDate,
-  concertEndDate,
-  userData,
+  concertDetail,
+  concertTicketing,
   isLiked,
-  isLoggedIn,
+  isAuthenticated,
   isChatAvailable,
 }: MobileQuickActionsProps) {
   const [open, setOpen] = useState(false);
@@ -71,13 +63,10 @@ export default function MobileQuickActions({
               aria-label="빠른 실행창 닫기"
             />
             <QuickActionsSection
-              concertId={concertId}
-              concertTicketingData={concertTicketingData}
-              concertStartDate={concertStartDate}
-              concertEndDate={concertEndDate}
-              userData={userData}
+              concertDetail={concertDetail}
+              concertTicketing={concertTicketing}
               isLiked={isLiked}
-              isLoggedIn={isLoggedIn}
+              isAuthenticated={isAuthenticated}
               isChatAvailable={isChatAvailable}
             />
           </div>

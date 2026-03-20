@@ -7,7 +7,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* TODO: 왼쪽 이미지 */}
       <div className="bg-point-main relative hidden flex-1 lg:block lg:min-h-[calc(100dvh-360px)]">
         <Image
-          src="/images/bn_2.png"
+          src="/images/bn_2.webp"
           width={1920}
           height={1920}
           alt="sign-in banner"

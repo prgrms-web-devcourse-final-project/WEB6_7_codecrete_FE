@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import TopButton from "@/components/common/TopButton";
 import Script from "next/script";
 import React from "react";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 export const metadata = {
   title: "내콘부 | 내 콘서트를 부탁해",
@@ -20,18 +21,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={twMerge("min-h-dvh text-sm", pretendard.className)}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <Toaster className={pretendard.className} style={{ fontFamily: "inherit" }} />
-          <TopButton />
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <Toaster className={pretendard.className} style={{ fontFamily: "inherit" }} />
+            <TopButton />
+          </ThemeProvider>
+        </QueryProvider>
         <Script
           src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY}&libraries=services&autoload=false`}
           strategy="beforeInteractive"

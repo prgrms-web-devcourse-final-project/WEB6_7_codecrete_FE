@@ -5,33 +5,29 @@ import { Button } from "../ui/button";
 import { twMerge } from "tailwind-merge";
 import { ArrowUpIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useThrottle } from "@/hooks/useThrottle";
 
 export default function TopButton() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const pathname = usePathname();
+
+  const throttledScrollY = useThrottle(scrollY, 100);
+  const isVisible = throttledScrollY > 0;
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      setScrollY(window.scrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
     // 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleScrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (

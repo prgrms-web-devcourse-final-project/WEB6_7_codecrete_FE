@@ -1,24 +1,32 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { TicketOffice } from "@/types/concerts";
 import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
 
-interface TicketModalProps {
+interface TicketDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-  ticketingData: TicketOffice[] | null;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  concertTicketing: TicketOffice[] | null;
 }
 
-export default function TicketDialog({ open, onOpenChange, ticketingData }: TicketModalProps) {
+export default function TicketDialog({ open, onOpenChange, concertTicketing }: TicketDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange} aria-description="티켓 예매처 목록">
       <DialogContent>
         <DialogHeader>
           <DialogTitle>티켓 예매하기</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">등록된 티켓 예매처 목록입니다.</DialogDescription>
         <div className="max-h-[60vh] overflow-y-auto p-4">
           <div className="flex flex-col gap-3">
-            {ticketingData?.length ? (
-              ticketingData.map((ticket: TicketOffice) => (
+            {concertTicketing?.length ? (
+              concertTicketing.map((ticket: TicketOffice) => (
                 <Link
                   key={ticket.ticketOfficeName}
                   href={ticket.ticketOfficeUrl}

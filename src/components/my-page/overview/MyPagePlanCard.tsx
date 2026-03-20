@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { UsersRoundIcon, CalendarIcon, MapPinIcon } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
-import { PLACEHOLDER_IMAGE } from "@/components/home/upcoming-slider/constants";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlannerListWithDetails } from "@/types/planner";
 import { formatDateKorean } from "@/utils/helpers/formatters";
+import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 
 export default function MyPagePlanCard({ schedule }: { schedule: PlannerListWithDetails }) {
   // 일정이 오늘부터 며칠 뒤에 있는지 계산 (한국날짜 기준)
@@ -20,12 +20,12 @@ export default function MyPagePlanCard({ schedule }: { schedule: PlannerListWith
       <div className="relative w-full shrink-0 sm:w-35">
         <AspectRatio ratio={320 / 426.5}>
           <Image
-            src={schedule.concertDetail.posterUrl ?? PLACEHOLDER_IMAGE}
+            src={schedule.concertDetail.posterUrl ?? PLACEHOLDER_CONCERT}
             alt={schedule.concertDetail.name}
             className="rounded-2xl object-cover"
             fill
             placeholder="blur"
-            blurDataURL={PLACEHOLDER_IMAGE}
+            blurDataURL={PLACEHOLDER_CONCERT}
             sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
           />
         </AspectRatio>

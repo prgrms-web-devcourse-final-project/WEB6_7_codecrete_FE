@@ -13,10 +13,10 @@ import ConcertReviewSummarySkeleton from "@/components/concert/detail/ConcertRev
 
 export default function ConcertDetailReview({
   concertId,
-  isLoggedIn,
+  isAuthenticated,
 }: {
   concertId: string;
-  isLoggedIn: boolean;
+  isAuthenticated: boolean;
 }) {
   const [data, setData] = useState<ConcertReviewListResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -83,7 +83,7 @@ export default function ConcertDetailReview({
               </p>
             </div>
           </div>
-          {isLoggedIn && (
+          {isAuthenticated && (
             <Link href={`/concerts/${concertId}/review/write`}>
               <Button
                 variant="outline"
@@ -117,7 +117,7 @@ export default function ConcertDetailReview({
       ) : (
         <div className="border-border flex flex-col items-center gap-3 rounded-xl border border-dashed p-8">
           <p className="text-text-sub text-sm">아직 작성된 리뷰가 없습니다.</p>
-          {isLoggedIn && (
+          {isAuthenticated && (
             <Link href={`/concerts/${concertId}/review/write`}>
               <Button variant="ghost" size="sm">
                 첫 리뷰 작성하기
