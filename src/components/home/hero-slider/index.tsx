@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Mousewheel, EffectFade, Autoplay, Parallax } from "swiper/modules";
@@ -9,17 +8,17 @@ import { SLIDES } from "./constants";
 import ThumbsSlider from "./ThumbsSlider";
 import { SlideContentProps } from "@/types/home";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsDesktop } from "@/hooks/useDesktop";
 
 export default function HeroSlider() {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
-  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
 
   return (
     <div className="relative h-100 w-full overflow-hidden bg-black text-white md:h-150 lg:h-130">
       {/* 메인 슬라이더 */}
       <Swiper
-        direction={isMobile ? "horizontal" : "vertical"}
+        direction={isDesktop ? "vertical" : "horizontal"}
         spaceBetween={0}
         slidesPerView={1}
         loop={true}
@@ -29,7 +28,7 @@ export default function HeroSlider() {
         autoplay={{ delay: 6000, disableOnInteraction: false }}
         parallax={true}
         speed={1000}
-        effect={isMobile ? "fade" : undefined}
+        effect={isDesktop ? undefined : "fade"}
       >
         {SLIDES.map((slide, index) => (
           <SwiperSlide key={slide.id} className="h-full w-full">
@@ -37,7 +36,7 @@ export default function HeroSlider() {
           </SwiperSlide>
         ))}
       </Swiper>
-      <ThumbsSlider isMobile={isMobile} onSwiper={setThumbsSwiper} />
+      <ThumbsSlider isMobile={!isDesktop} onSwiper={setThumbsSwiper} />
     </div>
   );
 }

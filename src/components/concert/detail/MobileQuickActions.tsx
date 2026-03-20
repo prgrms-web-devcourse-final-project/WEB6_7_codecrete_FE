@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import {
   Sheet,
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import QuickActionsSection from "./QuickActionsSection";
 import { ConcertDetail, TicketOffice } from "@/types/concerts";
 import { FlashlightIcon } from "lucide-react";
+import { useIsDesktop } from "@/hooks/useDesktop";
 
 interface MobileQuickActionsProps {
   concertDetail: ConcertDetail;
@@ -28,7 +30,10 @@ export default function MobileQuickActions({
   isAuthenticated,
   isChatAvailable,
 }: MobileQuickActionsProps) {
+  const isDesktop = useIsDesktop();
   const [open, setOpen] = useState(false);
+
+  if (isDesktop) return null;
 
   return (
     <div className="lg:hidden">
