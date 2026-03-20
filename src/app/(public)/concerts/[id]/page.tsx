@@ -14,18 +14,14 @@
  *   인가 판단의 근거로 사용하지 않음
  */
 
-import ConcertDetail from "@/components/concert/detail/ConcertDetail";
-import ConcertHeader from "@/components/concert/detail/ConcertHeader";
-import ConcertSimilar from "@/components/concert/detail/ConcertSimilar";
-import ConcertDetailSkeleton from "@/components/loading/concert/detail/ConcertDetailSkeleton";
-import ConcertHeaderSkeleton from "@/components/loading/concert/detail/ConcertHeaderSkeleton";
-import ConcertSimilarSkeleton from "@/components/loading/concert/detail/ConcertSimilarSkeleton";
 import BreadcrumbNavbar from "@/components/review/BreadcrumbNavbar";
-import { getConcertDetail, getSimilarConcerts } from "@/lib/api/concerts/concerts.server";
-import { Suspense } from "react";
+import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import { getAuthStatus } from "@/lib/api/auth/auth.server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import ConcertHeader from "@/components/concert/detail/header";
+import ConcertSimilar from "@/components/concert/detail/ConcertSimilar";
+import ConcertContents from "@/components/concert/detail/contents";
 
 export async function generateMetadata({
   params,
@@ -62,33 +58,32 @@ export async function generateMetadata({
   };
 }
 
+function checkChatAvailable(ticketTime: string | null) {
+  if (!ticketTime) return false;
+
+  const now = new Date();
+
+  // ticketTime은 KST 기준 시간으로 내려온다고 가정
+  const t = new Date(ticketTime);
+  // 채팅은 티켓 오픈 시점 기준 ±3일 동안만 가능
+  const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+
+  return now.getTime() >= t.getTime() - THREE_DAYS && now.getTime() <= t.getTime() + THREE_DAYS;
+}
+
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const concertDetail = await getConcertDetail({ concertId: id });
 
-  const similarConcertsData = await getSimilarConcerts({ concertId: id });
-  const similarConcerts = similarConcertsData.data ?? [];
-
-  const isLoggedIn = await getAuthStatus();
+  const [concertDetail, isAuthenticated] = await Promise.all([
+    getConcertDetail({ concertId: id }),
+    getAuthStatus(),
+  ]);
 
   if (!concertDetail) {
     notFound();
   }
 
-  const now = new Date();
-
-  let isChatAvailable = false;
-
-  if (concertDetail.ticketTime) {
-    // ticketTime은 KST 기준 시간으로 내려온다고 가정
-    const ticketTime = new Date(concertDetail.ticketTime);
-    // 채팅은 티켓 오픈 시점 기준 ±3일 동안만 가능
-    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
-
-    isChatAvailable =
-      now.getTime() >= ticketTime.getTime() - THREE_DAYS &&
-      now.getTime() <= ticketTime.getTime() + THREE_DAYS;
-  }
+  const isChatAvailable = checkChatAvailable(concertDetail.ticketTime);
 
   return (
     <>
@@ -99,17 +94,17 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           { label: concertDetail?.name },
         ]}
       />
-      <Suspense fallback={<ConcertHeaderSkeleton />}>
-        <ConcertHeader concertId={id} isLoggedIn={isLoggedIn} isChatAvailable={isChatAvailable} />
-      </Suspense>
-      <Suspense fallback={<ConcertDetailSkeleton />}>
-        <ConcertDetail concertId={id} isLoggedIn={isLoggedIn} isChatAvailable={isChatAvailable} />
-      </Suspense>
-      {similarConcerts.length > 0 && (
-        <Suspense fallback={<ConcertSimilarSkeleton />}>
-          <ConcertSimilar similarConcerts={similarConcerts} />
-        </Suspense>
-      )}
+      <ConcertHeader
+        concertDetail={concertDetail}
+        isAuthenticated={isAuthenticated}
+        isChatAvailable={isChatAvailable}
+      />
+      <ConcertContents
+        concertDetail={concertDetail}
+        isAuthenticated={isAuthenticated}
+        isChatAvailable={isChatAvailable}
+      />
+      <ConcertSimilar concertId={concertDetail.concertId} />
     </>
   );
 }

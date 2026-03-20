@@ -4,8 +4,9 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import QrCode from "@/components/ui/qr-code";
 import { ConcertWithTicket } from "@/types/home";
 import { formatDateRange } from "@/utils/helpers/formatters";
-import { DEFAULT_TICKET_URL, PLACEHOLDER_IMAGE } from "./constants";
+import { DEFAULT_TICKET_URL } from "./constants";
 import { cn } from "@/lib/utils";
+import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
 
 interface ConcertTicketCardProps {
   concert: ConcertWithTicket;
@@ -24,16 +25,17 @@ export default function ConcertTicketCard({ concert }: ConcertTicketCardProps) {
       {/* 포스터 이미지 */}
       <AspectRatio ratio={320 / 426.5}>
         <Image
-          src={concert.posterUrl ?? PLACEHOLDER_IMAGE}
+          src={concert.posterUrl ?? PLACEHOLDER_CONCERT}
           alt={concert.name}
           className="rounded-2xl object-cover"
           fill
           placeholder="blur"
-          blurDataURL={PLACEHOLDER_IMAGE}
+          priority
+          blurDataURL={PLACEHOLDER_CONCERT}
           sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = PLACEHOLDER_IMAGE;
+            target.src = PLACEHOLDER_CONCERT;
           }}
         />
       </AspectRatio>
