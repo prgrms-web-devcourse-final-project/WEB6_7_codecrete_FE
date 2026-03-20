@@ -1,14 +1,14 @@
 "use client";
-
 import Link from "next/link";
 import { UsersRound } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArtistListContent } from "@/types/artists";
 import { toast } from "sonner";
 import { MouseEvent, useState } from "react";
 import { deleteLikeArtist, postLikeArtist } from "@/lib/api/artists/artists.client";
+import Image from "next/image";
+import { PLACEHOLDER_ARTIST } from "@/constants/placeholder";
 
 export default function ArtistCard({
   artist,
@@ -44,12 +44,17 @@ export default function ArtistCard({
 
   return (
     <Link href={`/artists/${artist.id}`} className="block">
-      <Card className="flex h-full flex-col items-center gap-3 p-4 text-center shadow-none transition-transform hover:opacity-90 md:gap-4 md:p-6 lg:p-8">
-        {/* 아바타 */}
-        <Avatar className="ring-border size-20 ring-4 md:size-24 lg:size-30">
-          <AvatarImage src={artist.imageUrl} alt={artist.nameKo ?? artist.artistName} />
-          <AvatarFallback>{artist.nameKo ?? artist.artistName}</AvatarFallback>
-        </Avatar>
+      <Card className="flex h-full flex-col items-center gap-3 p-4 text-center shadow-none transition-transform hover:border-zinc-300 md:gap-4 md:p-6 lg:p-8">
+        <Image
+          src={artist.imageUrl}
+          alt={artist.nameKo ?? artist.artistName}
+          width={120}
+          height={120}
+          placeholder="blur"
+          blurDataURL={PLACEHOLDER_ARTIST}
+          className="ring-border size-20 rounded-full ring-4 md:size-24 lg:size-30"
+          sizes="(max-width: 475px) 84vw, (max-width: 640px) 48vw, (max-width: 768px) 38vw, (max-width: 1024px) 27vw, (max-width: 1280px) 20vw, 16vw"
+        />
 
         {/* 아티스트 정보 */}
         <h3 className="text-text-main line-clamp-1 text-base font-bold md:text-lg">

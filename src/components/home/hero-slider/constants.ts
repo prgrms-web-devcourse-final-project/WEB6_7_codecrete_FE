@@ -1,9 +1,9 @@
-import heroSlide01 from "@/../public/images/hero_slide_01.png";
-import heroSlide02 from "@/../public/images/hero_slide_02.png";
-import heroSlide03 from "@/../public/images/hero_slide_03.png";
-import heroSlide04 from "@/../public/images/hero_slide_04.png";
-import heroSlide05 from "@/../public/images/hero_slide_05.png";
-import heroSlide06 from "@/../public/images/hero_slide_06.png";
+import heroSlide01 from "@/../public/images/hero_slide_01.webp";
+import heroSlide02 from "@/../public/images/hero_slide_02.webp";
+import heroSlide03 from "@/../public/images/hero_slide_03.webp";
+import heroSlide04 from "@/../public/images/hero_slide_04.webp";
+import heroSlide05 from "@/../public/images/hero_slide_05.webp";
+import heroSlide06 from "@/../public/images/hero_slide_06.webp";
 
 export const SLIDES = [
   {

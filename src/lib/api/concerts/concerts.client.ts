@@ -6,6 +6,81 @@ import ClientApi from "@/utils/helpers/clientApi";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
 
 /**
+ * 다가오는 공연 목록 가져오기
+ *
+ * @param {number} page - 페이지 번호 (기본값: 0)
+ * @param {number} size - 페이지 크기 (기본값: 20)
+ * @returns {Promise<ResponseData<ConcertWithTicket[]>>} - 공연 목록 데이터
+ */
+export const getUpcomingConcerts = async ({
+  sort,
+  page = 0,
+  size = 21,
+}: {
+  sort: string;
+  page?: number;
+  size?: number;
+}): Promise<ResponseData<ConcertWithTicket[] | null>> => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/list/${sort}?page=${page}&size=${size}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return createEmptyResponse(`API 요청 실패: ${res.status}`);
+    }
+
+    const data = await res.json();
+    const concerts = data.data as Concert[];
+
+    const concertsWithTicketLinks = await Promise.allSettled(
+      concerts.map(async (concert: Concert) => {
+        try {
+          const ticketOffices = await getTicketOfficesByConcertId({ concertId: concert.id });
+
+          const firstOffice = ticketOffices?.[0];
+
+          return {
+            ...concert,
+            ticketOfficeName: firstOffice?.ticketOfficeName,
+            ticketOfficeUrl: firstOffice?.ticketOfficeUrl,
+          };
+        } catch (error) {
+          console.error(`Error fetching ticket info for concert ${concert.id}:`, error);
+          return concert;
+        }
+      })
+    );
+
+    const mappedConcerts = concertsWithTicketLinks
+      .map((result, index) => {
+        if (result.status === "fulfilled") return result.value;
+
+        const fallbackConcert = concerts[index];
+        console.error(
+          `Error fetching ticket info for concert ${fallbackConcert?.id}:`,
+          result.reason
+        );
+        return {
+          ...fallbackConcert,
+          ticketOfficeName: null,
+          ticketOfficeUrl: null,
+        };
+      })
+      .filter(Boolean);
+
+    return {
+      ...data,
+      data: mappedConcerts,
+    };
+  } catch (error) {
+    console.error("Error fetching upcoming concerts:", error);
+    return createEmptyResponse("콘서트 목록을 가져오는데 실패했습니다");
+  }
+};
+
+/**
  * 공연 ID로 공연장 정보 가져오기
  *
  * @param {string} concertId - 공연 ID

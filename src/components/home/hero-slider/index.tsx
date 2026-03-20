@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Mousewheel, EffectFade, Autoplay, Parallax } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -9,17 +9,11 @@ import { SLIDES } from "./constants";
 import ThumbsSlider from "./ThumbsSlider";
 import { SlideContentProps } from "@/types/home";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function HeroSlider() {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   return (
     <div className="relative h-100 w-full overflow-hidden bg-black text-white md:h-150 lg:h-130">
@@ -63,7 +57,8 @@ function SlideContent({ slide, priority = false }: SlideContentProps) {
           className="object-cover object-center"
           placeholder="blur"
           priority={priority}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1600px"
+          fetchPriority={priority ? "high" : "auto"}
+          sizes="(max-width: 768px) 100dvw, (max-width: 1200px) 100dvw, 1600px"
         />
 
         {/* 텍스트 오버레이 */}
