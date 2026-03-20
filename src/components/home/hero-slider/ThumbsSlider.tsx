@@ -49,6 +49,7 @@ export default function ThumbsSlider({
                 fill
                 className="rounded-xl object-cover"
                 placeholder="blur"
+                sizes="(max-width: 768px) 72px, 72px"
               />
             </div>
           </SwiperSlide>
