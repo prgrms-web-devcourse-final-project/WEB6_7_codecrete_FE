@@ -23,8 +23,8 @@ export default function UpcomingSlider() {
     const isServerClosed = data?.status === 503; // 서버 점검 여부 확인
 
     return (
-      <section className="py-10 md:py-15 lg:py-20">
-        <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
+      <section className="my-10 w-full px-5 md:my-15 lg:my-20 lg:gap-10 lg:px-15">
+        <div className="mx-auto flex max-w-400 flex-col gap-6">
           <div className="space-y-1 md:space-y-2">
             <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
               🔥 공연일까지 카운트다운 시작!
@@ -55,8 +55,8 @@ export default function UpcomingSlider() {
 
   if (concerts.length === 0) {
     return (
-      <section className="py-10 md:py-15 lg:py-20">
-        <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
+      <section className="w-full overflow-hidden py-10 md:py-15 lg:py-20">
+        <div className="mx-auto flex w-full max-w-400 flex-col gap-6 lg:gap-10">
           <div className="space-y-1 md:space-y-2">
             <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
               🔥 공연일까지 카운트다운 시작!

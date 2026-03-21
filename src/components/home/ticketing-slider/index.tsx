@@ -23,8 +23,8 @@ export default function TicketingSlider() {
     const isServerClosed = data?.status === 503; // 서버 점검 여부 확인
 
     return (
-      <section className="py-10 md:py-15 lg:py-20">
-        <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
+      <section className="my-10 w-full px-5 md:my-15 lg:my-20 lg:gap-10 lg:px-15">
+        <div className="mx-auto flex max-w-400 flex-col gap-6">
           <div className="space-y-1 md:space-y-2">
             <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
               🎫 예매일 임박! 콘서트 모음
