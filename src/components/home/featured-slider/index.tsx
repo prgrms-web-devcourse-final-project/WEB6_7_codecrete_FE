@@ -1,27 +1,19 @@
 "use client";
-
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { SliderHeader } from "../../common/SliderHeader";
 import "swiper/css";
 import ArtistCard from "./ArtistCard";
-import { getArtists } from "@/lib/api/artists/artists.client";
 import { useQuery } from "@tanstack/react-query";
 import FeaturedArtistsSkeleton from "@/components/loading/home/FeaturedArtistsSkeleton";
-import { artistQueryKeys } from "@/queries/artists";
+import { artistQueries } from "@/queries/artists";
 import EmptySection from "@/components/common/EmptySection";
 
 export default function FeaturedSlider({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
-  const queryKey = artistQueryKeys.featured(0, 20, "LIKE");
-  const { data, isLoading, isError } = useQuery({
-    queryKey,
-    queryFn: () => getArtists(0, 20, "LIKE"),
-    staleTime: 1000 * 60 * 3,
-    gcTime: 1000 * 60 * 30,
-  });
+  const { data, isLoading, isError } = useQuery(artistQueries.featured(0, 20, "LIKE"));
 
   if (isLoading) return <FeaturedArtistsSkeleton />;
   if (isError) {
