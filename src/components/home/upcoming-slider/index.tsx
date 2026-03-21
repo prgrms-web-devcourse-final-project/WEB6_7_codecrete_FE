@@ -1,21 +1,12 @@
 "use client";
-
 import { useQuery } from "@tanstack/react-query";
 import TicketShapeSlider from "../../common/ticket-slider";
-import { getUpcomingConcerts } from "@/lib/api/concerts/concerts.client";
 import TicketShapeSliderSkeleton from "../../common/ticket-slider/TicketShapeSliderSkeleton";
-import { concertsQueryKeys } from "@/queries/concerts";
+import { concertQueries } from "@/queries/concerts";
 import EmptySection from "@/components/common/EmptySection";
 
 export default function UpcomingSlider() {
-  const queryKey = concertsQueryKeys.upcoming("UPCOMING", 0, 21);
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey,
-    queryFn: () => getUpcomingConcerts({ sort: "UPCOMING", page: 0, size: 21 }),
-    staleTime: 1000 * 60 * 3,
-    gcTime: 1000 * 60 * 30,
-  });
+  const { data, isLoading, isError } = useQuery(concertQueries.upcoming("UPCOMING", 0, 21));
 
   if (isLoading) return <TicketShapeSliderSkeleton />;
 
