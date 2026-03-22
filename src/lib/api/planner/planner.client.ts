@@ -1,5 +1,5 @@
 import { ResponseData } from "@/types/api";
-import { PlannerParticipant, PlannerParticipantRole } from "@/types/planner";
+import { PlanDetail, PlanList, PlannerParticipant, PlannerParticipantRole } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 interface Planner {
@@ -11,6 +11,45 @@ interface Planner {
   createdDate: string;
   modifiedDate: string;
 }
+
+/**
+ * @description 플래너 계획 상세 조회
+ * @param planId - 플래너 계획 ID
+ * @returns 플래너 계획 상세 정보
+ */
+export const getPlanDetail = async (planId: string): Promise<PlanDetail> => {
+  const res = await ClientApi(`/api/v1/plans/${planId}`, { method: "GET" });
+
+  if (!res.ok) {
+    const error = new Error("플랜 정보를 불러오는데 실패했습니다.");
+    (error as Error & { statusCode?: number }).statusCode = res.status;
+    throw error;
+  }
+
+  const data = await res.json();
+  return data.data;
+};
+
+/**
+ * @description 플래너 계획 목록 조회
+ * @returns 플래너 계획 목록
+ */
+export const getPlanList = async (): Promise<PlanList[]> => {
+  try {
+    const res = await ClientApi("/api/v1/plans/list", { method: "GET" });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data.data as PlanList[];
+  } catch (error) {
+    console.error("Error fetching plans list:", error);
+    throw error;
+  }
+};
 
 // 플래너 계획 생성
 export const createNewPlan = async ({
