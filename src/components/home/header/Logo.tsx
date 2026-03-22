@@ -11,6 +11,7 @@ export default function Logo() {
         height={64}
         className="h-8 w-auto lg:h-12"
         priority
+        fetchPriority="high"
       />
     </Link>
   );
