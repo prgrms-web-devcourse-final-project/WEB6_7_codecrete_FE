@@ -6,7 +6,6 @@ import {
   getLikedArtistsConcerts,
   getLikedConcertCount,
 } from "@/lib/api/myPage/myPage.server";
-import { getPlanList } from "@/lib/api/planner/planner.server";
 import { ConcertWithTicket } from "@/types/my-page";
 
 export default async function Page() {
@@ -23,7 +22,6 @@ export default async function Page() {
   }
 
   // 참여한 플래너 목록 API
-  const joinedPlanners = await getPlanList();
   const likedArtists = await getLikedArtistList();
 
   // 찜한 아티스트가 없을 경우 빈 배열로 초기화
@@ -52,12 +50,11 @@ export default async function Page() {
   return (
     <div className="px-5 py-8 lg:px-15 lg:py-10">
       <div className="mx-auto flex w-full max-w-400 flex-col-reverse gap-8 lg:flex-row">
-        <MyPageCalendar concerts={concertsList} planners={joinedPlanners} />
+        <MyPageCalendar concerts={concertsList} />
         <MyPageAside
           likedConcerts={concertsList}
           likedConcertsCount={likedConcertsCount.data}
           likedArtists={likedArtists.data}
-          joinedPlanners={joinedPlanners}
         />
       </div>
     </div>
