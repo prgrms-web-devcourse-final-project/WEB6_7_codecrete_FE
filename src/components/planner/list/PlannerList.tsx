@@ -1,6 +1,13 @@
 "use client";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { useRouter } from "next/navigation";
 import { plannerQueries } from "@/queries/planner";
@@ -40,6 +47,7 @@ export default function PlannerList() {
         <DialogHeader>
           <DialogTitle>플래너 목록</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">플래너 목록 모달</DialogDescription>
         <div className="max-h-[60vh] gap-6 space-y-4 overflow-y-auto p-4">
           {isLoading ? (
             <PlannerListSkeleton />
