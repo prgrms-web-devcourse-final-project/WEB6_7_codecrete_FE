@@ -21,14 +21,11 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { deletePlan, updatePlanDetail } from "@/lib/api/planner/planner.client";
+import { usePlannerEdit } from "@/hooks/usePlannerEdit";
 import { ConcertDetail } from "@/types/concerts";
 import { PlanDetail } from "@/types/planner";
-import { getConcertStartDate, isSameDay, dateToISOString } from "@/utils/helpers/handleDate";
 import { Loader2Icon, PencilIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
 
 export default function PlannerEdit({
   planDetail,
@@ -37,86 +34,22 @@ export default function PlannerEdit({
   planDetail: PlanDetail;
   concertDetail: ConcertDetail;
 }) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-
-  // 플래너 수정 다이얼로그 상태
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-
-  // 플래너 삭제 다이얼로그 상태
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  // 플래너 제목 및 날짜 상태
-  const [plannerTitle, setPlannerTitle] = useState<string>(planDetail.title);
-  const [plannerDate, setPlannerDate] = useState<Date | undefined>(new Date(planDetail.planDate));
-
-  // 플래너 수정 핸들러
-  const handleEditPlanner = () => {
-    if (!plannerTitle.trim()) {
-      toast.error("플래너 제목을 입력해주세요.");
-      return;
-    }
-    if (!plannerDate) {
-      toast.error("플래너 날짜를 선택해주세요.");
-      return;
-    }
-
-    // 공연 당일 확인
-    const concertStart = getConcertStartDate(concertDetail?.startDate || "");
-    if (isSameDay(plannerDate, concertStart)) {
-      toast.error("오늘은 공연 시작일이므로 플래너를 생성할 수 없습니다.");
-      return;
-    }
-
-    try {
-      startTransition(async () => {
-        try {
-          const data = await updatePlanDetail({
-            planId: planDetail.id.toString(),
-            title: plannerTitle.trim(),
-            planDate: dateToISOString(plannerDate),
-          });
-
-          // 성공 후 링크 이동
-          toast.success("플래너가 수정되었습니다.");
-          router.replace(`/planner/${data.data.id}`);
-          setEditDialogOpen(false);
-        } catch (error) {
-          console.error(error);
-        }
-      });
-    } catch (error) {
-      console.error("플래너 수정 오류:", error);
-      toast.error("플래너 수정에 실패했습니다.");
-    }
-  };
-
-  // 플래너 모달 닫기 핸들러
-  const handleClosePlannerModal = () => {
-    setEditDialogOpen(false);
-  };
-
-  // 플래너 삭제 핸들러
-  const handleDeletePlanner = () => {
-    startTransition(async () => {
-      try {
-        await deletePlan({
-          planId: planDetail.id.toString(),
-        });
-
-        toast.success("플래너가 삭제되었습니다.");
-        setEditDialogOpen(false);
-        router.replace("/planner");
-      } catch (error) {
-        console.error("플래너 삭제 오류:", error);
-        toast.error("플래너 삭제에 실패했습니다.");
-      }
-    });
-  };
+  const {
+    isPending,
+    plannerTitle,
+    setPlannerTitle,
+    plannerDate,
+    setPlannerDate,
+    handleEdit,
+    handleDelete,
+  } = usePlannerEdit(planDetail, concertDetail);
 
   return (
     <>
-      <Button variant="ghost" onClick={() => setEditDialogOpen(true)}>
+      <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
         <PencilIcon className="size-3.5" />
       </Button>
       {/* 플래너 수정 모달 */}
@@ -161,11 +94,11 @@ export default function PlannerEdit({
             </div>
           </FieldGroup>
           <DialogFooter>
-            <Button variant="outline" onClick={handleClosePlannerModal}>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
               취소
             </Button>
             <Button
-              onClick={handleEditPlanner}
+              onClick={() => handleEdit(() => setEditDialogOpen(false))}
               disabled={!plannerTitle.trim() || !plannerDate || isPending}
             >
               {isPending ? (
@@ -195,7 +128,10 @@ export default function PlannerEdit({
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <Button variant="destructive" onClick={handleDeletePlanner}>
+            <Button
+              variant="destructive"
+              onClick={() => handleDelete(() => setDeleteDialogOpen(false))}
+            >
               삭제
             </Button>
           </AlertDialogFooter>
