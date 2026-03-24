@@ -145,7 +145,7 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
     return (
       <>
         <Separator />
-        <div className="text-text-sub grid grid-cols-2 gap-3 text-sm">
+        <div className="text-text-sub grid gap-3 text-sm md:grid-cols-2">
           {schedule.location && (
             <div className="space-y-1">
               <h5 className="text-xs font-medium">위치</h5>
@@ -189,7 +189,7 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
   return (
     <>
       <Separator />
-      <div className="text-text-sub grid grid-cols-2 gap-3 text-sm">
+      <div className="text-text-sub grid gap-3 text-sm md:grid-cols-2">
         {schedule.transportType !== "WALK" && (
           <div className="space-y-1">
             <h5 className="text-xs font-medium">예상 금액</h5>
