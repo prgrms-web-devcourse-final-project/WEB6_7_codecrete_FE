@@ -3,25 +3,19 @@ import { formatDateKorean } from "@/utils/helpers/formatters";
 import { ArrowLeftIcon, Calendar1Icon, MapPinIcon } from "lucide-react";
 import PlannerEdit from "./PlannerEdit";
 import { PlanDetail, PlannerParticipantRole } from "@/types/planner";
-import { useQuery } from "@tanstack/react-query";
-import { concertQueries } from "@/queries/concerts";
-import PlannerTopHeaderSkeleton from "@/components/loading/planner/PlannerTopHeaderSkeleton";
+import { ConcertDetail } from "@/types/concerts";
+
+interface PlannerTopHeaderProps {
+  planDetail: PlanDetail;
+  concertDetail: ConcertDetail;
+  role: PlannerParticipantRole;
+}
 
 export default function PlannerTopHeader({
   planDetail,
   role,
-}: {
-  planDetail: PlanDetail;
-  role: PlannerParticipantRole;
-}) {
-  const { data: concertDetail, isLoading } = useQuery(
-    concertQueries.detail(planDetail.concertId.toString())
-  );
-
-  if (isLoading || !concertDetail || !planDetail) {
-    return <PlannerTopHeaderSkeleton />;
-  }
-
+  concertDetail,
+}: PlannerTopHeaderProps) {
   return (
     <header
       className="relative overflow-hidden px-5 py-10 lg:px-15 lg:py-20"

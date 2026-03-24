@@ -6,6 +6,7 @@ import { plannerQueries } from "@/queries/planner";
 import PlannerTopHeaderSkeleton from "../loading/planner/PlannerTopHeaderSkeleton";
 import PlannerTopActions from "./top/PlannerTopActions";
 import { getShareBaseUrl } from "@/utils/helpers/domain";
+import { concertQueries } from "@/queries/concerts";
 
 interface PlannerDetailProps {
   planId: string;
@@ -15,15 +16,17 @@ interface PlannerDetailProps {
 
 export default function PlannerDetail({ planId, role, domain }: PlannerDetailProps) {
   const { data: planDetail, isLoading } = useQuery(plannerQueries.detail(planId));
+  const { data: concertDetail, isLoading: isConcertLoading } = useQuery(
+    concertQueries.detail(planDetail?.concertId.toString() || "")
+  );
   const {
     data: shareData,
     isLoading: isShareLoading,
     error: shareError,
   } = useQuery(plannerQueries.share(planId));
 
-  if (isLoading || !planDetail) {
+  if (isLoading || isConcertLoading || !planDetail || !concertDetail)
     return <PlannerTopHeaderSkeleton />;
-  }
 
   // 콘서트 일정 추출(메인 이벤트 또는 concertId가 있는 일정)
   const concertSchedules: ScheduleDetail = planDetail.schedules.find(
@@ -43,7 +46,7 @@ export default function PlannerDetail({ planId, role, domain }: PlannerDetailPro
 
   return (
     <>
-      <PlannerTopHeader planDetail={planDetail} role={role} />
+      <PlannerTopHeader planDetail={planDetail} role={role} concertDetail={concertDetail} />
       {(role === "OWNER" || role === "EDITOR") && (
         <PlannerTopActions
           concertCoords={{
