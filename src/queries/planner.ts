@@ -1,3 +1,4 @@
+import { getUserLocation } from "@/lib/api/planner/location.client";
 import {
   getPlanDetail,
   getPlanList,
@@ -14,6 +15,7 @@ export const plannerQueryKeys = {
   participants: (planId: string) =>
     [...plannerQueryKeys.details(), "participants", planId] as const, // 플랜 참여자 정보
   share: (planId: string) => [...plannerQueryKeys.details(), "share", planId] as const, // 플랜 공유 링크 정보
+  userLocation: () => [...plannerQueryKeys.all, "userLocation"] as const, // 사용자 위치 정보
 };
 
 export const plannerQueries = {
@@ -35,6 +37,11 @@ export const plannerQueries = {
   share: (planId: string) => ({
     queryKey: plannerQueryKeys.share(planId),
     queryFn: () => getPlanShareLink(planId),
+    staleTime: 5 * 60 * 1000, // 5분
+  }),
+  userLocation: () => ({
+    queryKey: plannerQueryKeys.userLocation(),
+    queryFn: () => getUserLocation(),
     staleTime: 5 * 60 * 1000, // 5분
   }),
 };
