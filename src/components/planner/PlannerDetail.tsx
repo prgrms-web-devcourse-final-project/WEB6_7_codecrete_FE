@@ -7,6 +7,9 @@ import PlannerTopHeaderSkeleton from "../loading/planner/PlannerTopHeaderSkeleto
 import PlannerTopActions from "./top/PlannerTopActions";
 import { getShareBaseUrl } from "@/utils/helpers/domain";
 import { concertQueries } from "@/queries/concerts";
+import PlannerBodySection from "./PlannerBodySection";
+import PlannerTimelineSectionSkeleton from "../loading/planner/PlannerTimelineSectionSkeleton";
+import PlannerTopActionsSkeleton from "../loading/planner/PlannerTopActionsSkeleton";
 
 interface PlannerDetailProps {
   planId: string;
@@ -19,14 +22,19 @@ export default function PlannerDetail({ planId, role, domain }: PlannerDetailPro
   const { data: concertDetail, isLoading: isConcertLoading } = useQuery(
     concertQueries.detail(planDetail?.concertId.toString() || "")
   );
-  const {
-    data: shareData,
-    isLoading: isShareLoading,
-    error: shareError,
-  } = useQuery(plannerQueries.share(planId));
+  const { data: shareData, isLoading: isShareLoading } = useQuery({
+    ...plannerQueries.share(planId),
+    enabled: role === "OWNER" || role === "EDITOR", // 공유 링크는 OWNER와 EDITOR만 필요하므로 조건부로 쿼리 실행
+  });
 
   if (isLoading || isConcertLoading || !planDetail || !concertDetail)
-    return <PlannerTopHeaderSkeleton />;
+    return (
+      <>
+        <PlannerTopHeaderSkeleton />
+        <PlannerTopActionsSkeleton />
+        <PlannerTimelineSectionSkeleton />
+      </>
+    );
 
   // 콘서트 일정 추출(메인 이벤트 또는 concertId가 있는 일정)
   const concertSchedules: ScheduleDetail = planDetail.schedules.find(
@@ -35,13 +43,17 @@ export default function PlannerDetail({ planId, role, domain }: PlannerDetailPro
 
   // 공유 링크 정보 구성
   const shareLink: PlannerShareLink = { domain, url: "", status: "" };
-  if (shareData) {
+  if (shareData?.status === "ok") {
     const baseUrl = getShareBaseUrl(domain);
-    shareLink.url = `${baseUrl}/planner/share?code=${shareData.shareToken}`;
+    shareLink.url = `${baseUrl}/planner/share?code=${shareData.data.shareToken}`;
   } else if (isShareLoading) {
     shareLink.status = "공유 링크를 불러오는 중입니다...";
-  } else if (shareError instanceof Error) {
-    shareLink.status = shareError.message;
+  } else if (shareData?.status === "not_created") {
+    shareLink.status = "아직 공유 링크가 생성되지 않았습니다.";
+  } else if (shareData?.status === "forbidden") {
+    shareLink.status = shareData.message;
+  } else if (shareData?.status === "error") {
+    shareLink.status = shareData.message;
   }
 
   return (
@@ -59,8 +71,8 @@ export default function PlannerDetail({ planId, role, domain }: PlannerDetailPro
           shareLink={shareLink}
         />
       )}
-      {/* <PlannerBodySection
-        planId={id}
+      <PlannerBodySection
+        planId={planId}
         schedules={planDetail.schedules}
         concertCoords={{
           lat: concertSchedules.locationLat as number,
@@ -68,7 +80,7 @@ export default function PlannerDetail({ planId, role, domain }: PlannerDetailPro
         }}
         role={role}
         totalDuration={planDetail.totalDuration}
-      /> */}
+      />
     </>
   );
 }

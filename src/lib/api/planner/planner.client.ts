@@ -58,28 +58,56 @@ export const getPlanList = async (): Promise<PlanList[]> => {
  */
 export const getPlanShareLink = async (
   planId: string
-): Promise<{
-  planId: string;
-  shareToken: string;
-  shareLink: string;
-}> => {
+): Promise<
+  | {
+      status: "ok";
+      data: {
+        planId: string;
+        shareToken: string;
+        shareLink: string;
+      };
+    }
+  | {
+      status: "not_created";
+    }
+  | {
+      status: "forbidden";
+      message: string;
+    }
+  | {
+      status: "error";
+      message: string;
+    }
+> => {
   const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
     method: "GET",
   });
 
-  if (!res.ok) {
-    let message = "공유 링크를 불러오는데 실패했습니다.";
-
-    const errorData = await res.json();
-    if (errorData?.msg) {
-      message = errorData.msg;
-    }
-
-    throw new Error(message);
+  if (res.ok) {
+    const data = await res.json();
+    return { status: "ok", data: data.data };
   }
 
-  const data = await res.json();
-  return data.data;
+  // 에러별로 상세 메시지 처리
+  const errorData = await res.json().catch(() => null);
+  const resultCode = errorData?.resultCode as string | undefined;
+  const msg = errorData?.msg as string | undefined;
+
+  // 공유 링크 미생성
+  if (res.status === 400) {
+    return { status: "not_created" };
+  }
+
+  // 권한 없음 (일반 사용자)
+  if (res.status === 403 && resultCode === "P-103") {
+    return { status: "forbidden", message: msg || "해당 작업을 수행할 권한이 없습니다." };
+  }
+
+  // 그 외 공통 에러
+  let message = "공유 링크를 불러오는데 실패했습니다.";
+  if (msg) message = msg;
+
+  return { status: "error", message };
 };
 
 // 플래너 계획 생성

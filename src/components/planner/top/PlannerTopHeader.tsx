@@ -13,8 +13,8 @@ interface PlannerTopHeaderProps {
 
 export default function PlannerTopHeader({
   planDetail,
-  role,
   concertDetail,
+  role,
 }: PlannerTopHeaderProps) {
   return (
     <header
