@@ -1,18 +1,26 @@
 import BackPageButton from "@/components/common/BackPageButton";
-import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import { formatDateKorean } from "@/utils/helpers/formatters";
 import { ArrowLeftIcon, Calendar1Icon, MapPinIcon } from "lucide-react";
 import PlannerEdit from "./PlannerEdit";
 import { PlanDetail, PlannerParticipantRole } from "@/types/planner";
+import { useQuery } from "@tanstack/react-query";
+import { concertQueries } from "@/queries/concerts";
+import PlannerTopHeaderSkeleton from "@/components/loading/planner/PlannerTopHeaderSkeleton";
 
-export default async function PlannerTopHeader({
+export default function PlannerTopHeader({
   planDetail,
   role,
 }: {
   planDetail: PlanDetail;
   role: PlannerParticipantRole;
 }) {
-  const concertDetail = await getConcertDetail({ concertId: planDetail.concertId.toString() });
+  const { data: concertDetail, isLoading } = useQuery(
+    concertQueries.detail(planDetail.concertId.toString())
+  );
+
+  if (isLoading || !concertDetail || !planDetail) {
+    return <PlannerTopHeaderSkeleton />;
+  }
 
   return (
     <header
