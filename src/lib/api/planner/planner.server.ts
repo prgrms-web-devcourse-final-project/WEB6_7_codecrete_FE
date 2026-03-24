@@ -62,23 +62,6 @@ export const getPlanList = async (): Promise<PlanList[]> => {
   }
 };
 
-// 플래너 공유 링크 조회
-export const getPlanShareLink = async (
-  planId: string
-): Promise<{ planId: string; shareToken: string; shareLink: string }> => {
-  try {
-    const res = await ServerApi(`/api/v1/plans/${planId}/share/link`, { method: "GET" });
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.msg || `API 요청 실패: ${res.status}`);
-    }
-    const data = await res.json();
-    return data.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // 공유받은 링크로 접속했을 때 액세스 토큰 검증
 export const getSharedPlan = async (shareToken: string): Promise<PlanDetail | null> => {
   const res = await ServerApi(`/api/v1/plans/share/${shareToken}`, { method: "GET" });

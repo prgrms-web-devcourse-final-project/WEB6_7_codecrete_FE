@@ -51,6 +51,37 @@ export const getPlanList = async (): Promise<PlanList[]> => {
   }
 };
 
+/**
+ * @description 플래너 공유 링크 조회
+ * @param planId - 플래너 계획 ID
+ * @returns 플래너 공유 링크 정보(URL, 토큰 등)
+ */
+export const getPlanShareLink = async (
+  planId: string
+): Promise<{
+  planId: string;
+  shareToken: string;
+  shareLink: string;
+}> => {
+  const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
+    method: "GET",
+  });
+
+  if (!res.ok) {
+    let message = "공유 링크를 불러오는데 실패했습니다.";
+
+    const errorData = await res.json();
+    if (errorData?.msg) {
+      message = errorData.msg;
+    }
+
+    throw new Error(message);
+  }
+
+  const data = await res.json();
+  return data.data;
+};
+
 // 플래너 계획 생성
 export const createNewPlan = async ({
   concertId,

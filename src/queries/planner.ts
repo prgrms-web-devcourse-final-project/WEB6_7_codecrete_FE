@@ -1,4 +1,9 @@
-import { getPlanDetail, getPlanList, getPlanParticipants } from "@/lib/api/planner/planner.client";
+import {
+  getPlanDetail,
+  getPlanList,
+  getPlanParticipants,
+  getPlanShareLink,
+} from "@/lib/api/planner/planner.client";
 
 export const plannerQueryKeys = {
   all: ["planner"] as const,
@@ -8,6 +13,7 @@ export const plannerQueryKeys = {
   detail: (planId: string) => [...plannerQueryKeys.details(), planId] as const,
   participants: (planId: string) =>
     [...plannerQueryKeys.details(), "participants", planId] as const, // 플랜 참여자 정보
+  share: (planId: string) => [...plannerQueryKeys.details(), "share", planId] as const, // 플랜 공유 링크 정보
 };
 
 export const plannerQueries = {
@@ -24,6 +30,11 @@ export const plannerQueries = {
   participants: (planId: string) => ({
     queryKey: plannerQueryKeys.participants(planId),
     queryFn: () => getPlanParticipants(planId),
+    staleTime: 5 * 60 * 1000, // 5분
+  }),
+  share: (planId: string) => ({
+    queryKey: plannerQueryKeys.share(planId),
+    queryFn: () => getPlanShareLink(planId),
     staleTime: 5 * 60 * 1000, // 5분
   }),
 };
