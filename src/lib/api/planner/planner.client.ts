@@ -1,5 +1,11 @@
 import { ResponseData } from "@/types/api";
-import { PlanDetail, PlanList, PlannerParticipant, PlannerParticipantRole } from "@/types/planner";
+import {
+  PlanDetail,
+  PlanList,
+  PlannerParticipant,
+  PlannerParticipantRole,
+  PlannerShareLinkResponse,
+} from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 interface Planner {
@@ -56,29 +62,7 @@ export const getPlanList = async (): Promise<PlanList[]> => {
  * @param planId - 플래너 계획 ID
  * @returns 플래너 공유 링크 정보(URL, 토큰 등)
  */
-export const getPlanShareLink = async (
-  planId: string
-): Promise<
-  | {
-      status: "ok";
-      data: {
-        planId: string;
-        shareToken: string;
-        shareLink: string;
-      };
-    }
-  | {
-      status: "not_created";
-    }
-  | {
-      status: "forbidden";
-      message: string;
-    }
-  | {
-      status: "error";
-      message: string;
-    }
-> => {
+export const getPlanShareLink = async (planId: string): Promise<PlannerShareLinkResponse> => {
   const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
     method: "GET",
   });

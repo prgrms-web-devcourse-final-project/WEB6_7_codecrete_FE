@@ -318,6 +318,28 @@ export type NearbyPlaces = Pick<
 // 콘서트 장소 좌표 타입
 export type ConcertCoords = { lon: number; lat: number };
 
+// 플래너 공유 링크 초기 상태 타입
+export type PlannerShareLinkResponse =
+  | {
+      status: "ok";
+      data: {
+        planId: string;
+        shareToken: string;
+        shareLink: string;
+      };
+    }
+  | {
+      status: "not_created";
+    }
+  | {
+      status: "forbidden";
+      message: string;
+    }
+  | {
+      status: "error";
+      message: string;
+    };
+
 // 플래너 링크
 export type PlannerShareLink = {
   domain: string;
