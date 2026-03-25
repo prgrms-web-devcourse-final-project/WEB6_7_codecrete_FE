@@ -74,7 +74,11 @@ export default function StartLocationDialog({
             value="search"
             className="flex max-h-[40dvh] min-h-[40dvh] flex-1 flex-col gap-2 overflow-hidden"
           >
-            <SearchPlaces placeholder="예: 강남역, 우리집" onSelect={handlePlaceSelect} />
+            <SearchPlaces
+              placeholder="예: 강남역, 홍대입구역, 서울역 등"
+              onSelect={handlePlaceSelect}
+              isStart={true}
+            />
           </TabsContent>
         </Tabs>
         {location && (

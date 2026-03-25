@@ -310,14 +310,10 @@ export type KakaoCarRouteGuide = {
 };
 
 // 주변 장소 검색 API 응답 타입 (음식점 기준)
-export type NearbyPlaces = {
-  place_name: string;
-  x: number;
-  y: number;
-  road_address_name: string;
-  address_name: string;
-  place_url: string;
-};
+export type NearbyPlaces = Pick<
+  SearchPlace,
+  "place_name" | "x" | "y" | "road_address_name" | "address_name" | "place_url"
+>;
 
 // 콘서트 장소 좌표 타입
 export type ConcertCoords = { lon: number; lat: number };
