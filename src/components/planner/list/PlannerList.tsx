@@ -13,8 +13,7 @@ import { useRouter } from "next/navigation";
 import { plannerQueries } from "@/queries/planner";
 import PlannerListItem from "./PlannerListItem";
 import { useQuery } from "@tanstack/react-query";
-import PlannerListSkeleton from "./PlannerListSkeleton";
-import { FeatherIcon } from "lucide-react";
+import { FeatherIcon, Loader2Icon } from "lucide-react";
 import {
   Empty,
   EmptyContent,
@@ -50,7 +49,9 @@ export default function PlannerList() {
         <DialogDescription className="sr-only">플래너 목록 모달</DialogDescription>
         <div className="max-h-[60vh] gap-6 space-y-4 overflow-y-auto p-4">
           {isLoading ? (
-            <PlannerListSkeleton />
+            <div className="flex h-20 items-center justify-center">
+              <Loader2Icon className="animate-spin" />
+            </div>
           ) : (
             <>
               {planLists.length === 0 && (
@@ -69,7 +70,7 @@ export default function PlannerList() {
                 </Empty>
               )}
               {planLists.map((plan) => (
-                <PlannerListItem key={plan.id} plan={plan} />
+                <PlannerListItem key={plan.id} plan={plan} isLoading={isLoading} />
               ))}
             </>
           )}

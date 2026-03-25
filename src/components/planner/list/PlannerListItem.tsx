@@ -5,10 +5,25 @@ import { formatDateKorean } from "@/utils/helpers/formatters";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDaysIcon, MapPinIcon, SpotlightIcon, Users2Icon } from "lucide-react";
 import Link from "next/link";
+import PlannerListSkeleton from "./PlannerListSkeleton";
 
-export default function PlannerListItem({ plan }: { plan: PlanList }) {
-  const { data: concertDetail } = useQuery(concertQueries.detail(plan.concertId.toString()));
-  const { data: planDetail } = useQuery(plannerQueries.detail(plan.id.toString()));
+export default function PlannerListItem({
+  plan,
+  isLoading,
+}: {
+  plan: PlanList;
+  isLoading: boolean;
+}) {
+  const { data: concertDetail, isLoading: isConcertLoading } = useQuery(
+    concertQueries.detail(plan.concertId.toString())
+  );
+  const { data: planDetail, isLoading: isPlanLoading } = useQuery(
+    plannerQueries.detail(plan.id.toString())
+  );
+
+  if (isLoading || isConcertLoading || isPlanLoading) {
+    return <PlannerListSkeleton />;
+  }
 
   return (
     <Link
