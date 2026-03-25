@@ -7,7 +7,7 @@ import { AccessibilityIcon, LinkIcon, MapIcon, MapPin, Phone } from "lucide-reac
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import ConcertDetailVenueSkeleton from "./ConcertDetailVenueSkeleton";
+import ConcertDetailVenueSkeleton from "../../../loading/concert/detail/ConcertDetailVenueSkeleton";
 import { useIntersectionOnce } from "@/hooks/useIntersectionOnce";
 import { Skeleton } from "@/components/ui/skeleton";
 

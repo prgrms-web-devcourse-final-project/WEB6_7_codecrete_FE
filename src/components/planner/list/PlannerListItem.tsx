@@ -5,7 +5,7 @@ import { formatDateKorean } from "@/utils/helpers/formatters";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDaysIcon, MapPinIcon, SpotlightIcon, Users2Icon } from "lucide-react";
 import Link from "next/link";
-import PlannerListSkeleton from "./PlannerListSkeleton";
+import PlannerListSkeleton from "../../loading/planner/PlannerListSkeleton";
 
 export default function PlannerListItem({
   plan,

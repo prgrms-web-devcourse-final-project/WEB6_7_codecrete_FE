@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ConcertReviewListResponse } from "@/types/community/concert-review";
 import { getConcertReviewList } from "@/lib/api/community/concert-review/review.client";
-import ConcertReviewSummarySkeleton from "@/components/concert/detail/ConcertReviewSummarySkeleton";
+import ConcertReviewSummarySkeleton from "@/components/loading/concert/detail/ConcertReviewSummarySkeleton";
 
 export default function ConcertDetailReview({
   concertId,
