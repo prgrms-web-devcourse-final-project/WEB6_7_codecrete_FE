@@ -8,13 +8,13 @@ import { ConcertDetail } from "@/types/concerts";
 interface PlannerTopHeaderProps {
   planDetail: PlanDetail;
   concertDetail: ConcertDetail;
-  role: PlannerParticipantRole;
+  userRole: PlannerParticipantRole;
 }
 
 export default function PlannerTopHeader({
   planDetail,
   concertDetail,
-  role,
+  userRole,
 }: PlannerTopHeaderProps) {
   return (
     <header
@@ -37,7 +37,7 @@ export default function PlannerTopHeader({
             <ArrowLeftIcon size={16} />
             뒤로 가기
           </BackPageButton>
-          {role === "OWNER" && (
+          {userRole === "OWNER" && (
             <PlannerEdit planDetail={planDetail} concertDetail={concertDetail!} />
           )}
         </div>

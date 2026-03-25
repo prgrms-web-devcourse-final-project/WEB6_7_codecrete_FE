@@ -10,7 +10,7 @@ interface PlannerTimelineSectionProps {
   planId: string;
   schedules: ScheduleDetail[];
   concertCoords: ConcertCoords;
-  role: PlannerParticipantRole;
+  userRole: PlannerParticipantRole;
   totalDuration: number;
   userLocation: UserPlace | null | undefined;
 }
@@ -19,7 +19,7 @@ export default function PlannerTimelineSection({
   planId,
   schedules,
   concertCoords,
-  role,
+  userRole,
   totalDuration,
   userLocation,
 }: PlannerTimelineSectionProps) {
@@ -132,7 +132,7 @@ export default function PlannerTimelineSection({
                   <PlannerTimelineItem
                     key={item.data.id || `schedule-${index}`}
                     schedule={item.data}
-                    role={role}
+                    userRole={userRole}
                     planId={planId}
                     concertCoords={{
                       lat: concertCoords.lat,

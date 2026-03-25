@@ -18,20 +18,15 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return <PlannerError />;
   }
 
-  const myParticipant = planDetail.participants.find((p) => p.userId === me?.id);
-
-  if (!myParticipant) {
-    throw new Error("해당 플래너에 접근할 권한이 없습니다.");
-  }
-
-  const myRole: PlannerParticipantRole = myParticipant.role ?? null;
+  const participants = planDetail.participants.find((p) => p.userId === me?.id);
+  const userRole: PlannerParticipantRole = participants?.role ?? null;
 
   const queryClient = new QueryClient();
   queryClient.setQueryData(plannerQueryKeys.detail(id), planDetail);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <PlannerDetail planId={id} role={myRole} domain={domain} />
+      <PlannerDetail planId={id} userRole={userRole} domain={domain} />
     </HydrationBoundary>
   );
 }

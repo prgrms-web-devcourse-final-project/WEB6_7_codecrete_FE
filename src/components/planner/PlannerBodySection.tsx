@@ -11,13 +11,13 @@ export default function PlannerBodySection({
   planId,
   schedules,
   concertCoords,
-  role,
+  userRole,
   totalDuration,
 }: {
   planId: string;
   schedules: ScheduleDetail[];
   concertCoords: ConcertCoords;
-  role: PlannerParticipantRole;
+  userRole: PlannerParticipantRole;
   totalDuration: number;
 }) {
   const { data: participants, isLoading } = useQuery(plannerQueries.participants(planId));
@@ -38,7 +38,7 @@ export default function PlannerBodySection({
             planId={planId}
             schedules={schedules}
             concertCoords={concertCoords}
-            role={role}
+            userRole={userRole}
             totalDuration={totalDuration}
             userLocation={userLocation}
           />
