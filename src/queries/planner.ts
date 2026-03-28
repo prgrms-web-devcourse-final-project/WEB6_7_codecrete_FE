@@ -12,9 +12,8 @@ export const plannerQueryKeys = {
   list: () => [...plannerQueryKeys.lists(), "default"] as const, // 이후 필터링이 추가되면 params를 받도록 변경
   details: () => [...plannerQueryKeys.all, "details"] as const, // 플랜 상세 정보
   detail: (planId: string) => [...plannerQueryKeys.details(), planId] as const,
-  participants: (planId: string) =>
-    [...plannerQueryKeys.details(), "participants", planId] as const, // 플랜 참여자 정보
-  share: (planId: string) => [...plannerQueryKeys.details(), "share", planId] as const, // 플랜 공유 링크 정보
+  participants: (planId: string) => [...plannerQueryKeys.detail(planId), "participants"] as const, // 플랜 참여자 정보
+  share: (planId: string) => [...plannerQueryKeys.detail(planId), "share"] as const, // 플랜 공유 링크 정보
   userLocation: () => [...plannerQueryKeys.all, "userLocation"] as const, // 사용자 위치 정보
 };
 
