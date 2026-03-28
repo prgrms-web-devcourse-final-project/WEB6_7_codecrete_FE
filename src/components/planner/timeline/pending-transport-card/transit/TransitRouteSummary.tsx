@@ -53,7 +53,7 @@ export default function TransitRouteSummary({
       </div>
 
       {filteredLegs && filteredLegs.length > 0 && (
-        <div className="mt-2 flex items-center gap-1.5 overflow-hidden">
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 overflow-hidden">
           {filteredLegs.map((leg, i) => {
             const routeColor = leg.routeColor ? `#${leg.routeColor}` : "#9ca3af";
             return (

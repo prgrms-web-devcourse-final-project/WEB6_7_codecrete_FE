@@ -213,7 +213,7 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
         {schedule.transportType === "PUBLIC_TRANSPORT" && (
           <div className="space-y-1">
             <h5 className="text-xs font-medium">이동 경로</h5>
-            <div className="mt-2 flex items-center gap-1.5 overflow-hidden">
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 overflow-hidden">
               {filteredLegs.map((leg, i) => {
                 const routeColor = leg.routeColor ? `#${leg.routeColor}` : "#9ca3af";
                 return (
