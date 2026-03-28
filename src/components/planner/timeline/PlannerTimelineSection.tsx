@@ -3,8 +3,7 @@
 import { ConcertCoords, PlannerParticipantRole, ScheduleDetail, UserPlace } from "@/types/planner";
 import PlannerTimelineItem from "./PlannerTimelineItem";
 import StartLocationCard from "./StartLocationCard";
-import RouteCard from "./RouteCard";
-import PendingTransportCard from "./PendingTransportCard";
+import PendingTransportCard from "./pending-transport-card";
 
 interface PlannerTimelineSectionProps {
   planId: string;
@@ -95,24 +94,25 @@ export default function PlannerTimelineSection({
           <div className="relative space-y-6 lg:space-y-8">
             {/* 출발지 */}
             <StartLocationCard userLocation={userLocation} />
-
             {/* 출발지 → 첫 일정 경로 */}
             {showRoute && userLocation && (
-              <RouteCard
-                key={`${firstSchedule.id}-route`}
-                start={{
-                  lat: userLocation.lat,
-                  lon: userLocation.lon,
-                  name: userLocation.placeName || "출발지",
+              <PendingTransportCard
+                fromSchedule={{
+                  scheduleType: "OTHER",
+                  title: "출발지",
+                  startAt: "",
+                  duration: 0,
+                  location: userLocation.placeName || "출발지",
+                  locationLon: userLocation.lon,
+                  locationLat: userLocation.lat,
+                  estimatedCost: 0,
+                  details: "",
                 }}
-                end={{
-                  lat: firstSchedule.locationLat!,
-                  lon: firstSchedule.locationLon!,
-                  name: firstSchedule.title,
-                }}
+                toSchedule={firstSchedule}
+                planId={planId}
+                isStart
               />
             )}
-
             {/* 타임라인 아이템 렌더링 */}
             {timelineItems.map((item, index) => {
               if (item.type === "PENDING_TRANSPORT" && item.fromSchedule && item.toSchedule) {

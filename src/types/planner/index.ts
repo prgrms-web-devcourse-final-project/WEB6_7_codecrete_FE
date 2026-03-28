@@ -171,6 +171,19 @@ export interface TMapDetail {
     };
   } | null;
 }
+// 거리가 너무 가까울 때 TMAP이 반환하는 응답값
+export interface TMapDetailClose {
+  result: {
+    message: string;
+    status: number;
+  };
+}
+export type TMapDetailResponse = TMapDetail | TMapDetailClose;
+
+// 타입가드용 유틸 함수
+export function isTMapDetailClose(data: TMapDetailResponse): data is TMapDetailClose {
+  return "result" in data;
+}
 
 // 2. 경로 (Itinerary) - 추천 경로 하나하나
 export interface Itinerary {
@@ -357,6 +370,7 @@ export type PlannerParticipantInviteStatus =
   | "LEFT"
   | "REMOVED";
 
+// PlanDetail의 participants 배열에 포함된 참여자 정보 타입
 export type PlannerParticipant = {
   participantId: string;
   userId: number;
@@ -367,8 +381,27 @@ export type PlannerParticipant = {
   role: PlannerParticipantRole;
 };
 
+// 직접 API 호출 시 사용하는 플래너 참가자 정보 타입
+export type PlannerParticipantInfo = {
+  email: string;
+  inviteStatus: PlannerParticipantInviteStatus;
+  nickname: string;
+  participantId: number;
+  profileImage: string;
+  role: PlannerParticipantRole;
+  userId: number;
+};
+
 // 도보 이동 경로 요약 타입
 export type TMapWalkRoute = {
   totalTime: number;
   totalDistance: number;
+};
+
+// 좌표 타입
+export type Coords = {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 };
