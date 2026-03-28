@@ -30,6 +30,7 @@ export default function PlannerTopHeader({
           placeholder="blur"
           blurDataURL={PLACEHOLDER_DEFAULT}
           priority
+          fetchPriority="high"
         />
         {/* 배경 오버레이용 */}
         <div className="from-bg-main opacity/95 absolute inset-0 bg-linear-to-r to-transparent backdrop-blur-lg" />

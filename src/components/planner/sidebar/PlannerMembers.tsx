@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { PlannerParticipantInfo, PlannerParticipantRole } from "@/types/planner";
 import ChangeParticipantRoleDialog from "../dialogs/ChangeParticipantRoleDialog";
+import Image from "next/image";
+import { PLACEHOLDER_DEFAULT } from "@/constants/placeholder";
 
 interface PlannerMembersProps {
   participants: PlannerParticipantInfo[];
@@ -49,12 +50,16 @@ export function PlannerMembers({
             className="bg-muted/40 border-input flex items-center justify-between gap-4 rounded-2xl border px-4 py-3"
           >
             <div className="flex items-center gap-4">
-              <Avatar className="size-10">
-                <AvatarImage src={m.profileImage} alt={m.nickname} />
-                <AvatarFallback>
-                  <ProfileNoImage size="sm" alt={m.nickname} />
-                </AvatarFallback>
-              </Avatar>
+              <Image
+                src={m.profileImage}
+                alt={m.nickname}
+                width={40}
+                height={40}
+                className="size-10 rounded-full"
+                placeholder="blur"
+                blurDataURL={PLACEHOLDER_DEFAULT}
+                onError={() => <ProfileNoImage size="sm" alt={m.nickname} />}
+              />
               <div className="flex flex-1 flex-col gap-1">
                 <strong className="text-sm font-medium">{m.nickname}</strong>
                 <span className="text-text-sub text-xs">{m.role}</span>
