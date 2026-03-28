@@ -15,13 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlannerParticipant, PlannerParticipantRole } from "@/types/planner";
+import { PlannerParticipantInfo, PlannerParticipantRole } from "@/types/planner";
 import { Loader2Icon } from "lucide-react";
 
 interface ChangeParticipantRoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  participant: PlannerParticipant | null;
+  participant: PlannerParticipantInfo | null;
   nextRole: PlannerParticipantRole;
   onChangeRole: (role: PlannerParticipantRole) => void;
   onConfirm: () => void;

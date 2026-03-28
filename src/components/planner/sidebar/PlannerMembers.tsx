@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ProfileNoImage from "@/components/common/ProfileNoImage";
-import { PlannerParticipant, PlannerParticipantRole } from "@/types/planner";
+import { PlannerParticipantInfo, PlannerParticipantRole } from "@/types/planner";
 import ChangeParticipantRoleDialog from "../dialogs/ChangeParticipantRoleDialog";
 
 interface PlannerMembersProps {
-  participants: PlannerParticipant[];
+  participants: PlannerParticipantInfo[];
   isChangingRole: boolean;
   isBanningParticipant: boolean;
   handleRemoveParticipant: (participantId: string) => void;
@@ -23,10 +23,12 @@ export function PlannerMembers({
   userRole,
 }: PlannerMembersProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedParticipant, setSelectedParticipant] = useState<PlannerParticipant | null>(null);
+  const [selectedParticipant, setSelectedParticipant] = useState<PlannerParticipantInfo | null>(
+    null
+  );
   const [nextRole, setNextRole] = useState<PlannerParticipantRole>("VIEWER");
 
-  const openRoleDialog = (participant: PlannerParticipant) => {
+  const openRoleDialog = (participant: PlannerParticipantInfo) => {
     setSelectedParticipant(participant);
     setNextRole(participant.role === "OWNER" ? "EDITOR" : participant.role || "VIEWER");
     setDialogOpen(true);
@@ -34,7 +36,7 @@ export function PlannerMembers({
 
   const handleConfirmRole = () => {
     if (!selectedParticipant || !nextRole) return;
-    handleChangeRole(selectedParticipant.participantId, nextRole);
+    handleChangeRole(selectedParticipant.participantId.toString(), nextRole);
     setDialogOpen(false);
   };
 
@@ -76,7 +78,7 @@ export function PlannerMembers({
                     size="sm"
                     aria-label="삭제"
                     type="button"
-                    onClick={() => handleRemoveParticipant(m.participantId)}
+                    onClick={() => handleRemoveParticipant(m.participantId.toString())}
                     disabled={isBanningParticipant}
                   >
                     추방

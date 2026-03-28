@@ -29,8 +29,9 @@ export function useParticipantsManage(planId: string, userRole: PlannerParticipa
           participantId,
           participantUpdateRole: nextRole,
           participantCurrentRole:
-            participants?.find((p) => p.participantId === participantId)?.role || "VIEWER",
-          ownerParticipantId: ownerParticipant ? ownerParticipant.participantId : "",
+            participants?.find((p) => p.participantId.toString() === participantId)?.role ||
+            "VIEWER",
+          ownerParticipantId: ownerParticipant ? ownerParticipant.participantId.toString() : "",
         });
         await refetch();
         toast.success("참여자 권한을 변경했습니다.");
@@ -46,7 +47,7 @@ export function useParticipantsManage(planId: string, userRole: PlannerParticipa
       toast.error("플래너 소유자만 참여자를 추방할 수 있습니다.");
       return;
     }
-    const target = participants.find((p) => p.participantId === participantId);
+    const target = participants.find((p) => p.participantId.toString() === participantId);
 
     startBanning(async () => {
       try {

@@ -2,7 +2,7 @@ import { ResponseData } from "@/types/api";
 import {
   PlanDetail,
   PlanList,
-  PlannerParticipant,
+  PlannerParticipantInfo,
   PlannerParticipantRole,
   PlannerShareLinkResponse,
 } from "@/types/planner";
@@ -149,7 +149,7 @@ export const updatePlanDetail = async ({
 
     return data;
   } catch (error) {
-    console.error("Error creating planner:", error);
+    console.error("Error updating planner:", error);
     throw error;
   }
 };
@@ -217,7 +217,7 @@ export const declinePlanAsParticipant = async (shareToken: string): Promise<bool
 };
 
 // 플래너 참가자 목록 조회
-export const getPlanParticipants = async (planId: string): Promise<PlannerParticipant[]> => {
+export const getPlanParticipants = async (planId: string): Promise<PlannerParticipantInfo[]> => {
   try {
     const res = await ClientApi(`/api/v1/plans/${planId}/participants`, {
       method: "GET",
