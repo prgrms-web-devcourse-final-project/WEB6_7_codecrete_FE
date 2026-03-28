@@ -1,5 +1,11 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -35,6 +41,9 @@ export default function LinkShareDialog({
         <DialogHeader>
           <DialogTitle>링크 공유</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          공유 링크를 복사하여 친구들에게 일정을 공유하세요.
+        </DialogDescription>
         <FieldGroup className="max-h-[60vh] gap-5 overflow-y-auto p-4">
           <Field>
             <FieldLabel>링크 공유하기</FieldLabel>

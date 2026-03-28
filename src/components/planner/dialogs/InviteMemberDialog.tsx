@@ -1,5 +1,11 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -54,6 +60,10 @@ export default function InviteMemberDialog({
         <DialogHeader>
           <DialogTitle>친구 초대</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          친구를 초대하여 함께 플래너를 만들어보세요. 공유 링크를 복사하거나 멤버 관리에서 권한을
+          설정할 수 있습니다.
+        </DialogDescription>
         <FieldGroup className="max-h-[60vh] gap-5 overflow-y-auto p-4">
           <Field>
             <FieldLabel>링크 공유하기</FieldLabel>
