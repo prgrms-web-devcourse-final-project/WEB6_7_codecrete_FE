@@ -1,32 +1,39 @@
 "use client";
-
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import { PlannerShareLink } from "@/types/planner";
+import { PlannerParticipantRole } from "@/types/planner";
+import { useShareLink } from "@/hooks/useShareLink";
 
 interface LinkShareDialogProps {
+  planId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  shareLink: PlannerShareLink;
+  userRole: PlannerParticipantRole;
+  domain: string;
 }
 
-export default function LinkShareDialog({ open, onOpenChange, shareLink }: LinkShareDialogProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(shareLink.url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
+export default function LinkShareDialog({
+  planId,
+  open,
+  onOpenChange,
+  userRole,
+  domain,
+}: LinkShareDialogProps) {
+  const { shareLink, copied, handleCopyShareLink } = useShareLink(
+    planId,
+    domain,
+    userRole === "OWNER" || userRole === "EDITOR"
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -34,6 +41,9 @@ export default function LinkShareDialog({ open, onOpenChange, shareLink }: LinkS
         <DialogHeader>
           <DialogTitle>링크 공유</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          공유 링크를 복사하여 친구들에게 일정을 공유하세요.
+        </DialogDescription>
         <FieldGroup className="max-h-[60vh] gap-5 overflow-y-auto p-4">
           <Field>
             <FieldLabel>링크 공유하기</FieldLabel>
@@ -45,7 +55,7 @@ export default function LinkShareDialog({ open, onOpenChange, shareLink }: LinkS
               />
               <Button
                 className="relative shrink-0"
-                onClick={handleCopy}
+                onClick={handleCopyShareLink}
                 disabled={copied || !shareLink.url}
               >
                 <span

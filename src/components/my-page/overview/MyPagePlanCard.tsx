@@ -4,14 +4,20 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlannerListWithDetails } from "@/types/planner";
+import { PlanList } from "@/types/planner";
 import { formatDateKorean } from "@/utils/helpers/formatters";
 import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
+import { useQuery } from "@tanstack/react-query";
+import { concertQueries } from "@/queries/concerts";
+import { plannerQueries } from "@/queries/planner";
 
-export default function MyPagePlanCard({ schedule }: { schedule: PlannerListWithDetails }) {
+export default function MyPagePlanCard({ plan }: { plan: PlanList }) {
+  const { data: concertDetail } = useQuery(concertQueries.detail(plan.concertId.toString()));
+  const { data: participants } = useQuery(plannerQueries.participants(plan.id.toString()));
+
   // 일정이 오늘부터 며칠 뒤에 있는지 계산 (한국날짜 기준)
   const today = new Date();
-  const timeDiff = new Date(schedule.planDate).getTime() - today.getTime();
+  const timeDiff = new Date(plan.planDate).getTime() - today.getTime();
   const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) - 1;
 
   return (
@@ -20,8 +26,8 @@ export default function MyPagePlanCard({ schedule }: { schedule: PlannerListWith
       <div className="relative w-full shrink-0 sm:w-35">
         <AspectRatio ratio={320 / 426.5}>
           <Image
-            src={schedule.concertDetail.posterUrl ?? PLACEHOLDER_CONCERT}
-            alt={schedule.concertDetail.name}
+            src={concertDetail?.posterUrl ?? PLACEHOLDER_CONCERT}
+            alt={concertDetail?.name ?? "Concert Poster"}
             className="rounded-2xl object-cover"
             fill
             placeholder="blur"
@@ -35,7 +41,7 @@ export default function MyPagePlanCard({ schedule }: { schedule: PlannerListWith
         <div className="flex flex-1 flex-col items-start justify-between gap-4">
           <div className="w-full space-y-2">
             <div className="flex items-center justify-between">
-              <h4 className="text-base font-bold sm:text-lg lg:text-2xl">{schedule.title}</h4>
+              <h4 className="text-base font-bold sm:text-lg lg:text-2xl">{plan.title}</h4>
               <span className="text-text-sub text-xs">
                 D{dayDiff > 0 ? `-${dayDiff}` : `+${Math.abs(dayDiff)}`}
               </span>
@@ -43,20 +49,20 @@ export default function MyPagePlanCard({ schedule }: { schedule: PlannerListWith
             <ul className="text-text-sub space-y-1 text-sm break-keep [&>li]:grid [&>li]:grid-cols-[auto_1fr] [&>li]:gap-1 [&>li>svg]:size-5 [&>li>svg]:py-0.5">
               <li>
                 <CalendarIcon />
-                <span>{formatDateKorean(schedule.planDate)}</span>
+                <span>{formatDateKorean(plan.planDate)}</span>
               </li>
               <li>
                 <MapPinIcon />
-                <span>{schedule.concertDetail.placeAddress}</span>
+                <span>{concertDetail?.placeAddress}</span>
               </li>
               <li>
                 <UsersRoundIcon />
-                <span>참여자 {schedule.participants.length}명</span>
+                <span>참여자 {participants?.length ?? 0}명</span>
               </li>
             </ul>
           </div>
           <div className="grid w-full gap-2 md:flex md:w-auto">
-            <Link href={`/planner/${schedule.id}`}>
+            <Link href={`/planner/${plan.id}`}>
               <Button type="button" className="w-full">
                 자세히 보기
               </Button>

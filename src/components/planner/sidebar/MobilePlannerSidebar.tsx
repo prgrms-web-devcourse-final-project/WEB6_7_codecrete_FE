@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { MapIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import PlannerSidebarContents from "./PlannerSidebarContents";
-import { PlannerParticipant, ScheduleDetail } from "@/types/planner";
+import { PlannerParticipantInfo, ScheduleDetail } from "@/types/planner";
 
 interface MobilePlannerSidebarProps {
-  participants: PlannerParticipant[];
+  participants: PlannerParticipantInfo[];
   schedules: ScheduleDetail[];
 }
 

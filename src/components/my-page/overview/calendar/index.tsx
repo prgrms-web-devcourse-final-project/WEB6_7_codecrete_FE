@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { twMerge } from "tailwind-merge";
@@ -10,16 +9,18 @@ import { CustomCaption } from "./CustomCaption";
 import { CustomDay } from "./CustomDay";
 import { CalendarLegend } from "./CalendarLegend";
 import type { ConcertWithTicket } from "@/types/my-page";
-import type { PlannerListWithDetails } from "@/types/planner";
 import { parseYMD, toYMD } from "@/utils/helpers/calendar";
 import MyPageCalendarList from "../MyPageCalendarList";
+import { useQuery } from "@tanstack/react-query";
+import { plannerQueries } from "@/queries/planner";
 
 interface MyPageCalendarProps {
   concerts: ConcertWithTicket[];
-  planners: PlannerListWithDetails[];
 }
 
-export default function MyPageCalendar({ concerts, planners }: MyPageCalendarProps) {
+export default function MyPageCalendar({ concerts }: MyPageCalendarProps) {
+  const { data: planList = [] } = useQuery(plannerQueries.list());
+
   const [date, setDate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
 
@@ -48,17 +49,17 @@ export default function MyPageCalendar({ concerts, planners }: MyPageCalendarPro
   // 날짜별 플래너 수
   const scheduleEvents = useMemo<Record<string, number>>(
     () =>
-      planners.reduce<Record<string, number>>((acc, { planDate }) => {
+      planList.reduce<Record<string, number>>((acc, { planDate }) => {
         acc[planDate] = (acc[planDate] ?? 0) + 1;
         return acc;
       }, {}),
-    [planners]
+    [planList]
   );
 
   const selectedDateKey = toYMD(date);
 
   const selectedConcerts = concertsByDate[selectedDateKey] ?? [];
-  const selectedSchedules = planners.filter((s) => s.planDate === selectedDateKey);
+  const selectedPlans = planList.filter((s) => s.planDate === selectedDateKey);
 
   return (
     <div className="flex-3 space-y-8">
@@ -113,7 +114,7 @@ export default function MyPageCalendar({ concerts, planners }: MyPageCalendarPro
       {/* 캘린더 날짜 선택 시 보여지는 일정 리스트 */}
       <MyPageCalendarList
         concerts={selectedConcerts}
-        schedules={selectedSchedules}
+        planList={selectedPlans}
         selectedDate={date}
       />
     </div>

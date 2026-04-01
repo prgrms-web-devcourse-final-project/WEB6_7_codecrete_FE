@@ -1,2 +1,4 @@
 export const PLACEHOLDER_ARTIST = "/images/placeholder_artist.svg";
 export const PLACEHOLDER_CONCERT = "/images/placeholder_concert.svg";
+
+export const PLACEHOLDER_DEFAULT = "/images/placeholder_default.webp";

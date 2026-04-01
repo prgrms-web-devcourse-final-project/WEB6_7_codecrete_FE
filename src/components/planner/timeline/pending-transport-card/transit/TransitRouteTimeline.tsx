@@ -2,7 +2,15 @@
 
 import { Itinerary } from "@/types/planner";
 import { cn } from "@/lib/utils";
-import { BusFrontIcon, FootprintsIcon, MapPinIcon, TrainIcon } from "lucide-react";
+import {
+  BusFrontIcon,
+  FootprintsIcon,
+  MapPinIcon,
+  PlaneIcon,
+  ShipIcon,
+  TrainFrontIcon,
+  TrainIcon,
+} from "lucide-react";
 import { formatDuration } from "@/utils/helpers/formatters";
 import { Separator } from "@/components/ui/separator";
 
@@ -74,7 +82,9 @@ export default function TransitRouteTimeline({ itinerary }: TransitRouteTimeline
                       )}
                       style={!isWalk ? { backgroundColor: lineColor } : {}}
                     >
-                      {isWalk ? "도보" : leg.route || leg.mode}
+                      {isWalk
+                        ? "도보"
+                        : leg.route?.split(":").join(" : ") || leg.mode.split(":").join(" ")}
                     </span>
 
                     <span>{formatDuration(leg.sectionTime)}</span>
@@ -114,6 +124,14 @@ function getLegIcon(mode: string, className?: string) {
       return <BusFrontIcon className={className} />;
     case "SUBWAY":
       return <TrainIcon className={className} />;
+    case "AIRPLANE":
+      return <PlaneIcon className={className} />;
+    case "EXPRESSBUS":
+      return <BusFrontIcon className={className} />;
+    case "FERRY":
+      return <ShipIcon className={className} />;
+    case "TRAIN":
+      return <TrainFrontIcon className={className} />;
     default:
       return <FootprintsIcon className={cn(className, "text-gray-400")} />;
   }

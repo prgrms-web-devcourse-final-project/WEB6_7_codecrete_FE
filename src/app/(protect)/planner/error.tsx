@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { LockIcon, ArrowLeftIcon, HomeIcon, AlertTriangle, RefreshCcw } from "lucide-react";
+import Link from "next/link";
 
 export default function Error({
   error,
@@ -102,15 +103,15 @@ export default function Error({
             )}
           </div>
 
-          <div className="border-border/50 border-t pt-6">
-            <p className="text-text-sub/70 mb-4 text-center text-sm">문제가 해결되지 않나요?</p>
-            <Button
-              variant="ghost"
-              className="text-point-main hover:text-point-main hover:bg-point-main/5 w-full"
-              asChild
-            >
-              <a href="mailto:support@naeconcertbutakhae.shop">고객 지원팀에 문의하기</a>
-            </Button>
+          <div className="border-border/50 border-t pt-6 text-center">
+            <p className="text-text-sub/70 mb-4 text-center text-sm">문제가 계속되나요?</p>
+            <p className="text-text-main">
+              문제가 계속 된다면{" "}
+              <Link href="mailto:garlatonic@kakao.com" className="hover:underline">
+                관리자
+              </Link>
+              에게 문의해주세요.
+            </p>
           </div>
 
           {/* 개발 모드용 에러 ID */}

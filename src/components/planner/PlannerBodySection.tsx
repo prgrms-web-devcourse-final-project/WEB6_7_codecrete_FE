@@ -3,22 +3,31 @@ import PlannerTimelineSection from "./timeline/PlannerTimelineSection";
 import PlannerSidebarContents from "./sidebar/PlannerSidebarContents";
 import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
 import MobilePlannerSidebar from "./sidebar/MobilePlannerSidebar";
-import { getPlanParticipants } from "@/lib/api/planner/planner.server";
+import { useQuery } from "@tanstack/react-query";
+import { plannerQueries } from "@/queries/planner";
+import PlannerTimelineSectionSkeleton from "../loading/planner/PlannerTimelineSectionSkeleton";
 
-export default async function PlannerBodySection({
+export default function PlannerBodySection({
   planId,
   schedules,
   concertCoords,
-  role,
+  userRole,
   totalDuration,
 }: {
   planId: string;
   schedules: ScheduleDetail[];
   concertCoords: ConcertCoords;
-  role: PlannerParticipantRole;
+  userRole: PlannerParticipantRole;
   totalDuration: number;
 }) {
-  const participants = await getPlanParticipants(planId);
+  const { data: participants, isLoading } = useQuery(plannerQueries.participants(planId));
+  const { data: userLocation, isLoading: isUserLocationLoading } = useQuery(
+    plannerQueries.userLocation()
+  );
+
+  if (isLoading || isUserLocationLoading || !participants) {
+    return <PlannerTimelineSectionSkeleton />;
+  }
 
   return (
     <section className="border-border bg-bg-sub border-t px-5 py-8 lg:px-15 lg:py-10">
@@ -29,8 +38,9 @@ export default async function PlannerBodySection({
             planId={planId}
             schedules={schedules}
             concertCoords={concertCoords}
-            role={role}
+            userRole={userRole}
             totalDuration={totalDuration}
+            userLocation={userLocation}
           />
           <PlannerQuickTips />
         </div>

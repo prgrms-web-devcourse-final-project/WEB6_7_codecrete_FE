@@ -1,5 +1,11 @@
 import { ResponseData } from "@/types/api";
-import { PlannerParticipant, PlannerParticipantRole } from "@/types/planner";
+import {
+  PlanDetail,
+  PlanList,
+  PlannerParticipantInfo,
+  PlannerParticipantRole,
+  PlannerShareLinkResponse,
+} from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 interface Planner {
@@ -11,6 +17,82 @@ interface Planner {
   createdDate: string;
   modifiedDate: string;
 }
+
+/**
+ * @description 플래너 계획 상세 조회
+ * @param planId - 플래너 계획 ID
+ * @returns 플래너 계획 상세 정보
+ */
+export const getPlanDetail = async (planId: string): Promise<PlanDetail> => {
+  const res = await ClientApi(`/api/v1/plans/${planId}`, { method: "GET" });
+
+  if (!res.ok) {
+    const error = new Error("플랜 정보를 불러오는데 실패했습니다.");
+    (error as Error & { statusCode?: number }).statusCode = res.status;
+    throw error;
+  }
+
+  const data = await res.json();
+  return data.data;
+};
+
+/**
+ * @description 플래너 계획 목록 조회
+ * @returns 플래너 계획 목록
+ */
+export const getPlanList = async (): Promise<PlanList[]> => {
+  try {
+    const res = await ClientApi("/api/v1/plans/list", { method: "GET" });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      throw new Error(`API 요청 실패: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data.data as PlanList[];
+  } catch (error) {
+    console.error("Error fetching plans list:", error);
+    throw error;
+  }
+};
+
+/**
+ * @description 플래너 공유 링크 조회
+ * @param planId - 플래너 계획 ID
+ * @returns 플래너 공유 링크 정보(URL, 토큰 등)
+ */
+export const getPlanShareLink = async (planId: string): Promise<PlannerShareLinkResponse> => {
+  const res = await ClientApi(`/api/v1/plans/${planId}/share/link`, {
+    method: "GET",
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    return { status: "ok", data: data.data };
+  }
+
+  // 에러별로 상세 메시지 처리
+  const errorData = await res.json().catch(() => null);
+  const resultCode = errorData?.resultCode as string | undefined;
+  const msg = errorData?.msg as string | undefined;
+
+  // 공유 링크 미생성
+  if (res.status === 400) {
+    return { status: "not_created" };
+  }
+
+  // 권한 없음 (일반 사용자)
+  if (res.status === 403 && resultCode === "P-103") {
+    return { status: "forbidden", message: msg || "해당 작업을 수행할 권한이 없습니다." };
+  }
+
+  // 그 외 공통 에러
+  let message = "공유 링크를 불러오는데 실패했습니다.";
+  if (msg) message = msg;
+
+  return { status: "error", message };
+};
 
 // 플래너 계획 생성
 export const createNewPlan = async ({
@@ -67,7 +149,7 @@ export const updatePlanDetail = async ({
 
     return data;
   } catch (error) {
-    console.error("Error creating planner:", error);
+    console.error("Error updating planner:", error);
     throw error;
   }
 };
@@ -135,7 +217,7 @@ export const declinePlanAsParticipant = async (shareToken: string): Promise<bool
 };
 
 // 플래너 참가자 목록 조회
-export const getPlanParticipants = async (planId: string): Promise<PlannerParticipant[]> => {
+export const getPlanParticipants = async (planId: string): Promise<PlannerParticipantInfo[]> => {
   try {
     const res = await ClientApi(`/api/v1/plans/${planId}/participants`, {
       method: "GET",

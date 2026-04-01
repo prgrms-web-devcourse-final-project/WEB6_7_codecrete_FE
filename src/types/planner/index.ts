@@ -171,6 +171,19 @@ export interface TMapDetail {
     };
   } | null;
 }
+// 거리가 너무 가까울 때 TMAP이 반환하는 응답값
+export interface TMapDetailClose {
+  result: {
+    message: string;
+    status: number;
+  };
+}
+export type TMapDetailResponse = TMapDetail | TMapDetailClose;
+
+// 타입가드용 유틸 함수
+export function isTMapDetailClose(data: TMapDetailResponse): data is TMapDetailClose {
+  return "result" in data;
+}
 
 // 2. 경로 (Itinerary) - 추천 경로 하나하나
 export interface Itinerary {
@@ -310,17 +323,35 @@ export type KakaoCarRouteGuide = {
 };
 
 // 주변 장소 검색 API 응답 타입 (음식점 기준)
-export type NearbyPlaces = {
-  place_name: string;
-  x: number;
-  y: number;
-  road_address_name: string;
-  address_name: string;
-  place_url: string;
-};
+export type NearbyPlaces = Pick<
+  SearchPlace,
+  "place_name" | "x" | "y" | "road_address_name" | "address_name" | "place_url"
+>;
 
 // 콘서트 장소 좌표 타입
 export type ConcertCoords = { lon: number; lat: number };
+
+// 플래너 공유 링크 초기 상태 타입
+export type PlannerShareLinkResponse =
+  | {
+      status: "ok";
+      data: {
+        planId: string;
+        shareToken: string;
+        shareLink: string;
+      };
+    }
+  | {
+      status: "not_created";
+    }
+  | {
+      status: "forbidden";
+      message: string;
+    }
+  | {
+      status: "error";
+      message: string;
+    };
 
 // 플래너 링크
 export type PlannerShareLink = {
@@ -339,6 +370,7 @@ export type PlannerParticipantInviteStatus =
   | "LEFT"
   | "REMOVED";
 
+// PlanDetail의 participants 배열에 포함된 참여자 정보 타입
 export type PlannerParticipant = {
   participantId: string;
   userId: number;
@@ -349,8 +381,27 @@ export type PlannerParticipant = {
   role: PlannerParticipantRole;
 };
 
+// 직접 API 호출 시 사용하는 플래너 참가자 정보 타입
+export type PlannerParticipantInfo = {
+  email: string;
+  inviteStatus: PlannerParticipantInviteStatus;
+  nickname: string;
+  participantId: number;
+  profileImage: string;
+  role: PlannerParticipantRole;
+  userId: number;
+};
+
 // 도보 이동 경로 요약 타입
 export type TMapWalkRoute = {
   totalTime: number;
   totalDistance: number;
+};
+
+// 좌표 타입
+export type Coords = {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 };

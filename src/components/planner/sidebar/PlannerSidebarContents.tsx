@@ -1,11 +1,11 @@
-import { PlannerParticipant, ScheduleDetail } from "@/types/planner";
+import { PlannerParticipantInfo, ScheduleDetail } from "@/types/planner";
 import PlannerInviteFriends from "./PlannerInviteFriends";
 import PlannerMapView from "./PlannerMapView";
 import PlannerNearbyRestaurants from "./PlannerNearbyRestaurants";
 import { Separator } from "@/components/ui/separator";
 
 interface PlannerSidebarContentsProps {
-  participants: PlannerParticipant[];
+  participants: PlannerParticipantInfo[];
   schedules: ScheduleDetail[];
 }
 

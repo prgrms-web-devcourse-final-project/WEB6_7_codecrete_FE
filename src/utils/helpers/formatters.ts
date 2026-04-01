@@ -170,7 +170,8 @@ export const formatDuration = (totalMinutes: number): string => {
   const hours = Math.floor(totalMinutes / 3600);
   const minutes = Math.floor((totalMinutes % 3600) / 60);
   if (hours > 0) {
-    return `${hours}시간 ${minutes}분`;
+    if (minutes > 0) return `${hours}시간 ${minutes}분`;
+    else return `${hours}시간`;
   } else {
     return `${minutes}분`;
   }

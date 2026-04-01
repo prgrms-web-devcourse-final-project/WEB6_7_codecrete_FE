@@ -17,20 +17,16 @@ import {
 } from "@/components/ui/dialog";
 import { ConcertDatePicker } from "@/components/concert/detail/ConcertDatePicker";
 import { Input } from "@/components/ui/input";
-import { PlannerListWithDetails } from "@/types/planner";
+import { PlanList } from "@/types/planner";
 import MyPagePlanCard from "./MyPagePlanCard";
 
 interface ConcertListProps {
   concerts: ConcertWithTicket[];
-  schedules: PlannerListWithDetails[];
+  planList: PlanList[];
   selectedDate: Date;
 }
 
-export default function MyPageCalendarList({
-  concerts,
-  schedules,
-  selectedDate,
-}: ConcertListProps) {
+export default function MyPageCalendarList({ concerts, planList, selectedDate }: ConcertListProps) {
   const dateStr = selectedDate.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -122,7 +118,7 @@ export default function MyPageCalendarList({
     });
   };
 
-  if (concerts.length === 0 && schedules.length === 0) {
+  if (concerts.length === 0 && planList.length === 0) {
     return (
       <section className="space-y-4">
         <h3 className="text-base font-bold lg:text-lg">{dateStr}</h3>
@@ -208,14 +204,14 @@ export default function MyPageCalendarList({
             </Dialog>
           </>
         )}
-        {schedules.length > 0 && (
+        {planList.length > 0 && (
           <>
             <FieldSeparator className="*:text-text-main h-auto *:px-10 *:text-base *:font-bold">
               일정
             </FieldSeparator>
             <div className="space-y-4">
-              {schedules.map((schedule) => (
-                <MyPagePlanCard key={schedule.id} schedule={schedule} />
+              {planList.map((plan) => (
+                <MyPagePlanCard key={plan.id} plan={plan} />
               ))}
             </div>
           </>

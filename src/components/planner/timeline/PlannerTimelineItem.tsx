@@ -22,14 +22,14 @@ import { useRouter } from "next/navigation";
 
 interface PlannerTimelineItemProps {
   planId: string;
-  role: PlannerParticipantRole;
+  userRole: PlannerParticipantRole;
   concertCoords: ConcertCoords;
   schedule: ScheduleDetail;
 }
 
 export default function PlannerTimelineItem({
   planId,
-  role,
+  userRole,
   concertCoords,
   schedule,
 }: PlannerTimelineItemProps) {
@@ -89,7 +89,7 @@ export default function PlannerTimelineItem({
                 </span>
 
                 {/* 드롭다운 메뉴 */}
-                {(role === "OWNER" || role === "EDITOR") && (
+                {(userRole === "OWNER" || userRole === "EDITOR") && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
