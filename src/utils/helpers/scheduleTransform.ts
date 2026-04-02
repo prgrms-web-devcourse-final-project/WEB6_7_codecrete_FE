@@ -1,5 +1,12 @@
 import { ScheduleFormData } from "@/lib/zod/schedule.schema";
-import { ScheduleDetail, Itinerary, KakaoMapSummary, TMapWalkRoute } from "@/types/planner";
+import {
+  ScheduleDetail,
+  Itinerary,
+  KakaoMapSummary,
+  TMapWalkRoute,
+  Coords,
+  TMapSummary,
+} from "@/types/planner";
 
 /**
  * 기본 일정(MEAL/WAITING/ACTIVITY/OTHER) 폼 데이터를 API용 ScheduleDetail로 변환
@@ -181,4 +188,32 @@ export function calculateNextScheduleStartTime(
     nextStartTime = `${String(hours).padStart(2, "0")}:${String(roundedMins).padStart(2, "0")}`;
   }
   return nextStartTime;
+}
+
+export function buildWalkSummary(
+  totalTime: number,
+  totalDistance: number,
+  coords: Coords
+): TMapSummary {
+  return {
+    metaData: {
+      plan: {
+        itineraries: [
+          {
+            totalTime,
+            totalDistance,
+            transferCount: 0,
+            fare: {
+              regular: {
+                totalFare: 0,
+                currency: { symbol: "￦", currency: "원", currencyCode: "KRW" },
+              },
+            },
+            pathType: 5,
+          },
+        ],
+      },
+      requestParameters: { reqDttm: "", ...coords },
+    },
+  };
 }

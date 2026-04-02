@@ -5,28 +5,23 @@ import { PlusIcon, UserRoundPlusIcon, MapIcon, Share2Icon } from "lucide-react";
 import AddScheduleDialog from "../dialogs/AddScheduleDialog";
 import InviteMemberDialog from "../dialogs/InviteMemberDialog";
 import LinkShareDialog from "../dialogs/LinkShareDialog";
-import {
-  ConcertCoords,
-  PlannerParticipantRole,
-  PlannerShareLink,
-  ScheduleDetail,
-} from "@/types/planner";
+import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
 import Link from "next/link";
 
 interface PlannerTopActionsProps {
   planId: string;
   concertCoords?: ConcertCoords;
   schedules?: ScheduleDetail[];
-  role: PlannerParticipantRole;
-  shareLink: PlannerShareLink;
+  userRole: PlannerParticipantRole;
+  domain: string;
 }
 
 export default function PlannerTopActions({
   planId,
   concertCoords,
   schedules,
-  role,
-  shareLink,
+  userRole,
+  domain,
 }: PlannerTopActionsProps) {
   const [showAdd, setShowAdd] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
@@ -129,11 +124,17 @@ export default function PlannerTopActions({
         planId={planId}
         open={showInvite}
         onOpenChange={setShowInvite}
-        role={role}
-        shareLink={shareLink}
+        userRole={userRole}
+        domain={domain}
       />
       {/* 링크 공유하기 */}
-      <LinkShareDialog open={showShare} onOpenChange={setShowShare} shareLink={shareLink} />
+      <LinkShareDialog
+        planId={planId}
+        open={showShare}
+        onOpenChange={setShowShare}
+        domain={domain}
+        userRole={userRole}
+      />
     </>
   );
 }

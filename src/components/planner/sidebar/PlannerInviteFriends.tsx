@@ -1,13 +1,13 @@
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { PlannerParticipant } from "@/types/planner";
+import { PlannerParticipantInfo } from "@/types/planner";
 
-export default function PlannerInviteFriends({
-  participants,
-}: {
-  participants: PlannerParticipant[];
-}) {
+interface PlannerInviteFriendsProps {
+  participants: PlannerParticipantInfo[];
+}
+
+export default function PlannerInviteFriends({ participants }: PlannerInviteFriendsProps) {
   return (
     <div className="bg-bg-main border-border lg:border lg:p-6">
       <h4 className="text-base font-bold">동행메이트</h4>

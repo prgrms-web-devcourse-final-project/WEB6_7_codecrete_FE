@@ -3,11 +3,11 @@ import { getIsLikedConcert, getTicketOfficesByConcertId } from "@/lib/api/concer
 import { ConcertDetail } from "@/types/concerts";
 import Image from "next/image";
 import ConcertArtistBadges from "./ConcertArtistBadges";
-import ConcertArtistBadgesSkeleton from "./ConcertArtistBadgesSkeleton";
+import ConcertArtistBadgesSkeleton from "../../../loading/concert/detail/ConcertArtistBadgesSkeleton";
 import { Suspense } from "react";
 import ConcertChatButton from "./ConcertChatButton";
 import ConcertLikeButton from "./ConcertLikeButton";
-import ConcertLikeButtonSkeleton from "./ConcertLikeButtonSkeleton";
+import ConcertLikeButtonSkeleton from "../../../loading/concert/detail/ConcertLikeButtonSkeleton";
 import ConcertHeaderInfo from "./ConcertHeaderInfo";
 import {
   formatConcertPrice,
@@ -15,7 +15,7 @@ import {
   formatDateTimeRange,
 } from "@/utils/helpers/formatters";
 import ConcertHeaderArtist from "./ConcertHeaderArtist";
-import ConcertHeaderArtistSkeleton from "./ConcertHeaderArtistSkeleton";
+import ConcertHeaderArtistSkeleton from "../../../loading/concert/detail/ConcertHeaderArtistSkeleton";
 import { getMe } from "@/lib/api/auth/auth.server";
 import ConcertHeaderBtn from "./ConcertHeaderBtn";
 import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";

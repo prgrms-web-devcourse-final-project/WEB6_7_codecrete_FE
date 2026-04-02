@@ -1,29 +1,32 @@
-import { ConcertCoords, PlannerParticipantRole, ScheduleDetail } from "@/types/planner";
+"use client";
+
+import { ConcertCoords, PlannerParticipantRole, ScheduleDetail, UserPlace } from "@/types/planner";
 import PlannerTimelineItem from "./PlannerTimelineItem";
 import StartLocationCard from "./StartLocationCard";
-import { getMyLocation } from "@/lib/api/planner/location.server";
-import RouteCard from "./RouteCard";
-import PendingTransportCard from "./PendingTransportCard";
+import PendingTransportCard from "./pending-transport-card";
 
-export default async function PlannerTimelineSection({
-  planId,
-  schedules,
-  concertCoords,
-  role,
-  totalDuration,
-}: {
+interface PlannerTimelineSectionProps {
   planId: string;
   schedules: ScheduleDetail[];
   concertCoords: ConcertCoords;
-  role: PlannerParticipantRole;
+  userRole: PlannerParticipantRole;
   totalDuration: number;
-}) {
+  userLocation: UserPlace | null | undefined;
+}
+
+export default function PlannerTimelineSection({
+  planId,
+  schedules,
+  concertCoords,
+  userRole,
+  totalDuration,
+  userLocation,
+}: PlannerTimelineSectionProps) {
   const firstSchedule = schedules[0];
-  const myLocation = await getMyLocation();
 
   // 초기 경로 표시 조건
   const showRoute =
-    myLocation && firstSchedule && firstSchedule.locationLat && firstSchedule.locationLon;
+    userLocation && firstSchedule && firstSchedule.locationLat && firstSchedule.locationLon;
 
   // 타임라인 아이템 생성 (일정 + pending 이동)
   const timelineItems: {
@@ -90,25 +93,26 @@ export default async function PlannerTimelineSection({
         <div className="before:bg-bg-sub relative space-y-6 before:absolute before:top-0 before:left-4 before:h-full before:w-0.5 lg:space-y-8 lg:before:left-8">
           <div className="relative space-y-6 lg:space-y-8">
             {/* 출발지 */}
-            <StartLocationCard myLocation={myLocation} />
-
+            <StartLocationCard userLocation={userLocation} />
             {/* 출발지 → 첫 일정 경로 */}
-            {showRoute && myLocation && (
-              <RouteCard
-                key={`${firstSchedule.id}-route`}
-                start={{
-                  lat: myLocation.lat,
-                  lon: myLocation.lon,
-                  name: myLocation.placeName || "출발지",
+            {showRoute && userLocation && (
+              <PendingTransportCard
+                fromSchedule={{
+                  scheduleType: "OTHER",
+                  title: "출발지",
+                  startAt: "",
+                  duration: 0,
+                  location: userLocation.placeName || "출발지",
+                  locationLon: userLocation.lon,
+                  locationLat: userLocation.lat,
+                  estimatedCost: 0,
+                  details: "",
                 }}
-                end={{
-                  lat: firstSchedule.locationLat!,
-                  lon: firstSchedule.locationLon!,
-                  name: firstSchedule.title,
-                }}
+                toSchedule={firstSchedule}
+                planId={planId}
+                isStart
               />
             )}
-
             {/* 타임라인 아이템 렌더링 */}
             {timelineItems.map((item, index) => {
               if (item.type === "PENDING_TRANSPORT" && item.fromSchedule && item.toSchedule) {
@@ -128,7 +132,7 @@ export default async function PlannerTimelineSection({
                   <PlannerTimelineItem
                     key={item.data.id || `schedule-${index}`}
                     schedule={item.data}
-                    role={role}
+                    userRole={userRole}
                     planId={planId}
                     concertCoords={{
                       lat: concertCoords.lat,

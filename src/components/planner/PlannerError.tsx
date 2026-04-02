@@ -3,6 +3,7 @@
 import { AlertCircle, ArrowLeftIcon, HomeIcon, LockIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function PlannerError() {
   const router = useRouter();
@@ -20,14 +21,13 @@ export default function PlannerError() {
           </div>
 
           {/* 제목 */}
-          <h1 className="text-foreground mb-4 text-center text-3xl font-bold">접근할 수 없어요!</h1>
+          <h1 className="text-foreground mb-4 text-center text-3xl font-bold">
+            접근할 수 없는 플래너입니다.
+          </h1>
 
-          {/* ✅ 에러 메시지 표시 */}
+          {/* 에러 메시지 표시 */}
           <div className="mb-8 text-center text-base">
-            {/* <p className="text-text-sub mb-2 leading-relaxed">{errorMessage}</p> */}
-            <p className="text-text-sub/70">
-              플래너 소유자에게 접근 권한을 부여받으면 사용할 수 있어요.
-            </p>
+            <p className="text-text-sub/70">접근 권한이 없는 플래너입니다.</p>
           </div>
 
           {/* 안내 박스 */}
@@ -35,7 +35,10 @@ export default function PlannerError() {
             <AlertCircle className="text-point-main mt-1 size-4 shrink-0" />
             <div className="text-text-sub text-left text-sm">
               <p className="text-foreground mb-1 text-base font-medium">안내</p>
-              <p>페이지를 다시 로드하거나 지원팀에 문의해주세요.</p>
+              <p className="break-keep">
+                플래너 소유자에게 접근 권한을 부여받아야 볼 수 있어요. 동행구인 게시판에서 권한을
+                요청해보세요.
+              </p>
             </div>
           </div>
 
@@ -61,23 +64,16 @@ export default function PlannerError() {
           </div>
 
           {/* 지원 */}
-          <div className="border-border/50 border-t pt-6">
+          <div className="border-border/50 border-t pt-6 text-center">
             <p className="text-text-sub/70 mb-4 text-center text-sm">문제가 계속되나요?</p>
-            <Button
-              variant="ghost"
-              className="text-point-main hover:text-point-main hover:bg-point-main/5 w-full"
-              asChild
-            >
-              <a href="mailto:support@naeconcertbutakhae.shop">고객 지원팀에 문의하기</a>
-            </Button>
+            <p className="text-text-main">
+              플래너에 초대되었는데도 접근할 수 없다면,{" "}
+              <Link href="mailto:garlatonic@kakao.com" className="hover:underline">
+                관리자
+              </Link>
+              에게 문의해주세요.
+            </p>
           </div>
-
-          {/* 에러 ID (개발 모드) */}
-          {/* {process.env.NODE_ENV === "development" && error.digest && (
-            <div className="border-border/30 mt-8 border-t pt-6 text-center">
-              <p className="text-text-sub/50 font-mono text-xs">Error ID: {error.digest}</p>
-            </div>
-          )} */}
         </div>
       </div>
     </div>

@@ -38,11 +38,14 @@ export default function PlannerQuickTips() {
       <h3 className="text-text-main text-xl font-bold">콘서트 당일 팁</h3>
       <div className="grid grid-cols-2 gap-4">
         {tips.map((tip, idx) => (
-          <Card key={idx} className="border-border bg-bg-sub flex-row items-center p-4">
+          <Card
+            key={idx}
+            className="border-border bg-bg-sub flex-row items-center gap-3 p-4 lg:gap-6"
+          >
             <div className="bg-point-main text-text-point-main flex size-10 items-center justify-center rounded-full">
               {tip.icon}
             </div>
-            <div className="space-y-1">
+            <div className="flex-1 space-y-1">
               <h4 className="text-text-main text-sm font-semibold">{tip.title}</h4>
               <p className="text-text-sub text-xs">{tip.description}</p>
             </div>

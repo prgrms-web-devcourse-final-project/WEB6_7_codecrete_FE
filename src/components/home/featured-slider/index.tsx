@@ -1,33 +1,25 @@
 "use client";
-
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { SliderHeader } from "../../common/SliderHeader";
 import "swiper/css";
 import ArtistCard from "./ArtistCard";
-import { getArtists } from "@/lib/api/artists/artists.client";
 import { useQuery } from "@tanstack/react-query";
 import FeaturedArtistsSkeleton from "@/components/loading/home/FeaturedArtistsSkeleton";
-import { artistQueryKeys } from "@/queries/artists";
+import { artistQueries } from "@/queries/artists";
 import EmptySection from "@/components/common/EmptySection";
 
 export default function FeaturedSlider({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
-  const queryKey = artistQueryKeys.featured(0, 20, "LIKE");
-  const { data, isLoading, isError } = useQuery({
-    queryKey,
-    queryFn: () => getArtists(0, 20, "LIKE"),
-    staleTime: 1000 * 60 * 3,
-    gcTime: 1000 * 60 * 30,
-  });
+  const { data, isLoading, isError } = useQuery(artistQueries.featured(0, 20, "LIKE"));
 
   if (isLoading) return <FeaturedArtistsSkeleton />;
   if (isError) {
     return (
-      <section className="py-10 md:py-15 lg:py-20">
-        <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
+      <section className="bg-bg-sub w-full overflow-hidden px-5 py-10 md:py-15 lg:px-15 lg:py-20">
+        <div className="mx-auto flex w-full max-w-400 flex-col gap-6 lg:gap-10">
           <div className="space-y-1 md:space-y-2">
             <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
               💖 당신의 취향을 저격할 아티스트
@@ -49,8 +41,8 @@ export default function FeaturedSlider({ isAuthenticated }: { isAuthenticated: b
   const artists = data ?? [];
   if (artists.length === 0) {
     return (
-      <section className="py-10 md:py-15 lg:py-20">
-        <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
+      <section className="bg-bg-sub w-full overflow-hidden px-5 py-10 md:py-15 lg:px-15 lg:py-20">
+        <div className="mx-auto flex w-full max-w-400 flex-col gap-6 lg:gap-10">
           <div className="space-y-1 md:space-y-2">
             <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
               💖 당신의 취향을 저격할 아티스트

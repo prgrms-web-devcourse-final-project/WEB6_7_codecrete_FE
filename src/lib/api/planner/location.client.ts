@@ -3,13 +3,28 @@ import { NearbyPlaces, UserPlace } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 /**
+ * 사용자의 현재 위치를 조회합니다.
+ * @returns {Promise<UserPlace | null>} 사용자 위치 데이터 또는 null(위치 정보가 없는 경우)
+ */
+export const getUserLocation = async (): Promise<UserPlace | null> => {
+  const res = await ClientApi(`/api/v1/location/my`, {
+    method: "GET",
+  });
+  if (!res.ok) {
+    return null;
+  }
+  const data = await res.json();
+  return data.data;
+};
+
+/**
  * 사용자의 위치를 저장합니다.
  *
  * @param {number} lat - 위도
  * @param {number} lon - 경도
  * @returns {Promise<ResponseData<UserPlace | null>>} 저장된 위치 데이터
  */
-export const saveMyLocation = async ({
+export const saveUserLocation = async ({
   lat,
   lon,
 }: {
@@ -34,7 +49,7 @@ export const saveMyLocation = async ({
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("saveMyLocation Error:", error);
+    console.error("saveUserLocation Error:", error);
     throw error;
   }
 };
@@ -46,7 +61,7 @@ export const saveMyLocation = async ({
  * @param {number} lon - 경도
  * @returns {Promise<ResponseData<UserPlace | null>>} 수정된 위치 데이터
  */
-export const updateMyLocation = async ({
+export const updateUserLocation = async ({
   lat,
   lon,
 }: {
@@ -71,7 +86,7 @@ export const updateMyLocation = async ({
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("updateMyLocation Error:", error);
+    console.error("updateUserLocation Error:", error);
     throw error;
   }
 };
@@ -81,7 +96,7 @@ export const updateMyLocation = async ({
  *
  * @returns {Promise<void>}
  */
-export const deleteMyLocation = async (): Promise<void> => {
+export const deleteUserLocation = async (): Promise<void> => {
   try {
     const res = await ClientApi("/api/v1/location/my", {
       method: "DELETE",
@@ -90,7 +105,7 @@ export const deleteMyLocation = async (): Promise<void> => {
       throw new Error(`Server Error: ${res.status}`);
     }
   } catch (error) {
-    console.error("deleteMyLocation Error:", error);
+    console.error("deleteUserLocation Error:", error);
     throw error;
   }
 };

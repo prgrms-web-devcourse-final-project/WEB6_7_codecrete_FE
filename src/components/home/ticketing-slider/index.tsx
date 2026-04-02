@@ -1,21 +1,12 @@
 "use client";
-
 import { useQuery } from "@tanstack/react-query";
 import TicketShapeSlider from "../../common/ticket-slider";
-import { getUpcomingConcerts } from "@/lib/api/concerts/concerts.client";
 import TicketShapeSliderSkeleton from "../../common/ticket-slider/TicketShapeSliderSkeleton";
-import { concertsQueryKeys } from "@/queries/concerts";
+import { concertQueries } from "@/queries/concerts";
 import EmptySection from "@/components/common/EmptySection";
 
 export default function TicketingSlider() {
-  const queryKey = concertsQueryKeys.ticketing("TICKETING", 0, 21);
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey,
-    queryFn: () => getUpcomingConcerts({ sort: "TICKETING", page: 0, size: 21 }),
-    staleTime: 1000 * 60 * 3,
-    gcTime: 1000 * 60 * 30,
-  });
+  const { data, isLoading, isError } = useQuery(concertQueries.ticketing("TICKETING", 0, 21));
 
   if (isLoading) return <TicketShapeSliderSkeleton />;
 
@@ -23,8 +14,8 @@ export default function TicketingSlider() {
     const isServerClosed = data?.status === 503; // 서버 점검 여부 확인
 
     return (
-      <section className="py-10 md:py-15 lg:py-20">
-        <div className="flex flex-col gap-6 px-5 lg:gap-10 lg:px-15">
+      <section className="my-10 w-full px-5 md:my-15 lg:my-20 lg:gap-10 lg:px-15">
+        <div className="mx-auto flex max-w-400 flex-col gap-6">
           <div className="space-y-1 md:space-y-2">
             <h2 className="text-text-main text-2xl font-extrabold md:text-3xl">
               🎫 예매일 임박! 콘서트 모음

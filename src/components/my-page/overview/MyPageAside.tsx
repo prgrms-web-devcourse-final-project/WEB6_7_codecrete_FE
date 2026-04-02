@@ -1,11 +1,11 @@
 "use client";
-
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PLACEHOLDER_CONCERT } from "@/constants/placeholder";
+import { plannerQueries } from "@/queries/planner";
 import { ConcertWithTicket } from "@/types/my-page";
 import { LikedArtist } from "@/types/my-page";
-import { PlannerListWithDetails } from "@/types/planner";
 import { formatDateRange } from "@/utils/helpers/formatters";
+import { useQuery } from "@tanstack/react-query";
 import { CalendarCheck, MicVocalIcon, SpotlightIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,13 +14,13 @@ export default function MyPageAside({
   likedConcerts,
   likedConcertsCount,
   likedArtists,
-  joinedPlanners,
 }: {
   likedConcerts: ConcertWithTicket[];
   likedConcertsCount: number;
   likedArtists: LikedArtist[];
-  joinedPlanners: PlannerListWithDetails[];
 }) {
+  const { data: plannerList } = useQuery(plannerQueries.list());
+
   // 찜한 콘서트 배열에서 예정된 콘서트 일정 필터링 및 정렬
   const upcomingLikedConcerts = likedConcerts
     .sort((a, b) => {
@@ -83,7 +83,7 @@ export default function MyPageAside({
                     참여한 플래너
                   </h5>
                   <p className="text-text-main line-clamp-1 text-sm font-medium md:text-base">
-                    {joinedPlanners.length}개
+                    {plannerList?.length ?? 0}개
                   </p>
                 </div>
               </Link>
