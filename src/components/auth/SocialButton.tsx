@@ -34,7 +34,13 @@ export default function SocialButton() {
           asChild={false}
           onClick={handleKakaoLogin}
         >
-          <Image src="/icons/ico_kakao.svg" alt="카카오 아이콘" width={16} height={16} />
+          <Image
+            src="/icons/ico_kakao.svg"
+            alt="카카오 아이콘"
+            width={16}
+            height={16}
+            style={{ width: 16, height: 16 }}
+          />
           Kakao로 계속하기
         </Button>
 
@@ -45,7 +51,13 @@ export default function SocialButton() {
           asChild={false}
           onClick={handleGoogleLogin}
         >
-          <Image src="/icons/ico_google.svg" alt="구글 아이콘" width={16} height={16} />
+          <Image
+            src="/icons/ico_google.svg"
+            alt="구글 아이콘"
+            width={16}
+            height={16}
+            style={{ width: 16, height: 16 }}
+          />
           Google로 계속하기
         </Button>
       </div>

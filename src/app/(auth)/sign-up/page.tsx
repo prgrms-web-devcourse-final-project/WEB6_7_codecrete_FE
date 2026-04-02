@@ -14,7 +14,7 @@ export const metadata = {
     title: "회원가입 | 내 콘서트를 부탁해",
     description:
       "내 콘서트를 부탁해에 가입하고 좋아하는 아티스트의 공연 소식을 가장 먼저 받아보세요!",
-    url: "/signup",
+    url: "/sign-up",
     siteName: "내 콘서트를 부탁해",
     locale: "ko_KR",
     type: "website",

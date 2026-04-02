@@ -12,7 +12,7 @@ export const metadata = {
   openGraph: {
     title: "로그인 | 내 콘서트를 부탁해",
     description: "로그인하고 나만의 공연 일정을 관리해보세요.",
-    url: "/signup",
+    url: "/sign-in",
     siteName: "내 콘서트를 부탁해",
     locale: "ko_KR",
     type: "website",
@@ -49,7 +49,7 @@ export default function Page() {
         <div className="signUpLink flex justify-center gap-1">
           <p className="text-text-sub">계정이 없으신가요?</p>
           <Link href="/sign-up" className="text-text-main hover:text-text-sub">
-            로그인
+            회원가입
           </Link>
         </div>
         <p className="agreePolicy text-text-sub flex justify-center text-center text-xs break-keep">
