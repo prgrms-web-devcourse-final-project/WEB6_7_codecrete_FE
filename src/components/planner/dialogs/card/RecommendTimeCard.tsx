@@ -1,6 +1,6 @@
 "use client";
 
-import { ZapIcon, TriangleAlert, Clover } from "lucide-react";
+import { ZapIcon, TriangleAlert, Clover, FootprintsIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatTimeToKoreanAMPM } from "@/utils/helpers/formatters";
@@ -8,8 +8,8 @@ import type { TimeValidationResult } from "@/utils/helpers/scheduleValidation";
 import { cn } from "@/lib/utils";
 
 interface RecommendTimeCardProps {
-  travelDuration: number;
-  recommendedStartTime: string;
+  travelDuration?: number;
+  recommendedStartTime?: string;
   currentStartTime?: string;
   onApply: () => void;
   validation: TimeValidationResult;
@@ -22,6 +22,25 @@ export default function RecommendTimeCard({
   onApply,
   validation,
 }: RecommendTimeCardProps) {
+  if (!travelDuration || !recommendedStartTime) {
+    return (
+      <Card className="p-4">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="bg-muted rounded-full p-1.5">
+              <FootprintsIcon className="text-muted-foreground size-4" />
+            </div>
+            <p className="text-sm font-medium">이동 시간 기반 추천</p>
+          </div>
+          <div>
+            거리가 가까워 해당 이동 수단으로는 추천 시간이 제공되지 않아요. 다른 이동 수단을
+            선택해주세요.
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   const travelMinutes = Math.ceil(travelDuration / 60);
   const hasWarning = !validation.isValid;
 
