@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useStartLocation } from "@/hooks/useStartLocation";
+import { useStartLocation } from "@/hooks/planner/useStartLocation";
 import StartLocationDialog from "../dialogs/StartLocationDialog";
 
 export default function StartLocationCard({

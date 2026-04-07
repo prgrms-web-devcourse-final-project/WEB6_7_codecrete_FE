@@ -1,6 +1,7 @@
 import { getWalkRouteByTmap } from "@/lib/api/planner/transport.client";
 import { transportQueries } from "@/queries/transport";
-import { Coords, TMapSummary } from "@/types/planner";
+import { Coords } from "@/types/planner";
+import { buildWalkSummary } from "@/utils/helpers/scheduleTransform";
 import { skipToken, useQuery } from "@tanstack/react-query";
 
 export function useCarRoute(coords: Coords | null) {
@@ -27,28 +28,4 @@ export function useWalkRoute(coords: Coords | null, straightDistance: number = 0
         }
       : skipToken,
   });
-}
-
-function buildWalkSummary(totalTime: number, totalDistance: number, coords: Coords): TMapSummary {
-  return {
-    metaData: {
-      plan: {
-        itineraries: [
-          {
-            totalTime,
-            totalDistance,
-            transferCount: 0,
-            fare: {
-              regular: {
-                totalFare: 0,
-                currency: { symbol: "￦", currency: "원", currencyCode: "KRW" },
-              },
-            },
-            pathType: 5,
-          },
-        ],
-      },
-      requestParameters: { reqDttm: "", ...coords },
-    },
-  };
 }

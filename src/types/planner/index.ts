@@ -189,10 +189,10 @@ export function isTMapDetailClose(data: TMapDetailResponse): data is TMapDetailC
 export interface Itinerary {
   totalTime: number; // 총 소요 시간 (초)
   totalDistance: number; // 총 거리 (m)
-  totalWalkTime?: number; // 총 도보 시간 (초)
-  totalWalkDistance?: number; // 총 도보 거리 (m)
+  totalWalkTime: number; // 총 도보 시간 (초)
+  totalWalkDistance: number; // 총 도보 거리 (m)
   transferCount: number; // 환승 횟수
-  pathType: number; // 경로 타입 (1: 지하철, 2: 버스, 3: 지하철+버스)
+  pathType?: number; // 경로 타입 (1: 지하철, 2: 버스, 3: 지하철+버스)
   fare: {
     regular: {
       totalFare: number; // 총 요금
