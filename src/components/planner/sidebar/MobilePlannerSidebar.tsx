@@ -32,7 +32,7 @@ export default function MobilePlannerSidebar({
               <span className="sr-only">지도 및 정보 보기</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-dvh gap-0 [&>button]:top-5">
+          <SheetContent side="right" className="h-dvh gap-0 [&>button]:top-5">
             <SheetHeader className="border-border border-b sm:px-6">
               <SheetTitle className="text-base">플래너 지도 및 정보 보기</SheetTitle>
             </SheetHeader>
