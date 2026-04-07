@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { ConcertCoords, ScheduleDetail } from "@/types/planner";
 import { formatConcertPrice, formatDistance } from "@/utils/helpers/formatters";
@@ -17,9 +16,18 @@ import {
   WandSparklesIcon,
 } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react/jsx-runtime";
-import TransitRouteTimeline from "./pending-transport-card/transit/TransitRouteTimeline";
+
+const TransitRouteDetailsPopover = dynamic(() => import("./TransitRouteDetailsPopover"), {
+  loading: () => (
+    <Button variant="secondary" className="w-full" disabled>
+      <BusFrontIcon />
+      이동 경로 자세히 보기
+    </Button>
+  ),
+});
 
 interface TimelineInfoGridProps {
   schedule: ScheduleDetail;
@@ -257,17 +265,7 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
           </Button>
         </Link>
         {schedule.transportType === "PUBLIC_TRANSPORT" && itineraries && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="secondary" className="w-full">
-                <BusFrontIcon />
-                이동 경로 자세히 보기
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="" align="start">
-              <TransitRouteTimeline itinerary={itineraries} />
-            </PopoverContent>
-          </Popover>
+          <TransitRouteDetailsPopover itinerary={itineraries} />
         )}
       </div>
     </>
