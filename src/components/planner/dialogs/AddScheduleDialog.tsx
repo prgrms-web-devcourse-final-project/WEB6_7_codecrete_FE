@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useTransition } from "react";
+import { useEffect, useMemo, useTransition } from "react";
 import { useWatch, type FieldErrors } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -32,6 +32,7 @@ import { useWarningTime } from "@/hooks/planner/useWarningTime";
 import { WarningTimeDialog } from "./WarningTimeDialog";
 import ScheduleDetailField from "./fields/ScheduleDetailField";
 import ScheduleTitleField from "./fields/ScheduleTitleField";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface AddScheduleDialogProps {
   planId: string;
@@ -69,15 +70,27 @@ export default function AddScheduleDialog({
   const userTransportType = useWatch({ control: form.control, name: "transportType" }); // 탭 연동
   const bufferMinutes = useWatch({ control: form.control, name: "bufferMinutes" }) ?? 10;
 
+  const recommendedTimeParams = useMemo(
+    () => ({
+      selectedScheduleId,
+      currentCoords,
+      bufferMinutes,
+    }),
+    [selectedScheduleId, currentCoords, bufferMinutes]
+  );
+  const debouncedRecommendedTimeParams = useDebounce(recommendedTimeParams, 500);
+
   const { recommendedTimes, isLoading } = useRecommendedTime({
-    selectedScheduleId,
-    currentCoords,
+    selectedScheduleId: debouncedRecommendedTimeParams.selectedScheduleId,
+    currentCoords: debouncedRecommendedTimeParams.currentCoords,
     regularScheduleCandidates,
-    bufferMinutes,
+    bufferMinutes: debouncedRecommendedTimeParams.bufferMinutes,
   });
 
-  const activeRecommend =
-    recommendedTimes && userTransportType ? recommendedTimes[userTransportType] : null;
+  const activeRecommend = useMemo(
+    () => (recommendedTimes && !!userTransportType ? recommendedTimes[userTransportType] : null),
+    [recommendedTimes, userTransportType]
+  );
 
   // 시간 변경 시 검증
   const timeValidation: TimeValidationResult = useMemo(() => {
@@ -149,6 +162,13 @@ export default function AddScheduleDialog({
       toast.error("일정 이름을 입력해주세요");
     }
   };
+
+  // 다이얼로그 호출 시 폼 초기화
+  useEffect(() => {
+    if (open) {
+      resetToInitialState();
+    }
+  }, [open, resetToInitialState]);
 
   return (
     <>
