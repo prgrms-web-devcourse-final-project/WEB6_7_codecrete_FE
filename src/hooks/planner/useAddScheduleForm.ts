@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -25,7 +25,7 @@ export function useAddScheduleForm(defaultStartTime?: string) {
   });
 
   // 초기화 로직
-  const resetToInitialState = () => {
+  const resetToInitialState = useCallback(() => {
     setCurrentScheduleType("MEAL");
     const initialValues = getDefaultScheduleValues("MEAL", toMinutePrecision(defaultStartTime));
     form.reset(initialValues, {
@@ -34,19 +34,22 @@ export function useAddScheduleForm(defaultStartTime?: string) {
       keepIsValid: false,
       keepErrors: false,
     });
-  };
+  }, [defaultStartTime, form]);
 
   // scheduleType 변경 핸들러
-  const handleScheduleTypeChange = (newType: Exclude<ScheduleType, "TRANSPORT">) => {
-    setCurrentScheduleType(newType);
-    const newValues = getDefaultScheduleValues(newType, toMinutePrecision(defaultStartTime));
-    form.reset(newValues, {
-      keepDirty: false,
-      keepTouched: false,
-      keepIsValid: false,
-      keepErrors: false,
-    });
-  };
+  const handleScheduleTypeChange = useCallback(
+    (newType: Exclude<ScheduleType, "TRANSPORT">) => {
+      setCurrentScheduleType(newType);
+      const newValues = getDefaultScheduleValues(newType, toMinutePrecision(defaultStartTime));
+      form.reset(newValues, {
+        keepDirty: false,
+        keepTouched: false,
+        keepIsValid: false,
+        keepErrors: false,
+      });
+    },
+    [defaultStartTime, form]
+  );
 
   return {
     form,
