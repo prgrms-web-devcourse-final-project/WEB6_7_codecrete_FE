@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Bus, Car, FootprintsIcon, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -41,7 +41,7 @@ export default function PendingTransportCard({
   // 사용자 선택 상태 (탭)
   const [userTransportType, setUserTransportType] = useState<"transit" | "car" | "walk">("transit");
   // 대중교통 경로 선택 인덱스
-  const [selectedTransitIndex, setSelectedTransitIndex] = useState<number>(0);
+  const [selectedTransitIndex, setSelectedTransitIndex] = useState<number | null>(null);
 
   const coords: Coords | null = useMemo(() => {
     const { locationLon: fromLon, locationLat: fromLat } = fromSchedule;
@@ -58,17 +58,37 @@ export default function PendingTransportCard({
   const { data: transitData, isLoading: loadingTransit } = useTransitRoute(coords);
 
   // 대중교통 경로 중 유효한 경로가 있는지 확인
-  const itineraries =
-    !transitData || isTMapDetailClose(transitData)
-      ? []
-      : (transitData.metaData?.plan?.itineraries ?? []);
+  const itineraries = useMemo(
+    () =>
+      !transitData || isTMapDetailClose(transitData)
+        ? []
+        : (transitData.metaData?.plan?.itineraries ?? []),
+    [transitData]
+  );
+  const recommendedTransitIndex = useMemo(() => {
+    if (itineraries.length === 0) return null;
+
+    const TRANSFER_PENALTY_SECONDS = 5 * 60;
+    return itineraries.reduce(
+      (best, route, index) => {
+        const score = route.totalTime + (route?.transferCount ?? 0) * TRANSFER_PENALTY_SECONDS;
+        return score < best.score ? { index, score } : best;
+      },
+      { index: 0, score: Infinity }
+    ).index;
+  }, [itineraries]);
+
+  const effectiveSelectedTransitIndex = selectedTransitIndex ?? recommendedTransitIndex;
   // 대중교통 데이터 없으면 자동으로 walk로 파생
   const transportType: "transit" | "car" | "walk" =
     userTransportType === "transit" && !itineraries.length && !loadingTransit
       ? "walk"
       : userTransportType;
   // index로 선택 경로 파생
-  const selectedTransitRoute: Itinerary | null = itineraries[selectedTransitIndex] ?? null;
+  const selectedTransitRoute: Itinerary | null =
+    effectiveSelectedTransitIndex === null
+      ? null
+      : (itineraries[effectiveSelectedTransitIndex] ?? null);
 
   // 자동차/도보 데이터는 transportType에 따라 조건부로 쿼리 실행
   const { data: carData, isLoading: loadingCar } = useCarRoute(
@@ -179,8 +199,8 @@ export default function PendingTransportCard({
           <ToggleGroup
             type="single"
             value={transportType}
-            onValueChange={
-              (value) => value && setUserTransportType(value as "transit" | "car" | "walk") // ✅ 수정
+            onValueChange={(value) =>
+              value && setUserTransportType(value as "transit" | "car" | "walk")
             }
             className="bg-muted text-muted-foreground [&>button[data-state=on]]:text-accent-foreground"
           >
@@ -254,29 +274,32 @@ export default function PendingTransportCard({
           ) : itineraries.length > 0 ? (
             <TransitRouteList
               itineraries={itineraries}
-              onSelect={(_, index) => setSelectedTransitIndex(index ?? 0)}
-              selectedIndex={selectedTransitIndex}
+              onSelect={(_, index) => setSelectedTransitIndex(index)}
+              selectedIndex={effectiveSelectedTransitIndex}
             />
           ) : (
             <RouteNotFound />
           ))}
 
         {!isStart && (
-          <Button
-            onClick={() => confirmMutation.mutate()}
-            disabled={confirmMutation.isPending || isLoading}
-          >
-            {confirmMutation.isPending ? (
-              <>
-                <Loader2 className="animate-spin" />
-                확정 중...
-              </>
-            ) : (
-              <>
-                <CheckCircle />이 경로로 확정하기
-              </>
-            )}
-          </Button>
+          <>
+            <Separator />
+            <Button
+              onClick={() => confirmMutation.mutate()}
+              disabled={confirmMutation.isPending || isLoading}
+            >
+              {confirmMutation.isPending ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  확정 중...
+                </>
+              ) : (
+                <>
+                  <CheckCircle />이 경로로 확정하기
+                </>
+              )}
+            </Button>
+          </>
         )}
       </div>
     </article>
