@@ -258,7 +258,7 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
         </Link>
         {schedule.transportType === "PUBLIC_TRANSPORT" && itineraries && (
           <Popover>
-            <PopoverTrigger>
+            <PopoverTrigger asChild>
               <Button variant="secondary" className="w-full">
                 <BusFrontIcon />
                 이동 경로 자세히 보기

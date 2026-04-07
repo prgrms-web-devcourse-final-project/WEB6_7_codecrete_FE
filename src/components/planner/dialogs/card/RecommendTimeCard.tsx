@@ -22,7 +22,7 @@ export default function RecommendTimeCard({
   onApply,
   validation,
 }: RecommendTimeCardProps) {
-  if (!travelDuration || !recommendedStartTime) {
+  if (travelDuration === undefined || recommendedStartTime === undefined) {
     return (
       <Card className="p-4">
         <div className="space-y-3">

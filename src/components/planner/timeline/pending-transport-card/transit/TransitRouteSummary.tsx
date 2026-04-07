@@ -47,7 +47,7 @@ export default function TransitRouteSummary({
           <span>환승 {route.transferCount}회</span>
           <Separator orientation="vertical" className="h-3!" />
           <span className="text-foreground font-medium">
-            {route?.fare?.regular && route.fare.regular.totalFare.toLocaleString()}원
+            {route?.fare?.regular ? `${route.fare.regular.totalFare.toLocaleString()}원` : "-"}
           </span>
         </div>
       </div>
