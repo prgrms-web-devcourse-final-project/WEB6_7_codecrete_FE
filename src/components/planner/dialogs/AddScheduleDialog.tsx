@@ -8,6 +8,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -156,6 +157,9 @@ export default function AddScheduleDialog({
           <DialogHeader>
             <DialogTitle>새로운 일정 추가</DialogTitle>
           </DialogHeader>
+          <DialogDescription className="sr-only">
+            새로운 일정을 추가하는 폼입니다. 일정 유형, 시간, 장소 등을 입력할 수 있습니다.
+          </DialogDescription>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit, onError)}>
