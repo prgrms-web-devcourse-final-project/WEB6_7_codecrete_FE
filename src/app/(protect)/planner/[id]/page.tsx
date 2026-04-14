@@ -1,10 +1,12 @@
 import { getPlanDetail } from "@/lib/api/planner/planner.server";
 import { getUsersMe } from "@/lib/api/user/user.server";
+import { getConcertDetail } from "@/lib/api/concerts/concerts.server";
 import PlannerError from "@/components/planner/PlannerError";
 import { PlannerParticipantRole } from "@/types/planner";
 import { headers } from "next/headers";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { plannerQueryKeys } from "@/queries/planner";
+import { concertQueryKeys } from "@/queries/concerts";
 import PlannerDetail from "@/components/planner/PlannerDetail";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -21,8 +23,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const participants = planDetail.participants.find((p) => p.userId === me?.id);
   const userRole: PlannerParticipantRole = participants?.role ?? null;
 
+  const concertId = planDetail.concertId?.toString();
+  const concertDetail = concertId ? await getConcertDetail({ concertId }) : null;
+
   const queryClient = new QueryClient();
   queryClient.setQueryData(plannerQueryKeys.detail(id), planDetail);
+  if (concertId && concertDetail) {
+    queryClient.setQueryData(concertQueryKeys.detail(concertId), concertDetail);
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

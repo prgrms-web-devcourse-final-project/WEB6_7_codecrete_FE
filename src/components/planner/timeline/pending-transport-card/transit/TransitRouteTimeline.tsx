@@ -1,6 +1,6 @@
 "use client";
 
-import { Itinerary } from "@/types/planner";
+import { Itinerary, ScheduleDetail } from "@/types/planner";
 import { cn } from "@/lib/utils";
 import {
   BusFrontIcon,
@@ -13,13 +13,22 @@ import {
 } from "lucide-react";
 import { formatDuration } from "@/utils/helpers/formatters";
 import { Separator } from "@/components/ui/separator";
+import { twMerge } from "tailwind-merge";
 
 interface TransitRouteTimelineProps {
-  itinerary: Itinerary;
+  itinerary: Itinerary | ScheduleDetail["transportRoute"];
 }
 
 export default function TransitRouteTimeline({ itinerary }: TransitRouteTimelineProps) {
-  const { legs } = itinerary;
+  if (!itinerary) {
+    return (
+      <div className="text-muted-foreground py-4 text-center text-sm">
+        상세 경로 정보가 없습니다.
+      </div>
+    );
+  }
+
+  const legs = "leg" in itinerary ? itinerary.leg : itinerary?.legs;
 
   if (!legs || legs.length === 0) {
     return (
@@ -30,7 +39,12 @@ export default function TransitRouteTimeline({ itinerary }: TransitRouteTimeline
   }
 
   return (
-    <div className="border-input relative border-t p-3 lg:p-4">
+    <div
+      className={twMerge(
+        "border-input relative border-t p-3 lg:p-4",
+        "leg" in itinerary && "border-none"
+      )}
+    >
       {legs.map((leg, index) => {
         const isLast = index === legs.length - 1;
 
@@ -90,12 +104,14 @@ export default function TransitRouteTimeline({ itinerary }: TransitRouteTimeline
                     <span>{formatDuration(leg.sectionTime)}</span>
 
                     {/* 거리 or 정거장 수 */}
-                    <Separator orientation="vertical" className="bg-muted h-3! w-px!" />
-                    <span>
-                      {isWalk
-                        ? `${leg.distance}m`
-                        : `${leg.passStopList?.stations.length || 0}개 정류장`}
-                    </span>
+
+                    {!isWalk && (
+                      <>
+                        <Separator orientation="vertical" className="bg-muted h-3! w-px!" />
+                        <span>{leg.passStopList?.stations.length || 0}개 정류장</span>
+                      </>
+                    )}
+                    {isWalk && leg.distance && <span>{leg.distance}m</span>}
                   </div>
                 </div>
               </>
