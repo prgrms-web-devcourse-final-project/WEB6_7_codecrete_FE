@@ -7,7 +7,13 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 
 export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  const isDark = theme === "dark" || (theme === "system" && resolvedTheme === "dark");
+
+  if (!theme && !resolvedTheme) {
+    return null;
+  }
 
   const handleToggleTheme = async (checked: boolean) => {
     const next = checked ? "dark" : "light";
@@ -25,10 +31,10 @@ export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
       <div className="flex items-center justify-between">
         <h2 className="text-text-main text-xl font-black lg:text-2xl">CodeCrete</h2>
         <div className="text-text-sub flex items-center justify-between gap-1.5 lg:text-base">
-          {theme === "dark" ? <Moon /> : <Sun />}
+          {isDark ? <Moon /> : <Sun />}
           <Switch
             aria-describedby="다크모드 스위치"
-            checked={theme === "dark"}
+            checked={isDark}
             onCheckedChange={handleToggleTheme}
           />
         </div>
