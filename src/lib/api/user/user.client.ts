@@ -22,7 +22,7 @@ export const getUsersSettings = async () => {
 
 // 이메일 알림 및 다크모드 설정 수정
 export const changeUsersSettings = async (data: {
-  emailNotifications: boolean;
+  emailNotifications?: boolean;
   darkMode: boolean;
 }) => {
   try {

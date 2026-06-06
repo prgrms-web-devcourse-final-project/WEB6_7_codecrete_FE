@@ -2,13 +2,16 @@ import { Separator } from "@/components/ui/separator";
 import { TEAM_MEMBERS } from "./constants";
 import TeamSection from "./TeamSection";
 import BrandInfo from "./BrandInfo";
+import { getAuthStatus } from "@/lib/api/auth/auth.server";
 
-export default function Footer() {
+export default async function Footer() {
+  const isLoggedIn = await getAuthStatus();
+
   return (
     <footer className="border-border bg-bg-main w-full border-t px-5 py-6 lg:px-15 lg:py-8">
       <div className="mx-auto flex w-full max-w-400 flex-col gap-5 lg:flex-row lg:gap-20">
         {/* Brand Section */}
-        <BrandInfo />
+        <BrandInfo isLoggedIn={isLoggedIn} />
         <Separator orientation="horizontal" className="lg:hidden" />
         {/* Team Section */}
         <div className="flex flex-1 flex-col gap-5 lg:flex-row lg:gap-10">

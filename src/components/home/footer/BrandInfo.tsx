@@ -1,15 +1,30 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
+import { changeUsersSettings } from "@/lib/api/user/user.client";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
-export default function BrandInfo() {
+export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { theme, setTheme } = useTheme();
 
-  const handleToggleTheme = (checked: boolean) => {
-    setTheme(checked ? "dark" : "light");
+  const handleToggleTheme = async (checked: boolean) => {
+    const next = checked ? "dark" : "light";
+    setTheme(next);
+
+    if (isLoggedIn) {
+      await changeUsersSettings({
+        darkMode: next === "dark", // T/F 전환
+      });
+    } else {
+      try {
+        window.localStorage.setItem("cc-dark-mode", next);
+      } catch (error) {
+        console.error("Error updating user settings in localStorage:", error);
+        return null;
+      }
+    }
   };
 
   return (
