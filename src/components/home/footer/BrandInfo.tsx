@@ -17,13 +17,6 @@ export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
       await changeUsersSettings({
         darkMode: next === "dark", // T/F 전환
       });
-    } else {
-      try {
-        window.localStorage.setItem("cc-dark-mode", next);
-      } catch (error) {
-        console.error("Error updating user settings in localStorage:", error);
-        return null;
-      }
     }
   };
 
