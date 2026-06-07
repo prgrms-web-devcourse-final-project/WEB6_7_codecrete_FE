@@ -1,6 +1,12 @@
 import { ResponseData } from "@/types/api";
 import { CommentResponse } from "@/types/community";
-import { ConcertDetail, ConcertVenueInfo, LikeConcert, TicketOffice } from "@/types/concerts";
+import {
+  ConcertData,
+  ConcertDetail,
+  ConcertVenueInfo,
+  LikeConcert,
+  TicketOffice,
+} from "@/types/concerts";
 import { Concert, ConcertWithTicket } from "@/types/home";
 import ClientApi from "@/utils/helpers/clientApi";
 import { createEmptyResponse } from "@/utils/helpers/createEmptyResponse";
@@ -106,6 +112,39 @@ export const getConcertVenueInfo = async ({
   } catch (error) {
     console.error("Error fetching concert venue info:", error);
     return createEmptyResponse("공연장 정보를 가져오는데 실패했습니다");
+  }
+};
+
+// TODO: 공연 목록 페이지에 연동 필요함
+/**
+ * 공연 목록 가져오기
+ * @param concertId
+ * @returns
+ */
+export const getConcertsList = async ({
+  sort,
+  page = 0,
+  size = 12,
+}: {
+  sort: string;
+  page?: number;
+  size?: number;
+}): Promise<ResponseData<ConcertData[] | null>> => {
+  try {
+    const res = await ClientApi(`/api/v1/concerts/list/${sort}?page=${page}&size=${size}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      console.error("API Error:", res.status, res.statusText);
+      return createEmptyResponse(`API 요청 실패: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data.data;
+  } catch (e) {
+    console.error("Error fetching concerts list:", e);
+    return createEmptyResponse("콘서트 목록을 가져오는데 실패했습니다");
   }
 };
 
