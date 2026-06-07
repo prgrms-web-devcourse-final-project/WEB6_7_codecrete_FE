@@ -1,8 +1,7 @@
 import { getArtists } from "@/lib/api/artists/artists.client";
 
 export const artistQueryKeys = {
-  featured: (page = 0, size = 20, sort = "LIKE") =>
-    ["artists", "featured", page, size, sort] as const,
+  featured: (page = 0, size = 20, sort = "LIKE") => ["artists", sort, page, size] as const,
 };
 
 export const artistQueries = {
