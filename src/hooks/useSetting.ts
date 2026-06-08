@@ -351,7 +351,6 @@ export default function useSetting(
   return {
     state: {
       showEditDialog,
-      open,
       previewImg,
       nickname,
       currentPassword,
