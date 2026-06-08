@@ -2,12 +2,16 @@
 
 import { Switch } from "@/components/ui/switch";
 import { changeUsersSettings } from "@/lib/api/user/user.client";
+import { HttpError } from "@/types/my-page";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const router = useRouter();
 
   const isDark = theme === "dark" || (theme === "system" && resolvedTheme === "dark");
 
@@ -20,9 +24,24 @@ export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
     setTheme(next);
 
     if (isLoggedIn) {
-      await changeUsersSettings({
-        darkMode: next === "dark", // T/F 전환
-      });
+      try {
+        const res = await changeUsersSettings({ darkMode: next === "dark" });
+
+        if (!res) {
+          toast.error("설정을 저장하지 못했습니다.");
+          return;
+        }
+      } catch (error: unknown) {
+        const err = error as HttpError;
+        const status = err?.status;
+
+        if (status === 401 || status === 403) {
+          toast.error("로그인이 만료되었습니다. 다시 로그인해 주세요.");
+          router.push("/sign-in");
+        } else {
+          toast.error("설정을 저장하지 못했습니다.");
+        }
+      }
     }
   };
 

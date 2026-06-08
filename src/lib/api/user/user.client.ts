@@ -1,5 +1,6 @@
 import ClientApi from "@/utils/helpers/clientApi";
 import { UserInfo } from "@/types/user";
+import { HttpError } from "@/types/my-page";
 
 // 이메일 알림 및 다크모드 설정 정보 가져오기
 export const getUsersSettings = async () => {
@@ -31,15 +32,17 @@ export const changeUsersSettings = async (data: {
       cache: "no-store",
       body: JSON.stringify(data),
     });
+
     if (!res.ok) {
-      console.error("API Error:", res.status, res.statusText);
-      return null;
+      const error: HttpError = new Error("Request failed");
+      error.status = res.status;
+      throw error;
     }
 
-    return await res.json();
+    return res.json();
   } catch (error) {
     console.error("Error updating user settings:", error);
-    return null;
+    throw error;
   }
 };
 

@@ -276,3 +276,6 @@ export type UnsavedChangesModalProps = {
   handleConfirm: () => void;
   handleCancel: () => void;
 };
+
+// 다크모드 에러 처리
+export type HttpError = Error & { status?: number };
