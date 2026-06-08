@@ -1,10 +1,5 @@
-import MyPageNavigation from "@/components/my-page/MyPageNavigation";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return (
-    <>
-      <MyPageNavigation />
-      <p></p>
-    </>
-  );
+  redirect("/my-page/overview");
 }
