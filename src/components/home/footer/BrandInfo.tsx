@@ -49,7 +49,7 @@ export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
   };
 
   return (
-    <div className="lg:x-1/2 space-y-2 lg:space-y-4 xl:w-1/3">
+    <div className="space-y-2 lg:w-1/2 lg:space-y-4 xl:w-1/3">
       <div className="flex items-center justify-between">
         <h2 className="text-text-main text-xl font-black lg:text-2xl">CodeCrete</h2>
         <div className="text-text-sub flex items-center justify-between gap-1.5 lg:text-base">
