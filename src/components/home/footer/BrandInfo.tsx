@@ -1,6 +1,7 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
+import { useIsMounted } from "@/hooks/useIsMounted";
 import { changeUsersSettings } from "@/lib/api/user/user.client";
 import { HttpError } from "@/types/my-page";
 import { Moon, Sun } from "lucide-react";
@@ -12,12 +13,14 @@ import { toast } from "sonner";
 export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const router = useRouter();
+  const isMounted = useIsMounted();
 
-  const isDark = theme === "dark" || (theme === "system" && resolvedTheme === "dark");
-
-  if (!theme && !resolvedTheme) {
+  if (!isMounted) {
     return null;
   }
+
+  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const isDark = currentTheme === "dark";
 
   const handleToggleTheme = async (checked: boolean) => {
     const next = checked ? "dark" : "light";
