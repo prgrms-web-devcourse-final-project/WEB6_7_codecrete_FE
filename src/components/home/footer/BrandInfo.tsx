@@ -1,6 +1,7 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
+import { useIsMounted } from "@/hooks/useIsMounted";
 import { changeUsersSettings } from "@/lib/api/user/user.client";
 import { HttpError } from "@/types/my-page";
 import { Moon, Sun } from "lucide-react";
@@ -12,12 +13,14 @@ import { toast } from "sonner";
 export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const router = useRouter();
+  const isMounted = useIsMounted();
 
-  const isDark = theme === "dark" || (theme === "system" && resolvedTheme === "dark");
-
-  if (!theme && !resolvedTheme) {
+  if (!isMounted) {
     return null;
   }
+
+  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const isDark = currentTheme === "dark";
 
   const handleToggleTheme = async (checked: boolean) => {
     const next = checked ? "dark" : "light";
@@ -46,7 +49,7 @@ export default function BrandInfo({ isLoggedIn }: { isLoggedIn: boolean }) {
   };
 
   return (
-    <div className="lg:x-1/2 space-y-2 lg:space-y-4 xl:w-1/3">
+    <div className="space-y-2 lg:w-1/2 lg:space-y-4 xl:w-1/3">
       <div className="flex items-center justify-between">
         <h2 className="text-text-main text-xl font-black lg:text-2xl">CodeCrete</h2>
         <div className="text-text-sub flex items-center justify-between gap-1.5 lg:text-base">
