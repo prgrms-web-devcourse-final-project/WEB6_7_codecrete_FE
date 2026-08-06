@@ -214,3 +214,17 @@ export const getConcertsByArtistId = async ({
     return createEmptyResponse("아티스트의 공연 목록을 가져오는데 실패했습니다");
   }
 };
+
+// 콘서트 목록 가져오기
+export const getConcerts = async (sortType: string = "REGISTERED", page: string = "1") => {
+  // 기본 : 최신 등록순 순 정렬
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/concerts/list/${sortType}?page=${page}&size=12`
+  );
+
+  if (!res.ok) {
+    throw new Error("데이터 패치 실패");
+  }
+
+  return res.json();
+};
