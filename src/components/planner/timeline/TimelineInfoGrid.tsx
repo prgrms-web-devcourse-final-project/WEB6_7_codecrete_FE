@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ConcertCoords, ScheduleDetail } from "@/types/planner";
@@ -17,8 +16,18 @@ import {
   WandSparklesIcon,
 } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react/jsx-runtime";
+
+const TransitRouteDetailsPopover = dynamic(() => import("./TransitRouteDetailsPopover"), {
+  loading: () => (
+    <Button variant="secondary" className="w-full" disabled>
+      <BusFrontIcon />
+      이동 경로 자세히 보기
+    </Button>
+  ),
+});
 
 interface TimelineInfoGridProps {
   schedule: ScheduleDetail;
@@ -171,8 +180,8 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
     );
   }
 
-  const itineraries = schedule.transportRoute?.leg ?? [];
-  const filteredLegs = itineraries?.filter((leg) => leg.mode !== "WALK") || [];
+  const itineraries = schedule.transportRoute;
+  const filteredLegs = itineraries?.leg?.filter((leg) => leg.mode !== "WALK") || [];
 
   const KAKAO_ROUTE_BY_FOOT = "foot";
   const KAKAO_ROUTE_BY_PUBLIC_TRANSIT = "publictransit";
@@ -248,12 +257,17 @@ export default function TimelineInfoGrid({ schedule, concertCoords }: TimelineIn
         )}
       </div>
       <Separator />
-      <Link href={kakaoUrl} target="_blank" rel="noopener noreferrer" className="block">
-        <Button type="button" variant="secondary">
-          <RouteIcon />
-          지도에서 길찾기
-        </Button>
-      </Link>
+      <div className="flex gap-2">
+        <Link href={kakaoUrl} target="_blank" rel="noopener noreferrer" className="block">
+          <Button type="button" variant="secondary">
+            <RouteIcon />
+            지도에서 길찾기
+          </Button>
+        </Link>
+        {schedule.transportType === "PUBLIC_TRANSPORT" && itineraries && (
+          <TransitRouteDetailsPopover itinerary={itineraries} />
+        )}
+      </div>
     </>
   );
 }

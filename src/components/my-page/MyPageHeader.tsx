@@ -1,17 +1,15 @@
 import ProfileNoImage from "@/components/common/ProfileNoImage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar1Icon, CalendarClockIcon, MailIcon } from "lucide-react";
-import MyPageSetting from "./MyPageSetting";
+import MyPageSetting from "./setting/MyPageSetting";
 import { format } from "date-fns";
 import { User } from "@/types/user";
+import { getMe } from "@/lib/api/auth/auth.server";
 
-export default function MyPageHeader({
-  userData,
-  planListCount,
-}: {
-  userData: User;
-  planListCount: number;
-}) {
+export default async function MyPageHeader({ planListCount }: { planListCount: number }) {
+  const res = await getMe();
+  const userData = res.data as User;
+
   const formattedDate = format(new Date(userData.createdDate), "yyyy-MM-dd");
 
   return (
@@ -55,6 +53,7 @@ export default function MyPageHeader({
             </li>
           </ul>
         </div>
+        {/* 설정 모달 */}
         <MyPageSetting userData={userData} />
       </div>
     </header>

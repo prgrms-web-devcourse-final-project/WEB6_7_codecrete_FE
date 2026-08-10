@@ -17,7 +17,7 @@ import { calculateDistance } from "@/utils/helpers/geolocation";
 import { formatDistance } from "@/utils/helpers/formatters";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useSearchPlace } from "@/hooks/useSearchPlace";
+import { useSearchPlace } from "@/hooks/planner/useSearchPlace";
 
 interface SearchPlacesProps {
   placeholder?: string;

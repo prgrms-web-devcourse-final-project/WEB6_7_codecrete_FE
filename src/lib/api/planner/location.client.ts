@@ -1,5 +1,5 @@
 import { ResponseData } from "@/types/api";
-import { NearbyPlaces, UserPlace } from "@/types/planner";
+import { NearbyPlaces, SearchPlace, UserPlace } from "@/types/planner";
 import ClientApi from "@/utils/helpers/clientApi";
 
 /**
@@ -115,7 +115,7 @@ export const deleteUserLocation = async (): Promise<void> => {
  * @param {string} query - 검색 키워드
  * @returns {Promise<any[]>} 검색된 장소 목록
  */
-export const searchPlaceByKeyword = async (query: string) => {
+export const searchPlaceByKeyword = async (query: string): Promise<SearchPlace[]> => {
   const res = await fetch(`/api/location?query=${encodeURIComponent(query)}`);
 
   if (!res.ok) throw new Error("장소 검색 실패");

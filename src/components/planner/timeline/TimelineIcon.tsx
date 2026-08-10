@@ -28,8 +28,10 @@ export default function TimelineIcon({
   const getIcon = () => {
     switch (type) {
       case "TRANSPORT":
-        if (transportType === "WALK") return <FootprintsIcon className="stroke-text-sub" />;
-        if (transportType === "PUBLIC_TRANSPORT") return <TrainIcon className="stroke-text-sub" />;
+        if (transportType === "WALK")
+          return <FootprintsIcon className="stroke-text-sub size-4 lg:size-7" />;
+        if (transportType === "PUBLIC_TRANSPORT")
+          return <TrainIcon className="stroke-text-sub size-4 lg:size-7" />;
         return <CarFrontIcon className="stroke-text-sub size-4 lg:size-7" />;
       case "MEAL":
         return <UtensilsIcon className="stroke-text-main size-4 lg:size-7" />;

@@ -33,7 +33,8 @@ function minutesToTime(minutes: number): string {
 export function validateScheduleTime(
   prevSchedule: ScheduleDetail | null,
   newStartTime: string,
-  travelTimeMinutes: number = 0
+  travelTimeMinutes: number = 0,
+  bufferMinutes: number = 10
 ): TimeValidationResult {
   if (!prevSchedule) {
     return { isValid: true, type: "valid" };
@@ -45,7 +46,6 @@ export function validateScheduleTime(
   const newStartMinutes = timeToMinutes(normalizeTime(newStartTime));
   const actualMinutes = newStartMinutes - prevEndMinutes;
 
-  const bufferMinutes = 10;
   const requiredMinutes = travelTimeMinutes + bufferMinutes;
 
   // 1. 이전 일정과 겹치는지 체크 - 이동시간 포함해서 추천

@@ -21,7 +21,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { usePlannerEdit } from "@/hooks/usePlannerEdit";
+import { usePlannerEdit } from "@/hooks/planner/usePlannerEdit";
 import { ConcertDetail } from "@/types/concerts";
 import { PlanDetail } from "@/types/planner";
 import { Loader2Icon, PencilIcon } from "lucide-react";

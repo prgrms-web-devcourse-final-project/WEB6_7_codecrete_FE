@@ -4,11 +4,18 @@ import PlannerTopHeader from "./top/PlannerTopHeader";
 import { useQuery } from "@tanstack/react-query";
 import { plannerQueries } from "@/queries/planner";
 import PlannerTopHeaderSkeleton from "../loading/planner/PlannerTopHeaderSkeleton";
-import PlannerTopActions from "./top/PlannerTopActions";
 import { concertQueries } from "@/queries/concerts";
-import PlannerBodySection from "./PlannerBodySection";
 import PlannerTimelineSectionSkeleton from "../loading/planner/PlannerTimelineSectionSkeleton";
 import PlannerTopActionsSkeleton from "../loading/planner/PlannerTopActionsSkeleton";
+import dynamic from "next/dynamic";
+
+const PlannerTopActions = dynamic(() => import("./top/PlannerTopActions"), {
+  loading: () => <PlannerTopActionsSkeleton />,
+});
+
+const PlannerBodySection = dynamic(() => import("./PlannerBodySection"), {
+  loading: () => <PlannerTimelineSectionSkeleton />,
+});
 
 interface PlannerDetailProps {
   planId: string;

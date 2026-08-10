@@ -17,7 +17,7 @@ import { PlannerParticipantRole } from "@/types/planner";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { useShareLink } from "@/hooks/useShareLink";
 import PlannerShareLinkSkeleton from "@/components/loading/planner/PlannerShareLinkSkeleton";
-import { useParticipantsManage } from "@/hooks/useParticipantsManage";
+import { useParticipantsManage } from "@/hooks/planner/useParticipantsManage";
 import PlannerMembersSkeleton from "@/components/loading/planner/PlannerMembersSkeleton";
 
 interface InviteMemberDialogProps {

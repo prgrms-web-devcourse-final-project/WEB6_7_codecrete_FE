@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Itinerary } from "@/types/planner";
 import {
   Accordion,
@@ -6,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import TransitRouteTimeline from "./TransitRouteTimeline";
 import TransitRouteSummary from "./TransitRouteSummary";
@@ -21,6 +23,8 @@ export default function TransitRouteList({
   onSelect,
   selectedIndex,
 }: TransitRouteListProps) {
+  const [showAllRoutes, setShowAllRoutes] = useState(false);
+
   if (!itineraries || itineraries.length === 0) {
     return (
       <div className="text-muted-foreground py-4 text-center text-sm">추천 경로가 없습니다.</div>
@@ -34,44 +38,68 @@ export default function TransitRouteList({
     isBest: index === bestIndex,
   }));
 
+  const hasValidSelectedIndex =
+    selectedIndex !== null &&
+    selectedIndex !== undefined &&
+    selectedIndex >= 0 &&
+    selectedIndex < itineraries.length;
+  const prioritizedIndex = hasValidSelectedIndex ? selectedIndex : bestIndex;
+
   const sortedRoutes =
-    bestIndex !== null
-      ? [routesWithMeta[bestIndex], ...routesWithMeta.filter((_, idx) => idx !== bestIndex)]
+    prioritizedIndex !== null
+      ? [
+          routesWithMeta[prioritizedIndex],
+          ...routesWithMeta.filter((routeMeta) => routeMeta.index !== prioritizedIndex),
+        ]
       : routesWithMeta;
+  const visibleRoutes = showAllRoutes ? sortedRoutes : sortedRoutes.slice(0, 1);
 
   return (
-    <Accordion type="single" collapsible className="w-full space-y-2">
-      {sortedRoutes.map(({ route, index }) => {
-        const filteredLegs = route.legs?.filter((leg) => leg.mode !== "WALK") || [];
-        const isSelected = selectedIndex === index;
+    <div className="space-y-2">
+      <Accordion type="single" collapsible className="w-full space-y-2">
+        {visibleRoutes.map(({ route, index }) => {
+          const filteredLegs = route.legs?.filter((leg) => leg.mode !== "WALK") || [];
+          const isSelected = selectedIndex === index;
 
-        return (
-          <AccordionItem
-            key={`route-${index}`}
-            value={`route-${index}`}
-            className={cn(
-              "bg-muted rounded-md border-0 opacity-60 shadow-none",
-              isSelected && "ring-input bg-main opacity-100 ring-1"
-            )}
-          >
-            <AccordionTrigger
-              className="w-full p-3 hover:no-underline lg:p-4"
-              onClick={() => onSelect(route, index)}
+          return (
+            <AccordionItem
+              key={`route-${index}`}
+              value={`route-${index}`}
+              className={cn(
+                "bg-muted rounded-md border-0 opacity-60 shadow-none",
+                isSelected && "ring-input bg-main opacity-100 ring-1"
+              )}
             >
-              <TransitRouteSummary
-                route={route}
-                index={index}
-                isBest={index === bestIndex}
-                filteredLegs={filteredLegs}
-              />
-            </AccordionTrigger>
-            <AccordionContent className="p-0">
-              <TransitRouteTimeline itinerary={route} />
-            </AccordionContent>
-          </AccordionItem>
-        );
-      })}
-    </Accordion>
+              <AccordionTrigger
+                className="w-full p-3 hover:no-underline lg:p-4"
+                onClick={() => onSelect(route, index)}
+              >
+                <TransitRouteSummary
+                  route={route}
+                  index={index}
+                  isBest={index === bestIndex}
+                  filteredLegs={filteredLegs}
+                />
+              </AccordionTrigger>
+              <AccordionContent className="min-w-auto p-0">
+                <TransitRouteTimeline itinerary={route} />
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+
+      {sortedRoutes.length > 1 && (
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() => setShowAllRoutes((prev) => !prev)}
+        >
+          {showAllRoutes ? "접기" : `더보기 (${sortedRoutes.length - 1}개)`}
+        </Button>
+      )}
+    </div>
   );
 }
 
@@ -84,7 +112,7 @@ function findBestRouteIndex(itineraries: Itinerary[]): number | null {
   let minScore = Infinity;
 
   itineraries.forEach((route, index) => {
-    const score = route.totalTime + route.transferCount * TRANSFER_PENALTY_SECONDS;
+    const score = route.totalTime + (route?.transferCount ?? 0) * TRANSFER_PENALTY_SECONDS;
     if (score < minScore) {
       minScore = score;
       bestIndex = index;

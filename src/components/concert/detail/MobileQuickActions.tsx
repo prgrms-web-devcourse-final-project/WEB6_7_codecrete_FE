@@ -56,7 +56,7 @@ export default function MobileQuickActions({
         )}
 
         <SheetContent
-          side="bottom"
+          side="right"
           className="z-50 max-h-[85vh] overflow-y-auto pb-[env(safe-area-inset-bottom)] [&>button]:hidden"
         >
           <SheetHeader className="sr-only">

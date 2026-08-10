@@ -202,6 +202,8 @@ export function buildWalkSummary(
           {
             totalTime,
             totalDistance,
+            totalWalkDistance: totalDistance,
+            totalWalkTime: totalTime,
             transferCount: 0,
             fare: {
               regular: {

@@ -221,3 +221,61 @@ export interface LikedPostPageResponse {
   numberOfElements: number;
   empty: boolean;
 }
+
+/**
+ * 마이페이지 설정 모달
+ */
+// 프로필 이미지
+export type ProfileImgFieldsProps = {
+  previewImg: string;
+  handleImgChange: (file: File | null) => void;
+  handleImgClear: (e: React.MouseEvent) => void;
+};
+
+// 닉네임
+export type NicknameFieldsProps = {
+  nickname: string;
+  handleNicknameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+// 비밀번호
+export type PasswordFieldsProps = {
+  currentPassword: string;
+  password: string;
+  passwordConfirm: string;
+  handleCurrentPassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordConfirmChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isCurrentPasswordFormatValid: boolean;
+  isPasswordValid: boolean;
+  isPasswordMatch: boolean;
+};
+
+// 이메일
+export type EmailFieldProps = {
+  email: string;
+};
+
+// 생년월일
+export type BirthFieldProps = {
+  date: Date | null;
+  handleDateChange: (date: Date | null) => void;
+};
+
+// 일반 설정
+export type PreferenceFieldsProps = {
+  emailNotifications: boolean;
+  darkMode: boolean;
+  handleEmailAlertChange: (checked: boolean) => void;
+  handleDarkModeChange: (checked: boolean) => void;
+};
+
+// 닫기 모달
+export type UnsavedChangesModalProps = {
+  open: boolean;
+  handleConfirm: () => void;
+  handleCancel: () => void;
+};
+
+// 다크모드 에러 처리
+export type HttpError = Error & { status?: number };
